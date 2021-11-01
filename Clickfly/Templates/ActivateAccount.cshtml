@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ativação de conta</title>
+
+    <style>
+        :root {
+            --color-background: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        *:before,
+        *:after {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box; 
+        }
+
+        html, body, #root {
+            height: 100%;
+        }
+
+        html {
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            background: var(--color-background);
+            line-height: 1.5;
+            overflow-y: hidden;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        p {
+            margin: 0;
+            font-size: 15px;
+            color: #333333;
+        }
+
+        .container {
+            margin-left: 15px;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header > img {
+            height: 100px;
+            width: 250px;
+            object-fit: contain;
+        }
+
+        .footer {
+            padding-top: 50px;
+            padding-bottom: 50px;
+            border-top: 1px solid #cccccc;
+        }
+
+        .footer .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00B2A9;
+        }
+
+        .footer .subtitle {
+            font-size: 16px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="https://aeronorte.s3.sa-east-1.amazonaws.com/clickfly-logo.png" />
+    </div>
+
+    <div class="container">
+        <div class="content">
+            <p>Olá @Model.customer_name!</p>
+            <br />
+            <br />
+            <br />
+            <br />
+            <p>Como vai?</p>
+            <br />
+            <br />
+            <br />
+            <br />
+            <p>Para que você tenha acesso a sua conta com segurança, é necessário confirmar o seu e-mail. Basta clicar no link abaixo:</p>
+            <br />
+            <br />
+            <br />
+            <a href="@Model.activation_link">Confirar e-mail</a>
+            <br />
+            <br />
+            <br />
+            <p>Problemas ao abrir o link?</p>
+            <p>Copie e cole o link no seu navegador:</p>
+            <br />
+            <br />
+            <p>@Model.activation_link</p>
+            <br />
+            <br />
+            <p>Qualquer dúvida, acesse nossa <a href="">central de ajuda</a></p>
+            <br />
+            <br />
+            <br />
+            <p>Conte conosco e boa viagem!</p>
+            <br />
+            <br />
+            <br />
+        </div>
+        
+        <div class="footer">
+            <p class="title">ClickFly</p>
+            <p class="subtitle">A sua viagem acontece em poucos cliques!</p>
+        </div>
+    </div>
+</body>
+</html>

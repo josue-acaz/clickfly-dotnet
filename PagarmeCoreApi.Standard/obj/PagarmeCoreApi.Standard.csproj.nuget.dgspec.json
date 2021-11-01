@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/PagarmeCoreApi.Standard.csproj": {}
+  },
+  "projects": {
+    "/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/PagarmeCoreApi.Standard.csproj": {
+      "version": "5.0.2",
+      "restore": {
+        "projectUniqueName": "/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/PagarmeCoreApi.Standard.csproj",
+        "projectName": "PagarmeCoreApi.Standard",
+        "projectPath": "/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/PagarmeCoreApi.Standard.csproj",
+        "packagesPath": "/Users/piquiatuba/.nuget/packages/",
+        "outputPath": "/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/piquiatuba/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard1.3"
+        ],
+        "sources": {
+          "/Users/piquiatuba/Documents/Nuget/Packages": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard1.3": {
+            "targetAlias": "netstandard1.3",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard1.3": {
+          "targetAlias": "netstandard1.3",
+          "dependencies": {
+            "NETStandard.Library": {
+              "target": "Package",
+              "version": "[1.6.1, )",
+              "autoReferenced": true
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[10.0.3, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.302/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

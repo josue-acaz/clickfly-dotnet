@@ -1,0 +1,9 @@
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/bin/Debug/netstandard1.3/PagarmeCoreApi.Standard.deps.json
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/bin/Debug/netstandard1.3/PagarmeCoreApi.Standard.dll
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/bin/Debug/netstandard1.3/PagarmeCoreApi.Standard.pdb
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/obj/Debug/netstandard1.3/PagarmeCoreApi.Standard.csproj.AssemblyReference.cache
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/obj/Debug/netstandard1.3/PagarmeCoreApi.Standard.AssemblyInfoInputs.cache
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/obj/Debug/netstandard1.3/PagarmeCoreApi.Standard.AssemblyInfo.cs
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/obj/Debug/netstandard1.3/PagarmeCoreApi.Standard.csproj.CoreCompileInputs.cache
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/obj/Debug/netstandard1.3/PagarmeCoreApi.Standard.dll
+/Users/piquiatuba/Documents/ClickFly/SDK/PagarmeCoreApi.Standard/obj/Debug/netstandard1.3/PagarmeCoreApi.Standard.pdb
