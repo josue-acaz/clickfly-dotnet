@@ -13,12 +13,10 @@ namespace clickfly.Controllers
     [Route("/flight-segments")]
     public class FlightSegmentController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IFlightSegmentService _flightSegmentService;
 
-        public FlightSegmentController(IDataContext dataContext, IFlightSegmentService flightSegmentService)
+        public FlightSegmentController(IDataContext dataContext, IInformer informer, IFlightSegmentService flightSegmentService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _flightSegmentService = flightSegmentService;
         }
 
@@ -47,7 +45,6 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
             PaginationResult<FlightSegment> flightSegments = await _flightSegmentService.Pagination(filter);
-            
             return HttpResponse(flightSegments);
         }
 

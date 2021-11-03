@@ -34,6 +34,9 @@ namespace clickfly.Models
         public List<Flight> flights { get; set; }
 
         [NotMapped]
+        public string thumbnail { get; set; }
+
+        [NotMapped]
         public string full_name { get { return $"{prefix} • {model?.name}"; } }
     }
 }

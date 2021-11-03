@@ -13,10 +13,14 @@ namespace clickfly.ViewModels
         public string order { get; set; }
         public string order_by { get; set; }
 
-        // other params
+        // additional params
         public string customer_id { get; set; }
         public string flight_id { get; set; }
         public int selected_seats { get; set; }
+        public string origin_city_id { get; set; }
+        public string destination_city_id { get; set; }
+        public string flight_type { get; set; }
+        public string flight_segment_type { get; set; }
         public PaginationFilter()
         {
             this.page_number = 1;

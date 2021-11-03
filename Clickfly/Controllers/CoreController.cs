@@ -14,14 +14,12 @@ namespace clickfly.Controllers
     [Route("/cores")]
     public class CoreController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly ICoreService _coreService;
         private readonly IAerodromeService _aerodromeService;
         private readonly ICepService _cepService;
 
-        public CoreController(IDataContext dataContext, ICoreService coreService, ICepService cepService, IAerodromeService aerodromeService)
+        public CoreController(IDataContext dataContext, IInformer informer, ICoreService coreService, ICepService cepService, IAerodromeService aerodromeService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _coreService = coreService;
             _cepService = cepService;
             _aerodromeService = aerodromeService;
@@ -37,9 +35,17 @@ namespace clickfly.Controllers
 
         [HttpGet("flight-price")]
         [AllowAnonymous]
-        public async Task<ActionResult<double>> GetFlightSubtotal([FromQuery]FlightPriceRequest flightPriceRequest)
+        public async Task<ActionResult<double>> GetFlightPrice([FromQuery]FlightPriceRequest flightPriceRequest)
         {
             double flightPrice = await _coreService.GetFlightPrice(flightPriceRequest);
+            return flightPrice;
+        }
+
+        [HttpGet("flight-subtotal")]
+        [AllowAnonymous]
+        public async Task<ActionResult<double>> GetFlightSubtotal([FromQuery]FlightSubtotalRequest flightSubtotalRequest)
+        {
+            double flightPrice = await _coreService.GetFlightSubtotal(flightSubtotalRequest);
             return flightPrice;
         }
 

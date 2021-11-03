@@ -2,6 +2,16 @@ using System;
 
 namespace clickfly
 {
+    static class UserTypes {
+        public const string User = "user";
+        public const string Customer = "customer";
+    };
+
+    static class UserIdTypes {
+        public const string userId = "user_id";
+        public const string CustomerId = "customer_id";
+    };
+
     static class PaymentMethods {
         public const string CreditCard = "credit_card";
         public const string Pix = "pix";

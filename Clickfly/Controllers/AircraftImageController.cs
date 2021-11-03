@@ -12,12 +12,10 @@ namespace clickfly.Controllers
     [Route("/aircraft-images")]
     public class AircraftImageController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IAircraftImageService _aircraftImageService;
 
-        public AircraftImageController(IDataContext dataContext, IAircraftImageService aircraftImageService)
+        public AircraftImageController(IDataContext dataContext, IInformer informer, IAircraftImageService aircraftImageService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _aircraftImageService = aircraftImageService;
         }
 

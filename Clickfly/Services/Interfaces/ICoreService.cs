@@ -11,5 +11,6 @@ namespace clickfly.Services
         Task<double> GetFlightTime(FlightTimeRequest flightTimeRequest);
         Task<Installment []> GetInstallments(InstallmentsRequest installmentsRequest);
         Task<float> GetFlightPrice(FlightPriceRequest flightPriceRequest);
+        Task<double> GetFlightSubtotal(FlightSubtotalRequest flightSubtotalRequest);
     }
 }

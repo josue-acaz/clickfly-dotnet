@@ -7,9 +7,9 @@ using System.Dynamic;
 
 namespace clickfly.Services
 {
-    public interface ISharedFlightService
+    public interface IAppFlightService
     {
-        Task<SharedFlightOverviewResult> Overview(PaginationFilter filter);
+        Task<PaginationResult<AppFlight>> Overview(PaginationFilter filter);
         Task<PaginationResult<FlightSegment>> Pagination(PaginationFilter filter);
     }
 }

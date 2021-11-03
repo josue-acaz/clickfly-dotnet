@@ -16,6 +16,7 @@ namespace clickfly.Configs
         {
             services.AddScoped<IDataContext, DataContext>();
             services.AddScoped<IDBContext, DBContext>();
+            services.AddScoped<IInformer, Informer>();
             services.AddScoped<IUtils, Utils>();
             services.AddScoped<IOrm, Orm>();
 
@@ -88,9 +89,9 @@ namespace clickfly.Configs
 
             services.AddScoped<ICoreService, CoreService>();
 
-            services.AddScoped<ISharedFlightService, SharedFlightService>();
-            services.AddScoped<ISharedFlightRepository, SharedFlightRepository>();
-
+            services.AddScoped<IAppFlightService, AppFlightService>();
+            services.AddScoped<IAppFlightRepository, AppFlightRepository>();
+            
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<ICepService, CepService>();

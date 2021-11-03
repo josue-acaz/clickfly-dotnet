@@ -10,41 +10,38 @@ using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/customer-friends")]
     public class CustomerFriendController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly ICustomerFriendService _customerFriendService;
 
-        public CustomerFriendController(IDataContext dataContext, ICustomerFriendService customerFriendService)
+        public CustomerFriendController(IDataContext dataContext, IInformer informer, ICustomerFriendService customerFriendService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _customerFriendService = customerFriendService;
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]CustomerFriend customerFriend)
         {
+            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            CustomerFriend _customerFriend = await _customerFriendService.Save(customerFriend);
+            customerFriend.customer_id = customerId;
+            customerFriend = await _customerFriendService.Save(customerFriend);
             await transaction.CommitAsync();
 
-            return HttpResponse(_customerFriend);
+            return HttpResponse(customerFriend);
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
             PaginationResult<CustomerFriend> customerFriends = await _customerFriendService.Pagination(filter);
-            
             return HttpResponse(customerFriends);
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<CustomerFriend>> GetById(string id)
         {
             CustomerFriend customerFriend = await _customerFriendService.GetById(id);
@@ -52,7 +49,6 @@ namespace clickfly.Controllers
         }
 
         [HttpDelete("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult> Delete(string id)
         {
             await _customerFriendService.Delete(id);

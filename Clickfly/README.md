@@ -9,3 +9,4 @@ Adicionar endpoint em applicationUrl propriedade => Properties/lauchSettings.jso
 
 # DISABLE NOT MAPPED ATTRIBUTES IN MIGRATION
 1. available_seats
+

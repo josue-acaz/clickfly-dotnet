@@ -10,15 +10,14 @@ using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/customer-cards")]
     public class CustomerCardController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly ICustomerCardService _customerCardService;
 
-        public CustomerCardController(IDataContext dataContext, ICustomerCardService customerCardService)
+        public CustomerCardController(IDataContext dataContext, IInformer informer, ICustomerCardService customerCardService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _customerCardService = customerCardService;
         }
 
@@ -26,13 +25,14 @@ namespace clickfly.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]CustomerCard customerCard)
         {
-            string customer_id = Request.Headers["customer_id"];
+            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            CustomerCard _customerCard = await _customerCardService.Save(customerCard);
+            customerCard.customer_id = customerId;
+            customerCard = await _customerCardService.Save(customerCard);
             await transaction.CommitAsync();
 
-            return HttpResponse(_customerCard);
+            return HttpResponse(customerCard);
         }
 
         [HttpGet]

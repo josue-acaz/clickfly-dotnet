@@ -13,15 +13,13 @@ namespace clickfly.Controllers
     [Route("/customers")]
     public class CustomerController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly ICustomerService _customerService;
         private readonly IAccountVerificationService _accountVerificationService;
         private readonly IEmailService _emailService;
         private readonly IUtils _utils;
 
-        public CustomerController(IDataContext dataContext, ICustomerService customerService, IAccountVerificationService accountVerificationService, IEmailService emailService, IUtils utils)
+        public CustomerController(IDataContext dataContext, IInformer informer, ICustomerService customerService, IAccountVerificationService accountVerificationService, IEmailService emailService, IUtils utils) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _customerService = customerService;
             _accountVerificationService = accountVerificationService;
             _emailService = emailService;

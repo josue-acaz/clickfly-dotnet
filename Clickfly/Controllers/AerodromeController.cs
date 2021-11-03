@@ -13,12 +13,10 @@ namespace clickfly.Controllers
     [Route("/aerodromes")]
     public class AerodromeController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IAerodromeService _aerodromeService;
 
-        public AerodromeController(IDataContext dataContext, IAerodromeService aerodromeService)
+        public AerodromeController(IDataContext dataContext, IInformer informer, IAerodromeService aerodromeService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _aerodromeService = aerodromeService;
         }
 

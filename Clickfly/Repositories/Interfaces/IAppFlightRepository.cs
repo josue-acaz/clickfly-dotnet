@@ -2,13 +2,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using clickfly.ViewModels;
 using clickfly.Models;
-using System.Dynamic;
 
 namespace clickfly.Repositories
 {
-    public interface ISharedFlightRepository
+    public interface IAppFlightRepository
     {
-        Task<SharedFlightOverviewResult> Overview(PaginationFilter filter);
+        Task<PaginationResult<AppFlight>> Overview(PaginationFilter filter);
         Task<PaginationResult<FlightSegment>> Pagination(PaginationFilter filter);
     }
 }

@@ -13,5 +13,8 @@ namespace clickfly.Models
 
         [Required(ErrorMessage = "Este campo é obrigatório")]
         public string prefix { get; set; }
+
+        [NotMapped]
+        public string teste { get; set; }
     }
 }

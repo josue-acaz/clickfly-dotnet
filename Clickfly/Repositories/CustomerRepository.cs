@@ -72,25 +72,17 @@ namespace clickfly.Repositories
 
         public async Task<Customer> GetById(string id)
         {
-            string querySql = $@"
-                SELECT 
-                customer.id, 
-                customer.name, 
-                customer.email,
-                customer.phone_number,
-                customer.emergency_phone_number,
-                customer.document,
-                customer.document_type,
-                customer.type,
-                customer.birthdate,
-                customer.customer_id,
-                ({subQueryThumbnailSql}) AS thumbnail
-                FROM {fromSql} WHERE {whereSql} AND customer.id = @id
-            ";
+            string querySql = $@"SELECT {fieldsSql}, ({subQueryThumbnailSql}) AS thumbnail FROM {fromSql} WHERE {whereSql} AND customer.id = @id";
 
-            object param = new { id = id };
+            NpgsqlParameter param = new NpgsqlParameter("id", id);
 
-            Customer customer = await _dBContext.GetConnection().QueryFirstOrDefaultAsync<Customer>(querySql, param);
+            Customer customer = await _dataContext.Customers
+            .FromSqlRaw(querySql, param)
+            .Include(customer => customer.cards)
+            .Include(customer => customer.addresses)
+            .Include(customer => customer.friends)
+            .FirstOrDefaultAsync();
+
             return customer;
         }
 

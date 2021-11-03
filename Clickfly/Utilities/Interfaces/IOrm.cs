@@ -9,5 +9,6 @@ namespace clickfly
     public interface IOrm
     {
         Task<IEnumerable<Type>> QueryAsync<Type>(QueryAsyncParams queryAsyncParams) where Type : new();
+        Task<Type> QuerySingleOrDefaultAsync<Type>(QueryAsyncParams queryAsyncParams);
     }
 }

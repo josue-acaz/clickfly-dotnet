@@ -71,5 +71,21 @@ namespace clickfly.Services
 
             return installments;
         }
+    
+        public async Task<double> GetFlightSubtotal(FlightSubtotalRequest flightSubtotalRequest)
+        {
+            double selected_seats = flightSubtotalRequest.selected_seats;
+            string flight_segment_id = flightSubtotalRequest.flight_segment_id;
+
+            FlightSegment flightSegment = await _flightSegmentRepository.GetById(flight_segment_id);
+            
+            if(flightSegment == null)
+            {
+                throw new NotFoundException("Voo não encontrado.");
+            }
+
+            double subtotal = selected_seats * flightSegment.price_per_seat;
+            return subtotal;
+        }
     }
 }

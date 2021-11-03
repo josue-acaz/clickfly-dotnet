@@ -13,12 +13,10 @@ namespace clickfly.Controllers
     [Route("/flights")]
     public class FlightController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IFlightService _flightService;
 
-        public FlightController(IDataContext dataContext, IFlightService flightService)
+        public FlightController(IDataContext dataContext, IInformer informer, IFlightService flightService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _flightService = flightService;
         }
 

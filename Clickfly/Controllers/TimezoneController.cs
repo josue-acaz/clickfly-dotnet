@@ -12,12 +12,10 @@ namespace clickfly.Controllers
     [Route("/timezones")]
     public class TimezoneController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly ITimezoneService _timezoneService;
 
-        public TimezoneController(IDataContext dataContext, ITimezoneService timezoneService)
+        public TimezoneController(IDataContext dataContext, IInformer informer, ITimezoneService timezoneService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _timezoneService = timezoneService;
         }
 

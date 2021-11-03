@@ -12,12 +12,10 @@ namespace clickfly.Controllers
     [Route("/states")]
     public class StateController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IStateService _stateService;
 
-        public StateController(IDataContext dataContext, IStateService stateService)
+        public StateController(IDataContext dataContext, IInformer informer, IStateService stateService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _stateService = stateService;
         }
 

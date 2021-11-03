@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace clickfly.Services
 {
@@ -131,16 +132,18 @@ namespace clickfly.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
+                    new Claim(UserIdTypes.CustomerId, customer.id),
                     new Claim(ClaimTypes.Name, customer.name.ToString()),
-                    new Claim(ClaimTypes.Role, customer.role.ToString())
+                    new Claim(ClaimTypes.Role, customer.role.ToString()),
+                    new Claim(UserTypes.Customer, JsonConvert.SerializeObject(customer))
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var encodedToken = tokenHandler.CreateToken(tokenDescriptor);
             
-            return tokenHandler.WriteToken(token);
+            return tokenHandler.WriteToken(encodedToken);
         }
 
         public async Task<string> Thumbnail(ThumbnailRequest thumbnailRequest)

@@ -12,12 +12,10 @@ namespace clickfly.Controllers
     [Route("/cities")]
     public class CityController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly ICityService _cityService;
 
-        public CityController(IDataContext dataContext, ICityService cityService)
+        public CityController(IDataContext dataContext, IInformer informer, ICityService cityService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _cityService = cityService;
         }
 

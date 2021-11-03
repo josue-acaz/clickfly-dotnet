@@ -14,12 +14,10 @@ namespace clickfly.Controllers
     [Route("/aircraft-models")]
     public class AircraftModelController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IAircraftModelService _aircraftModelService;
 
-        public AircraftModelController(IDataContext dataContext, IAircraftModelService aircraftModelService)
+        public AircraftModelController(IDataContext dataContext, IInformer informer, IAircraftModelService aircraftModelService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _aircraftModelService = aircraftModelService;
         }
 

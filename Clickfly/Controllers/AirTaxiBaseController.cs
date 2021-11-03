@@ -13,12 +13,10 @@ namespace clickfly.Controllers
     [Route("/air-taxi-bases")]
     public class AirTaxiBaseController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IAirTaxiBaseService _airTaxiBaseService;
 
-        public AirTaxiBaseController(IDataContext dataContext, IAirTaxiBaseService airTaxiBaseService)
+        public AirTaxiBaseController(IDataContext dataContext, IInformer informer, IAirTaxiBaseService airTaxiBaseService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _airTaxiBaseService = airTaxiBaseService;
         }
 

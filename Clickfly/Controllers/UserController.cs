@@ -13,12 +13,10 @@ namespace clickfly.Controllers
     [Route("/users")]
     public class UserController : BaseController
     {
-        private readonly IDataContext _dataContext;
         private readonly IUserService _userService;
 
-        public UserController(IDataContext dataContext, IUserService userService)
+        public UserController(IDataContext dataContext, IInformer informer, IUserService userService) : base(dataContext, informer)
         {
-            _dataContext  = dataContext;
             _userService = userService;
         }
 
@@ -47,7 +45,6 @@ namespace clickfly.Controllers
         [Route("authenticate")]
         public async Task<ActionResult<Authenticated>> Authenticate([FromBody]AuthenticateParams authenticateParams)
         {
-            Console.WriteLine(authenticateParams.username);
             Authenticated authenticated = await _userService.Authenticate(authenticateParams);
             return authenticated;
         }

@@ -28,6 +28,9 @@ namespace clickfly.Models
         public DateTime? birthdate { get; set; }
         public bool verified { get; set; }
         public string customer_id { get; set; }
+        public List<CustomerAddress> addresses { get; set; }
+        public List<CustomerCard> cards { get; set; }
+        public List<CustomerFriend> friends { get; set; }
 
         [NotMapped]
         public string thumbnail { get; set; }
