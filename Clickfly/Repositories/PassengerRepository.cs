@@ -16,7 +16,7 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "passengers as passenger";
         private static string whereSql = "passenger.excluded = false";
-        protected string[] defaultFields = new string[8];
+        protected string[] defaultFields = new string[9];
 
         public PassengerRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
         {

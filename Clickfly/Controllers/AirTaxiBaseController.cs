@@ -10,6 +10,7 @@ using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/air-taxi-bases")]
     public class AirTaxiBaseController : BaseController
     {
@@ -21,13 +22,14 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]AirTaxiBase airTaxiBase)
         {
-            string air_taxi_id = Request.Headers["air_taxi_id"];
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            User user = _informer.GetValue<User>(UserTypes.User); 
+
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            airTaxiBase.air_taxi_id = air_taxi_id;
+            airTaxiBase.air_taxi_id = user.air_taxi_id;
             AirTaxiBase _airTaxiBase = await _airTaxiBaseService.Save(airTaxiBase);
             await transaction.CommitAsync();
 
@@ -35,7 +37,6 @@ namespace clickfly.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<AirTaxiBase>> GetById(string id)
         {
             AirTaxiBase airTaxiBase = await _airTaxiBaseService.GetById(id);
@@ -43,11 +44,13 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            User user = _informer.GetValue<User>(UserTypes.User);
+
+            filter.air_taxi_id = user.air_taxi_id;
             PaginationResult<AirTaxiBase> airTaxiBases = await _airTaxiBaseService.Pagination(filter);
-            
             return HttpResponse(airTaxiBases);
         }
     }

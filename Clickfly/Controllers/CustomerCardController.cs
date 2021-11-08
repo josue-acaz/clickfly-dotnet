@@ -22,7 +22,6 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]CustomerCard customerCard)
         {
             string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
@@ -36,15 +35,16 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
+            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+            
+            filter.customer_id = customerId;
             PaginationResult<CustomerCard> customerCards = await _customerCardService.Pagination(filter);
             return HttpResponse(customerCards);
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<CustomerCard>> GetById(string id)
         {
             CustomerCard customerCard = await _customerCardService.GetById(id);
@@ -52,7 +52,6 @@ namespace clickfly.Controllers
         }
 
         [HttpDelete("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult> Delete(string id)
         {
             await _customerCardService.Delete(id);

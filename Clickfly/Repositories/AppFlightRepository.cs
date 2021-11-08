@@ -14,110 +14,11 @@ namespace clickfly.Repositories
     public class AppFlightRepository : BaseRepository<FlightSegment>, IAppFlightRepository
     {
         private readonly IOrm _orm;
+        private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
 
-        private static string countSql = $@"
-            (SELECT COUNT(*) FROM (
-                select distinct on (origin_city.id, destination_city.id) 
-                origin_city.id as origin_city_id, 
-                destination_city.id as destination_city_id
-                from flight_segments as segment
-                inner join aerodromes as origin_aerodrome on origin_aerodrome.id=segment.origin_aerodrome_id
-                inner join cities as origin_city on origin_city.id=origin_aerodrome.city_id
-                inner join aerodromes as destination_aerodrome on destination_aerodrome.id=segment.destination_aerodrome_id
-                inner join cities as destination_city on destination_city.id=destination_aerodrome.city_id
-                where segment.excluded=false and segment.type='trip'
-            ) as overview) as total_records
-        ";
+        private static string flightTimeSql = $"SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))";
 
-        private static string originCitySql = $@"(
-            SELECT json_build_object(
-                'id', city.id, 
-                'name', city.name, 
-                'state_id', city.state_id, 
-                'state', (SELECT json_build_object('id', state.id, 'prefix', state.prefix) FROM states AS state WHERE state.id = city.state_id)
-            )
-            FROM cities AS city WHERE city.excluded = false
-            AND city.id = overview.origin_city_id
-        ) AS origin_city";
-
-        private static string destinationCitySql = $@"(
-            SELECT json_build_object(
-                'id', city.id, 
-                'name', city.name, 
-                'state_id', city.state_id, 
-                'state', (SELECT json_build_object('id', state.id, 'prefix', state.prefix) FROM states AS state WHERE state.id = city.state_id)
-            )
-            FROM cities AS city WHERE city.excluded = false
-            AND city.id = overview.destination_city_id
-        ) AS destination_city";
-
-        private static string originAerodromeSql = $@"(
-            SELECT json_build_object(
-                'id', aerodrome.id,
-                'name', aerodrome.name,
-                'oaci_code', aerodrome.oaci_code,
-                'ciad', aerodrome.ciad
-            ) FROM aerodromes AS aerodrome 
-            WHERE aerodrome.excluded = false 
-            AND aerodrome.id = flight_segment.origin_aerodrome_id
-        ) AS origin_aerodrome";
-
-        private static string destinationAerodromeSql = $@"(
-            SELECT json_build_object(
-                'id', aerodrome.id,
-                'name', aerodrome.name,
-                'oaci_code', aerodrome.oaci_code,
-                'ciad', aerodrome.ciad
-            ) FROM aerodromes AS aerodrome 
-            WHERE aerodrome.excluded = false 
-            AND aerodrome.id = flight_segment.destination_aerodrome_id
-        ) AS destination_aerodrome";
-
-        private static string flightSegmentsSql = $@"
-            SELECT overview.origin_city_id, overview.destination_city_id, (SELECT json_agg(t.*) FROM (
-                SELECT * FROM (
-                    select 
-                    flight_segment.id, 
-                    flight_segment.flight_id, 
-                    flight_segment.aircraft_id, 
-                    flight_segment.origin_aerodrome_id, 
-                    flight_segment.destination_aerodrome_id, 
-                    flight_segment.number, 
-                    flight_segment.departure_datetime, 
-                    flight_segment.arrival_datetime, 
-                    flight_segment.price_per_seat, 
-                    flight_segment.total_seats, 
-                    flight_segment.type,
-                    {originAerodromeSql},
-                    {destinationAerodromeSql}
-                        from flight_segments as flight_segment 
-                            inner join flights as flight on flight.id=flight_segment.flight_id
-                            inner join aerodromes as origin_aerodrome on origin_aerodrome.id=flight_segment.origin_aerodrome_id
-                            inner join cities as origin_city on origin_city.id=origin_aerodrome.city_id
-                            inner join aerodromes as destination_aerodrome on destination_aerodrome.id=flight_segment.destination_aerodrome_id
-                            inner join cities as destination_city on destination_city.id=destination_aerodrome.city_id
-                            where origin_city.id=overview.origin_city_id 
-                                and destination_city.id=overview.destination_city_id
-                                and flight.type='shared' and flight_segment.type='trip'
-                                and flight_segment.excluded=false
-                                and flight_segment.type='trip' 
-                                and flight_segment.departure_datetime > current_timestamp + (120 * interval '1 minute')
-                ) as segments
-            ) AS t) AS flights
-        ";
-
-        private static string bookedSeatsSql = $@"
-            SELECT COALESCE(count(passenger.id), 0) AS  booked_seats FROM passengers AS passenger 
-            INNER JOIN bookings AS booking ON booking.id = passenger.booking_id 
-            INNER JOIN ( SELECT status.type, status.booking_id FROM booking_status AS status WHERE status.excluded = false ORDER BY status.created_at DESC LIMIT 1 ) AS status ON status.booking_id = booking.id
-            WHERE passenger.excluded = false AND booking.excluded = false AND passenger.flight_segment_id = flight_segment.id AND ( status.type::text = 'approved' OR status.type::text = 'pending' )
-        ";
-
-        private static string availableSeatsSql = $"(SELECT CAST(((flight_segment.total_seats - ({bookedSeatsSql}))) AS INTEGER))";
-
-        private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime)))";
-
-        private static string subtotalSql = $"(SELECT flight_segment.price_per_seat * @selected_seats)";
+        private static string subtotalSql = $"SELECT flight_segment.price_per_seat * @selected_seats";
 
         private static string whereSql = $"flight_segment.excluded = false";
 
@@ -130,37 +31,105 @@ namespace clickfly.Repositories
         {
             string now = _utils.DateTimeToSql(DateTime.Now);
 
-            string querySql = $@"SELECT {countSql}, COALESCE((SELECT json_agg(json_build_object(
-                'origin_city', t.origin_city,
-                'destination_city', t.destination_city,
-                'flights', t.flights
-            )) FROM (
-                {flightSegmentsSql}, 
-                {originCitySql}, 
-                {destinationCitySql} FROM (
-                    select distinct on (origin_city.id, destination_city.id) 
-                    origin_city.id as origin_city_id, 
-                    destination_city.id as destination_city_id
-                    from flight_segments as segment
-                    inner join flights as flight on segment.flight_id = flight.id
-                    inner join aerodromes as origin_aerodrome on origin_aerodrome.id=segment.origin_aerodrome_id
-                    inner join cities as origin_city on origin_city.id=origin_aerodrome.city_id
-                    inner join aerodromes as destination_aerodrome on destination_aerodrome.id=segment.destination_aerodrome_id
-                    inner join cities as destination_city on destination_city.id=destination_aerodrome.city_id
-                    where segment.excluded=false 
-                    and flight.type = 'shared'
-                    and segment.type='trip' 
-                    and segment.departure_datetime > '{now}'::date + (120 * interval '1 minute')
-                ) as overview ORDER BY overview.origin_city_id OFFSET 0 LIMIT 10) AS t), '[]') AS data";
+            string availableFlightCitySql = $@"
+                SELECT DISTINCT ON(origin_city_id, destination_city_id) origin_aerodrome.city_id AS origin_city_id, destination_aerodrome.city_id AS destination_city_id FROM flight_segments AS flight_segment 
+                INNER JOIN flights AS flight ON flight_segment.flight_id = flight.id
+                INNER JOIN aerodromes AS origin_aerodrome ON flight_segment.origin_aerodrome_id = origin_aerodrome.id
+                INNER JOIN aerodromes AS destination_aerodrome ON flight_segment.destination_aerodrome_id = destination_aerodrome.id
+                WHERE flight_segment.excluded = false 
+                AND flight.type = 'shared' 
+                AND flight_segment.type = 'trip' 
+                AND (flight_segment.total_seats > get_booked_seats(flight_segment.id))
+                AND flight_segment.departure_datetime > current_timestamp + (120 * interval '1 minute')
+            ";
+
+            string countSql = $@"
+                SELECT COUNT(available_flight_cities) AS total_records FROM ({availableFlightCitySql}) AS available_flight_cities GROUP BY available_flight_cities.origin_city_id, available_flight_cities.destination_city_id
+            ";
+
+            string querySql = $@"
+                SELECT (
+                    SELECT json_build_object(
+                        'id', city.id, 
+                        'name', city.name, 
+                        'state_id', city.state_id,
+                        'state', (
+                            SELECT json_build_object('id', state.id, 'prefix', state.prefix) FROM states AS state WHERE state.id = city.state_id
+                        )
+                    ) FROM cities AS city WHERE city.excluded = false AND city.id = available_flight_cities.origin_city_id
+                ) AS origin_city,
+                (
+                    SELECT json_build_object(
+                        'id', city.id, 
+                        'name', city.name, 
+                        'state_id', city.state_id,
+                        'state', (
+                            SELECT json_build_object('id', state.id, 'prefix', state.prefix) FROM states AS state WHERE state.id = city.state_id
+                        )
+                    ) FROM cities AS city WHERE city.excluded = false AND city.id = available_flight_cities.destination_city_id
+                ) AS destination_city,
+                (
+                    SELECT json_agg(flight_segment.*) FROM (
+                        SELECT flight_segment.id,
+                        flight_segment.number,
+                        flight_segment.departure_datetime,
+                        flight_segment.arrival_datetime,
+                        flight_segment.price_per_seat,
+                        flight_segment.total_seats,
+                        flight_segment.type, 
+                        (
+                            SELECT json_build_object(
+                                'id', aerodrome.id,
+                                'name', aerodrome.name,
+                                'oaci_code', aerodrome.oaci_code,
+                                'ciad', aerodrome.ciad
+                            ) FROM aerodromes AS aerodrome 
+                            WHERE aerodrome.excluded = false 
+                            AND aerodrome.id = flight_segment.origin_aerodrome_id
+                        ) AS origin_aerodrome,
+                        (
+                            SELECT json_build_object(
+                                'id', aerodrome.id,
+                                'name', aerodrome.name,
+                                'oaci_code', aerodrome.oaci_code,
+                                'ciad', aerodrome.ciad
+                            ) FROM aerodromes AS aerodrome 
+                            WHERE aerodrome.excluded = false 
+                            AND aerodrome.id = flight_segment.destination_aerodrome_id
+                        ) AS destination_aerodrome
+                        FROM flight_segments AS flight_segment 
+                        INNER JOIN aerodromes AS origin_aerodrome ON flight_segment.origin_aerodrome_id = origin_aerodrome.id
+                        INNER JOIN aerodromes AS destination_aerodrome ON flight_segment.destination_aerodrome_id = destination_aerodrome.id
+                        WHERE flight_segment.excluded = false 
+                        AND origin_aerodrome.city_id = available_flight_cities.origin_city_id
+                        AND destination_aerodrome.city_id = available_flight_cities.destination_city_id
+                    ) AS flight_segment
+                ) AS flights
+                FROM ({availableFlightCitySql}) AS available_flight_cities GROUP BY available_flight_cities.origin_city_id, available_flight_cities.destination_city_id
+            ";
 
             IEnumerable<dynamic> result = await _dBContext.GetConnection().QueryAsync<dynamic>(querySql, null, _dBContext.GetTransaction());
-            dynamic[] _result = result.ToArray();
-
-            string data = _result[0].data;
-            int total_records = (int)_result[0].total_records;
-            List<AppFlight> flights = JsonSerializer.Deserialize<List<AppFlight>>(data);
+            List<AppFlight> appFlights = new List<AppFlight>();
+    
+            dynamic[] data = result.ToArray<dynamic>();
+            for (int i = 0; i < data.Length; i++)
+            {
+                dynamic obj = data[i];
+                City originCity = JsonSerializer.Deserialize<City>(obj.origin_city);
+                City destinationCity = JsonSerializer.Deserialize<City>(obj.destination_city);
+                List<FlightSegment> flights = new List<FlightSegment>(JsonSerializer.Deserialize<List<FlightSegment>>(obj.flights));
             
-            PaginationResult<AppFlight> paginationResult = _utils.CreatePaginationResult<AppFlight>(flights.ToList(), filter, total_records);
+                AppFlight appFlight = new AppFlight();
+                appFlight.origin_city = originCity;
+                appFlight.destination_city = destinationCity;
+                appFlight.flights = flights;
+
+                appFlights.Add(appFlight);
+            }
+
+            int total_records = await _dBContext.GetConnection().QueryFirstOrDefaultAsync<int>(countSql);
+            PaginationResult<AppFlight> paginationResult = _utils.CreatePaginationResult<AppFlight>(appFlights, filter, total_records);
+            
             return paginationResult;
         } 
 
@@ -169,10 +138,37 @@ namespace clickfly.Repositories
             int limit = filter.page_size;
             int offset = (filter.page_number - 1) * filter.page_size;
             int selected_seats = filter.selected_seats;
+
             string origin_city_id = filter.origin_city_id;
             string destination_city_id = filter.destination_city_id;
             string flight_type = filter.flight_type;
-            string now = _utils.DateTimeToSql(DateTime.Now);
+
+            string currentDatetime = _utils.DateTimeToSql(DateTime.Now);
+
+            string querySql = $@"
+                SELECT flight_segment.id,
+                flight_segment.number,
+                flight_segment.departure_datetime,
+                flight_segment.arrival_datetime,
+                flight_segment.price_per_seat,
+                flight_segment.total_seats,
+                flight_segment.type,
+                ({subtotalSql}) AS subtotal, 
+                ({flightTimeSql}) AS flight_time, 
+                ({availableSeatsSql}) AS available_seats ? 
+                flight_segments AS flight_segment 
+                INNER JOIN flights AS flight ON flight_segment.flight_id = flight.id
+                INNER JOIN aerodromes AS origin_aerodrome ON flight_segment.origin_aerodrome_id = origin_aerodrome.id
+                INNER JOIN aerodromes AS destination_aerodrome ON flight_segment.destination_aerodrome_id = destination_aerodrome.id
+                WHERE flight_segment.excluded = false 
+                AND flight.type = @flight_type
+                AND flight_segment.type = 'trip'
+                AND origin_aerodrome.city_id = @origin_city_id
+                AND destination_aerodrome.city_id = @destination_city_id
+                AND (({availableSeatsSql}) - @selected_seats) >= 0 
+                AND flight_segment.departure_datetime > '{currentDatetime}'::date + (120 * interval '1 minute')
+                LIMIT @limit OFFSET @offset
+            ";
 
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             
@@ -187,35 +183,7 @@ namespace clickfly.Repositories
 
             queryAsyncParams.tableName = "flight_segments";
             queryAsyncParams.relationshipName = "flight_segment";
-            queryAsyncParams.querySql = $@"
-                SELECT 
-                    flight_segment.id, 
-                    flight_segment.number, 
-                    flight_segment.departure_datetime,
-                    flight_segment.arrival_datetime,
-                    flight_segment.price_per_seat,
-                    flight_segment.total_seats,
-                    flight_segment.type,
-                    flight_segment.flight_id,
-                    flight_segment.aircraft_id,
-                    flight_segment.origin_aerodrome_id,
-                    flight_segment.destination_aerodrome_id,
-                    {subtotalSql} AS subtotal,
-                    {flightTimeSql} AS flight_time,
-                    {availableSeatsSql} AS available_seats 
-                ? flight_segments AS flight_segment 
-                INNER JOIN flights AS flight ON flight_segment.flight_id = flight.id
-                INNER JOIN aerodromes AS origin_aerodrome ON flight_segment.origin_aerodrome_id = origin_aerodrome.id
-                INNER JOIN aerodromes AS destination_aerodrome ON flight_segment.destination_aerodrome_id = destination_aerodrome.id
-                WHERE flight_segment.excluded = false 
-                AND flight.type = @flight_type
-                AND flight_segment.type = 'trip'
-                AND origin_aerodrome.city_id = @origin_city_id
-                AND destination_aerodrome.city_id = @destination_city_id
-                AND ({availableSeatsSql} - @selected_seats) >= 0 
-                AND flight_segment.departure_datetime > '{now}'::date + (120 * interval '1 minute')
-                LIMIT @limit OFFSET @offset
-            ";
+            queryAsyncParams.querySql = querySql;
 
             queryAsyncParams.queryParams = queryParams;
             queryAsyncParams.foreignKey = "flight_segment_id";

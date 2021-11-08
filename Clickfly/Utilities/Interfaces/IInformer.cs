@@ -5,7 +5,7 @@ namespace clickfly
 {
     public interface IInformer
     {
-        SessionInfo GetValue(string key);
+        Type GetValue<Type>(string key);
         void AddInfo(SessionInfo sessionInfo);
     }
 }

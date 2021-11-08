@@ -103,10 +103,10 @@ namespace clickfly.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(UserIdTypes.CustomerId, user.id),
+                    new Claim(UserIdTypes.UserId, user.id),
                     new Claim(ClaimTypes.Name, user.name.ToString()),
                     new Claim(ClaimTypes.Role, user.role.ToString()),
-                    new Claim(UserTypes.Customer, JsonConvert.SerializeObject(user))
+                    new Claim(UserTypes.User, JsonConvert.SerializeObject(user))
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

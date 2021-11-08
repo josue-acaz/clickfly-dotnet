@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using clickfly.ViewModels;
+using Newtonsoft.Json;
 
 namespace clickfly
 {
@@ -19,16 +20,16 @@ namespace clickfly
             _sessionInfo.Add(sessionInfo);
         }
 
-        public SessionInfo GetValue(string key)
+        public Type GetValue<Type>(string key)
         {
             SessionInfo sessionInfo = _sessionInfo.Where(sessionInfo => sessionInfo.Key == key).FirstOrDefault();
 
             if(sessionInfo == null)
             {
-                return new SessionInfo("", "");
+                return (Type)Activator.CreateInstance(typeof(Type));
             }
 
-            return sessionInfo;
+            return JsonConvert.DeserializeObject<Type>(sessionInfo.Value);
         }
     }
 }

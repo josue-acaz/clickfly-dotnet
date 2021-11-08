@@ -77,6 +77,9 @@ namespace clickfly.Configs
             services.AddScoped<IFlightRepository, FlightRepository>();
             services.AddScoped<IFlightService, FlightService>();
 
+            services.AddScoped<ITicketRepository, TicketRepository>();
+            services.AddScoped<ITicketService, TicketService>();
+
             services.AddScoped<IBookingStatusRepository, BookingStatusRepository>();
 
             services.AddScoped<IBookingPaymentRepository, BookingPaymentRepository>();

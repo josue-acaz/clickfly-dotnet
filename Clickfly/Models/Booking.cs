@@ -17,6 +17,9 @@ namespace clickfly.Models
 
         [ForeignKey("flight_segment_id")]
         public FlightSegment flight_segment { get; set; }
+        public List<BookingStatus> status { get; set; }
+        public List<BookingPayment> payments { get; set; }
+        public List<Passenger> passengers { get; set; }
 
         [NotMapped]
         public string customer_card_id { get; set; }
@@ -25,7 +28,7 @@ namespace clickfly.Models
         public string customer_address_id { get; set; }
 
         [NotMapped]
-        public string[] passengers { get; set; }
+        public string[] selected_passengers { get; set; }
 
         [NotMapped]
         public int installments { get; set; }

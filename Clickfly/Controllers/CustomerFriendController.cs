@@ -37,6 +37,9 @@ namespace clickfly.Controllers
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
+            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+
+            filter.customer_id = customerId;
             PaginationResult<CustomerFriend> customerFriends = await _customerFriendService.Pagination(filter);
             return HttpResponse(customerFriends);
         }

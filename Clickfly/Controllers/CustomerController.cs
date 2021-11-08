@@ -10,6 +10,7 @@ using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/customers")]
     public class CustomerController : BaseController
     {
@@ -70,7 +71,6 @@ namespace clickfly.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Aircraft>> GetById(string id)
         {
             Customer customer = await _customerService.GetById(id);
@@ -87,7 +87,6 @@ namespace clickfly.Controllers
         }
 
         [HttpPost("thumbnail")]
-        [AllowAnonymous]
         public async Task<ActionResult<string>> Thumbnail([FromForm]ThumbnailRequest thumbnailRequest)
         {
             using var transaction = _dataContext.Database.BeginTransaction();

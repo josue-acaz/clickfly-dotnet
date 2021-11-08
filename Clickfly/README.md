@@ -10,3 +10,5 @@ Adicionar endpoint em applicationUrl propriedade => Properties/lauchSettings.jso
 # DISABLE NOT MAPPED ATTRIBUTES IN MIGRATION
 1. available_seats
 
+# PARA GERAR O QRCODE
+`apt-get update && apt-get install -y apt-utils libgdiplus libc6-dev`

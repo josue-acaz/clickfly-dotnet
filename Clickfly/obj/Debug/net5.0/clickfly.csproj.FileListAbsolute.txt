@@ -110,3 +110,4 @@
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/bin/Debug/net5.0/System.Drawing.Common.dll
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/bin/Debug/net5.0/runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/bin/Debug/net5.0/runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll
+/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/bin/Debug/net5.0/QRCoder.dll

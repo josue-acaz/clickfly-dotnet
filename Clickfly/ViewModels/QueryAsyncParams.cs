@@ -17,6 +17,8 @@ namespace clickfly.ViewModels
         public string relationshipName { get; set; }
         public string foreignKey { get; set; }
         public List<Include> includes { get; set; }
+        public bool hasMany { get; set; }
+        public string where { get; set; }
 
         public Include()
         {

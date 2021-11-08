@@ -14,6 +14,7 @@ namespace clickfly.ViewModels
         public string order_by { get; set; }
 
         // additional params
+        public string user_id { get; set; }
         public string customer_id { get; set; }
         public string flight_id { get; set; }
         public int selected_seats { get; set; }
@@ -21,6 +22,7 @@ namespace clickfly.ViewModels
         public string destination_city_id { get; set; }
         public string flight_type { get; set; }
         public string flight_segment_type { get; set; }
+        public string air_taxi_id { get; set; }
         public PaginationFilter()
         {
             this.page_number = 1;

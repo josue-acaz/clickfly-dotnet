@@ -8,7 +8,7 @@ namespace clickfly
     };
 
     static class UserIdTypes {
-        public const string userId = "user_id";
+        public const string UserId = "user_id";
         public const string CustomerId = "customer_id";
     };
 

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "t/7gZOdUZ/JhYsTcI4VjOIowMpATKgv5dqh8GAOaFPIL6hXgjKoSosodGxTobEYod071HvLS4jGa0lDWaFOKng==",
+  "dgSpecHash": "/15HBcGuDK3cZ+meA/UYqbqDIm9Jr8E0fvOAg98Fe9MseUZxVQb13A+/48uYtpij+pmBv8r+By+ocCg05TqzVw==",
   "success": true,
   "projectFilePath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/clickfly.csproj",
   "expectedPackageFiles": [
@@ -80,6 +80,7 @@
     "/Users/piquiatuba/.nuget/packages/npgsql/5.0.10/npgsql.5.0.10.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/npgsql.entityframeworkcore.postgresql/5.0.10/npgsql.entityframeworkcore.postgresql.5.0.10.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/onesignal.restapiv3.client/1.2.0/onesignal.restapiv3.client.1.2.0.nupkg.sha512",
+    "/Users/piquiatuba/.nuget/packages/qrcoder/1.4.1/qrcoder.1.4.1.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/razorengine.netcore/3.1.0/razorengine.netcore.3.1.0.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/restsharp/106.0.1/restsharp.106.0.1.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",

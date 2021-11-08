@@ -13,22 +13,25 @@ namespace clickfly.Repositories
 {
     public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
     {
+        private readonly IOrm _orm;
         private static string fieldsSql = "*";
         private static string fromSql = "customers as customer";
         private static string whereSql = "customer.excluded = false";
         private static string subQueryThumbnailSql = $@"
             SELECT file.url AS thumbnail FROM files as file 
             WHERE file.excluded = false 
-            AND file.resource = '{Resources.Customers}' 
+            AND file.resource = 'customers' 
             AND file.resource_id = customer.id
-            AND file.field_name = '{FieldNames.Thumbnail}' 
+            AND file.field_name = 'thumbnail' 
             ORDER BY file.created_at 
             DESC LIMIT 1 OFFSET 0
         ";
         protected string[] defaultFields = new string[9];
 
-        public CustomerRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public CustomerRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils, IOrm orm) : base(dBContext, dataContext, utils)
         {
+            _orm = orm;
+
             defaultFields[0] = "name";
             defaultFields[1] = "email";
             defaultFields[2] = "phone_number";
@@ -72,16 +75,50 @@ namespace clickfly.Repositories
 
         public async Task<Customer> GetById(string id)
         {
-            string querySql = $@"SELECT {fieldsSql}, ({subQueryThumbnailSql}) AS thumbnail FROM {fromSql} WHERE {whereSql} AND customer.id = @id";
+            string querySql = $@"SELECT {fieldsSql} ? {fromSql} WHERE {whereSql} AND customer.id = @id";
 
-            NpgsqlParameter param = new NpgsqlParameter("id", id);
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("id", id);
 
-            Customer customer = await _dataContext.Customers
-            .FromSqlRaw(querySql, param)
-            .Include(customer => customer.cards)
-            .Include(customer => customer.addresses)
-            .Include(customer => customer.friends)
-            .FirstOrDefaultAsync();
+            RawAttribute[] rawAttributes = new RawAttribute[1];
+            RawAttribute thumbnail = new RawAttribute();
+            thumbnail.name = "thumbnail";
+            thumbnail.query = "SELECT url FROM files WHERE resource_id = customer.id AND resource = 'customers' AND field_name = 'thumbnail' LIMIT 1";
+            rawAttributes[0] = thumbnail;
+
+            QueryAsyncParams queryAsyncParams = new QueryAsyncParams();
+            queryAsyncParams.tableName = "customers";
+            queryAsyncParams.relationshipName = "customer";
+            queryAsyncParams.rawAttributes = rawAttributes;
+            queryAsyncParams.queryParams = queryParams;
+            queryAsyncParams.querySql = querySql;
+
+            Include includeCustomerCards = new Include();
+            includeCustomerCards.tableName = "customer_cards";
+            includeCustomerCards.relationshipName = "cards";
+            includeCustomerCards.foreignKey = "customer_id";
+            includeCustomerCards.where = "cards.excluded = false";
+            includeCustomerCards.hasMany = true;
+
+            Include includeCustomerAddresses = new Include();
+            includeCustomerAddresses.tableName = "customer_addresses";
+            includeCustomerAddresses.relationshipName = "addresses";
+            includeCustomerAddresses.foreignKey = "customer_id";
+            includeCustomerAddresses.where = "addresses.excluded = false";
+            includeCustomerAddresses.hasMany = true;
+
+            Include includeCustomerFriends = new Include();
+            includeCustomerFriends.tableName = "customer_friends";
+            includeCustomerFriends.relationshipName = "friends";
+            includeCustomerFriends.foreignKey = "customer_id";
+            includeCustomerFriends.where = "friends.excluded = false";
+            includeCustomerFriends.hasMany = true;
+
+            queryAsyncParams.includes.Add(includeCustomerCards);
+            queryAsyncParams.includes.Add(includeCustomerAddresses);
+            queryAsyncParams.includes.Add(includeCustomerFriends);
+
+            Customer customer = await _orm.QuerySingleOrDefaultAsync<Customer>(queryAsyncParams);
 
             return customer;
         }

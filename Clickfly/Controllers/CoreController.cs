@@ -45,6 +45,8 @@ namespace clickfly.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<double>> GetFlightSubtotal([FromQuery]FlightSubtotalRequest flightSubtotalRequest)
         {
+            Console.WriteLine(flightSubtotalRequest.selected_seats);
+            Console.WriteLine(flightSubtotalRequest.flight_segment_id);
             double flightPrice = await _coreService.GetFlightSubtotal(flightSubtotalRequest);
             return flightPrice;
         }

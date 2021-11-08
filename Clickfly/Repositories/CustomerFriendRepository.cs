@@ -33,12 +33,11 @@ namespace clickfly.Repositories
         public async Task<IEnumerable<CustomerFriend>> BulkGetById(string[] ids)
         {
             string bulkSql = _utils.GetBulkSql(ids);
-            object param = new { bulkSql = bulkSql };
+            object param = new { bulkSql = bulkSql }; // Não é usado
 
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND customer_friend.id = ANY(@bulkSql)";
-            Console.WriteLine(querySql);
+            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND customer_friend.id = ANY('{bulkSql}')";
 
-            IEnumerable<CustomerFriend> customerFriends = await _dBContext.GetConnection().QueryAsync<CustomerFriend>(querySql, param, _dBContext.GetTransaction());
+            IEnumerable<CustomerFriend> customerFriends = await _dBContext.GetConnection().QueryAsync<CustomerFriend>(querySql, param);
             return customerFriends;
         }
 

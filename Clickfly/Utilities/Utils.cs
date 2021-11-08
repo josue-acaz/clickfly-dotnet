@@ -1,14 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using clickfly.ViewModels;
-using SixLabors.ImageSharp;
+using QRCoder;
 
 namespace clickfly
 {
+    //Extension method to convert Bitmap to Byte Array
+    public static class BitmapExtension
+    {
+        public static byte[] BitmapToByteArray(this Bitmap bitmap)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bitmap.Save(ms, ImageFormat.Png);
+                return ms.ToArray();
+            }
+        }
+    }
+    
     public class Utils : IUtils
     {
         public string RandomBytes(int length)
@@ -82,7 +96,7 @@ namespace clickfly
                 bool isLastId = i == ids.Length - 1;
 
                 string id = ids[i];
-                bulkSql += id;
+                bulkSql += $"\"{id}\"";
 
                 if(!isLastId)
                 {
@@ -110,7 +124,7 @@ namespace clickfly
 
             int maxLength = subtotal < 800 ? (int)Math.Truncate(subtotal / 100) : max;
 
-            for (int i = 0; i < maxLength; i++)
+            for (int i = 1; i <= maxLength; i++)
             {
                 float value = subtotal / i;
                 Installment installment = new Installment();
@@ -207,5 +221,18 @@ namespace clickfly
             return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
+        public string GenerateQRCode(string value)
+        {
+            QRCodeGenerator qRCodeGenerator = new QRCodeGenerator();
+            QRCodeData qRCodeData = qRCodeGenerator.CreateQrCode(value, QRCodeGenerator.ECCLevel.Q);
+
+            QRCode qRCode = new QRCode(qRCodeData);
+            Bitmap qRBitmap = qRCode.GetGraphic(60);
+
+            byte[] BitmapArray = qRBitmap.BitmapToByteArray();
+            string qRUri = string.Format("data:image/png;base64,{0}", Convert.ToBase64String(BitmapArray));
+
+            return qRUri;
+        }
     }
 }

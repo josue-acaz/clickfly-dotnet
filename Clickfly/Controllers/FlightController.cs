@@ -7,9 +7,11 @@ using clickfly.Data;
 using clickfly.Models;
 using clickfly.Services;
 using clickfly.ViewModels;
+using Newtonsoft.Json;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/flights")]
     public class FlightController : BaseController
     {
@@ -21,7 +23,6 @@ namespace clickfly.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Flight>> GetById(string id)
         {
             Flight flight = await _flightService.GetById(id);
@@ -29,21 +30,27 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]Flight flight)
         {
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            User user = _informer.GetValue<User>(UserTypes.User);
+            
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            Flight _flight = await _flightService.Save(flight);
+            flight.air_taxi_id = user.air_taxi_id;
+            flight = await _flightService.Save(flight);
             await transaction.CommitAsync();
 
-            return HttpResponse(_flight);
+            return HttpResponse(flight);
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            User user = _informer.GetValue<User>(UserTypes.User);
+
+            filter.air_taxi_id = user.air_taxi_id;
             PaginationResult<Flight> flights = await _flightService.Pagination(filter);
             
             return HttpResponse(flights);

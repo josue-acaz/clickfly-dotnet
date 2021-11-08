@@ -23,6 +23,7 @@ namespace clickfly.Services
         private readonly ICustomerFriendRepository _customerFriendRepository;
         private readonly IBookingStatusRepository _bookingStatusRepository;
         private readonly IPassengerRepository _passengerRepository;
+        private readonly ITicketRepository _ticketRepository;
         private readonly IOrdersController _ordersController;
 
         public BookingService(
@@ -33,9 +34,11 @@ namespace clickfly.Services
             IFlightSegmentRepository flightSegmentRepository, 
             ICustomerCardRepository customerCardRepository, 
             ICustomerAddressRepository customerAddressRepository,
+            IBookingStatusRepository bookingStatusRepository,
             IBookingPaymentRepository bookingPaymentRepository,
             ICustomerFriendRepository customerFriendRepository,
             IPassengerRepository passengerRepository,
+            ITicketRepository ticketRepository,
             IOrdersController ordersController
         ) : base(appSettings, utils)
         {
@@ -47,6 +50,8 @@ namespace clickfly.Services
             _bookingPaymentRepository = bookingPaymentRepository;
             _customerFriendRepository = customerFriendRepository;
             _passengerRepository = passengerRepository;
+            _bookingStatusRepository = bookingStatusRepository;
+            _ticketRepository = ticketRepository;
 
             _ordersController = ordersController;
         }
@@ -61,19 +66,22 @@ namespace clickfly.Services
             throw new NotImplementedException();
         }
 
-        public Task<PaginationResult<Booking>> Pagination(PaginationFilter filter)
+        public async Task<PaginationResult<Booking>> Pagination(PaginationFilter filter)
         {
-            throw new NotImplementedException();
+            PaginationResult<Booking> paginationResult = await _bookingRepository.Pagination(filter);
+            return paginationResult;
         }
 
-        public async Task<Booking> Save(Booking booking)
+        public async Task<CreateBookingResponse> Save(Booking booking)
         {
+            CreateBookingResponse createBookingResponse = new CreateBookingResponse();
+
             string customer_id = booking.customer_id;
             string customerCardId = booking.customer_card_id;
             string flightSegmentId = booking.flight_segment_id;
             string customerAddressId = booking.customer_address_id;
 
-            string[] passengers = booking.passengers;
+            string[] selected_passengers = booking.selected_passengers;
             string paymentMethod = booking.payment_method;
             int installments = booking.installments;
             bool customerIsPassenger = booking.customer_is_passenger;
@@ -83,17 +91,16 @@ namespace clickfly.Services
             CustomerAddress customerAddress = await _customerAddressRepository.GetById(customerAddressId);
 
             if(
-                (customerIsPassenger && customer.type == CustomerTypes.Individual) ||
+                (customerIsPassenger && customer.type != CustomerTypes.Individual) ||
                 (flightSegment == null || customerAddress == null) ||
                 (customer == null || !customer.verified)
-                
             )
             {
                 throw new BadRequestException("Requisição inválida.");
             }
 
             int availableSeats = flightSegment.available_seats;
-            int selectedSeats = passengers.Length + (customerIsPassenger ? 1 : 0);
+            int selectedSeats = selected_passengers.Length + (customerIsPassenger ? 1 : 0);
             float pricePerSeat = flightSegment.price_per_seat;
             string addressId = customerAddress.address_id;
             string customerId = customer.customer_id;
@@ -106,12 +113,16 @@ namespace clickfly.Services
             float amount = selectedSeats * pricePerSeat;
             CreateOrderRequest orderRequest = new CreateOrderRequest();
 
-            orderRequest.Items[0] = new CreateOrderItemRequest();
-            orderRequest.Items[0].Description = "Passagem ClickFly";
-            orderRequest.Items[0].Quantity = selectedSeats;
-            orderRequest.Items[0].Amount = (int)pricePerSeat;
+            List<CreateOrderItemRequest> createOrderItems = new List<CreateOrderItemRequest>();
+            CreateOrderItemRequest createOrderItemRequest = new CreateOrderItemRequest();
+            createOrderItemRequest.Description = "Passagem ClickFly";
+            createOrderItemRequest.Quantity = selectedSeats;
+            createOrderItemRequest.Amount = (int)pricePerSeat;
+            createOrderItems.Add(createOrderItemRequest);
+            orderRequest.Items = createOrderItems;
             
-            orderRequest.Payments[0] = new CreatePaymentRequest();
+            List<CreatePaymentRequest> createPayments = new List<CreatePaymentRequest>();
+            CreatePaymentRequest paymentRequest = new CreatePaymentRequest();
 
             if(paymentMethod == PaymentMethods.CreditCard)
             {
@@ -132,21 +143,23 @@ namespace clickfly.Services
                 creditCardPaymentRequest.Recurrence = false;
                 creditCardPaymentRequest.CardId = cardId;
 
-                orderRequest.Payments[0].CreditCard = creditCardPaymentRequest;
+                paymentRequest.CreditCard = creditCardPaymentRequest;
             }
             else if(paymentMethod == PaymentMethods.Pix)
             {
                 CreatePixPaymentRequest pixPaymentRequest = new CreatePixPaymentRequest();
                 pixPaymentRequest.ExpiresIn = 52134613;
 
-                orderRequest.Payments[0].Pix = pixPaymentRequest;
+                paymentRequest.Pix = pixPaymentRequest;
             }
             else
             {
                 throw new BadRequestException("Requisição inválida.");
             }
 
-            orderRequest.Payments[0].PaymentMethod = paymentMethod;
+            paymentRequest.PaymentMethod = paymentMethod;
+            createPayments.Add(paymentRequest);
+            orderRequest.Payments = createPayments;
             orderRequest.CustomerId = customerId;
 
             GetOrderResponse orderResponse = await _ordersController.CreateOrderAsync(orderRequest);
@@ -159,7 +172,7 @@ namespace clickfly.Services
             // CASO PAGAMENTO NÃO SEJA APROVADO, NÃO CRIAR RESERVA
             if(bookingStatus == BookingStatusTypes.NotApproved)
             {
-                return booking;
+                return createBookingResponse;
             }
 
             Booking createBooking = new Booking();
@@ -174,7 +187,7 @@ namespace clickfly.Services
             bookingPayment.payment_method = paymentMethod;
             bookingPayment = await _bookingPaymentRepository.Create(bookingPayment);
 
-            IEnumerable<CustomerFriend> customerFriends = await _customerFriendRepository.BulkGetById(passengers);
+            IEnumerable<CustomerFriend> customerFriends = await _customerFriendRepository.BulkGetById(selected_passengers);
             CustomerFriend[] customerFriendPassengers = customerFriends.ToArray<CustomerFriend>();
 
             if(customerIsPassenger)
@@ -197,6 +210,7 @@ namespace clickfly.Services
                 CustomerFriend customerFriendPassenger = customerFriendPassengers[index];
 
                 Passenger passenger = new Passenger();
+                passenger.id = Guid.NewGuid().ToString();
                 passenger.name = customerFriendPassenger.name;
                 passenger.email = customerFriendPassenger.email;
                 passenger.birthdate = customerFriendPassenger.birthdate;
@@ -204,6 +218,19 @@ namespace clickfly.Services
                 passenger.document_type = customerFriendPassenger.document_type;
                 passenger.booking_id = bookingId;
                 passenger.flight_segment_id = flightSegmentId;
+
+                string boardingUrl = $"https://www.dashboard.clickfly.app/boardings/{flightSegmentId}/passengers/{passenger.id}";
+
+                // Adicionar os bilhetes de passagem se o status de reserva for "APPROVED"
+                if(bookingStatus == BookingStatusTypes.Approved)
+                {
+                    Ticket ticket = new Ticket();
+                    ticket.id = Guid.NewGuid().ToString();
+                    ticket.qr_code = boardingUrl/*_utils.GenerateQRCode(boardingUrl)*/;
+                    ticket.passenger_id = passenger.id;
+                    ticket.flight_segment_id = flightSegmentId;
+                    passenger.ticket = ticket;
+                }
 
                 Passengers.Add(passenger);
             }
@@ -219,7 +246,10 @@ namespace clickfly.Services
             createBookingStatus.booking_id = bookingId;
 
             createBookingStatus = await _bookingStatusRepository.Create(createBookingStatus);
-            return booking;
+            createBookingResponse.booking_status = createBookingStatus;
+            createBookingResponse.payment_transaction = transactionResponse;
+
+            return createBookingResponse;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace clickfly.Services
 {
     public interface IBookingService
     {
-        Task<Booking> Save(Booking booking);
+        Task<CreateBookingResponse> Save(Booking booking);
         Task<Booking> GetById(string id);
         Task Delete(string id);
         Task<PaginationResult<Booking>> Pagination(PaginationFilter filter);

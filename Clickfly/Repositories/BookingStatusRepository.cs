@@ -18,6 +18,8 @@ namespace clickfly.Repositories
             string id = Guid.NewGuid().ToString();
             bookingStatus.id = id;
 
+            Console.WriteLine("\n\n\nAQUIIIIIIIII\n\n");
+
             await _dataContext.BookingStatus.AddAsync(bookingStatus);
             await _dataContext.SaveChangesAsync();
 

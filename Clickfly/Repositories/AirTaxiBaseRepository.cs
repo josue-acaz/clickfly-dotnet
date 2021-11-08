@@ -56,12 +56,14 @@ namespace clickfly.Repositories
 
         public async Task<PaginationResult<AirTaxiBase>> Pagination(PaginationFilter filter)
         {
+            string airTaxiId = filter.air_taxi_id;
             PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
 
             List<AirTaxiBase> airTaxiBases = await _dataContext.AirTaxiBases
                 .Include(airTaxiBase => airTaxiBase.aerodrome)
                 .Skip((paginationFilter.page_number - 1) * paginationFilter.page_size)
                 .Take(paginationFilter.page_size)
+                .Where(airTaxiBase => airTaxiBase.air_taxi_id == airTaxiId && airTaxiBase.excluded == false)
                 .ToListAsync();
             
             int total_records = await _dataContext.AirTaxiBases.CountAsync();

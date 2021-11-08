@@ -24,9 +24,12 @@ namespace clickfly
         protected string GetJsonResult(dynamic result)
         {
             string jsonResult = JsonConvert.SerializeObject(result);
+            jsonResult = jsonResult.Replace(@"\n", string.Empty); // Remove quebra de linha inserida
             jsonResult = jsonResult.Replace(@"\", string.Empty);
             jsonResult = jsonResult.Replace("\"{", "{");
             jsonResult = jsonResult.Replace("}\"", "}");
+            jsonResult = jsonResult.Replace("\"[", "[");
+            jsonResult = jsonResult.Replace("]\"", "]");
 
             return jsonResult;
         }
@@ -37,54 +40,87 @@ namespace clickfly
             string tableName = queryAsyncParams.tableName;
             string relationshipName = queryAsyncParams.relationshipName;
             string foreignKey = queryAsyncParams.foreignKey;
+            RawAttribute[] rawAttributes = queryAsyncParams.rawAttributes;
 
             var includes = queryAsyncParams.includes.ToArray();
             string[] queryIndex = querySql.Split(new[] { '?' }, 2);
 
             string leftSql = queryIndex[0];
             string rightSql = queryIndex[1];
+            bool hasIncludes  = includes.Length > 0;
 
-            leftSql += ", ";
+            if(hasIncludes)
+            {
+                leftSql += ", ";
+            }
+
             for (int i = 0; i < includes.Length; i++)
             {
                 var include = includes[i];
+                string where = include.where;
+                bool hasMany = include.hasMany;
                 string[] attributes = include.attributes;
-                RawAttribute[] rawAttributes = include.rawAttributes;
+                RawAttribute[] includeRawAttributes = include.rawAttributes;
+                string buildModel = $"SELECT ";
 
-                string buildModel = $"SELECT json_build_object(";
-                for (int j = 0; j < attributes.Length; j++)
+                if(hasMany)
                 {
-                    string attribute = attributes[j];
-                    var thenIncludes = include.includes.ToArray();
-                    bool isLastAttribute = j == attributes.Length - 1;
-                    buildModel += $"'{attribute}', {include.relationshipName}.{attribute}";
-                
-                    if(j < attributes.Length - 1 || thenIncludes.Length > 0)
+                    buildModel += $@"json_agg({include.relationshipName}.*) FROM (
+                        SELECT * FROM {include.tableName} AS {include.relationshipName} WHERE {include.relationshipName}.{include.foreignKey} = {relationshipName}.id";
+
+                    if(where != null)
+                    {
+                        buildModel += $" AND {where}";
+                    }
+
+                    buildModel += $") AS {include.relationshipName}";
+                }
+                else
+                {
+                    buildModel += $"json_build_object(";
+                    for (int j = 0; j < attributes.Length; j++)
+                    {
+                        string attribute = attributes[j];
+                        var thenIncludes = include.includes.ToArray();
+                        bool isLastAttribute = j == attributes.Length - 1;
+                        buildModel += $"'{attribute}', {include.relationshipName}.{attribute}";
+                    
+                        if(j < attributes.Length - 1 || thenIncludes.Length > 0)
+                        {
+                            buildModel += ",";
+                        }
+
+                        if(isLastAttribute)
+                        {
+                            buildModel = GetChildBuildModel(buildModel, include, thenIncludes);
+                        }
+                    }
+
+                    for (int k = 0; k < includeRawAttributes.Length; k++)
                     {
                         buildModel += ",";
+                        RawAttribute rawAttribute = includeRawAttributes[k];
+
+                        buildModel += $"'{rawAttribute.name}', ({rawAttribute.query})";
                     }
 
-                    if(isLastAttribute)
-                    {
-                        buildModel = GetChildBuildModel(buildModel, include, thenIncludes);
-                    }
+                    buildModel += $") FROM {include.tableName} AS {include.relationshipName} WHERE {relationshipName}.{include.foreignKey} = {include.relationshipName}.id";
                 }
 
-                for (int k = 0; k < rawAttributes.Length; k++)
-                {
-                    buildModel += ",";
-                    RawAttribute rawAttribute = rawAttributes[k];
-
-                    buildModel += $"'{rawAttribute.name}', ({rawAttribute.query})";
-                }
-
-                buildModel += $") FROM {include.tableName} AS {include.relationshipName} WHERE {relationshipName}.{include.foreignKey} = {include.relationshipName}.id";
                 leftSql += $"({buildModel}) AS {include.relationshipName}";
-                
+
                 if(i < includes.Length - 1)
                 {
                     leftSql += ",";
                 }
+            }
+
+            // Atributos dinâmicos da consulta principal
+            for (int k = 0; k < rawAttributes.Length; k++)
+            {
+                leftSql += ",";
+                RawAttribute rawAttribute = rawAttributes[k];
+                leftSql += $"({rawAttribute.query}) AS {rawAttribute.name}";
             }
 
             string _querySql = $"SELECT * FROM ({leftSql} FROM {rightSql}) AS {relationshipName}";
@@ -128,6 +164,10 @@ namespace clickfly
                 }
 
                 buildModel += $") FROM {include.tableName} AS {include.relationshipName} WHERE {parent.relationshipName}.{include.foreignKey} = {include.relationshipName}.id)";
+                if(index < includes.Length - 1)
+                {
+                    buildModel += ",";
+                }
             }
 
             return buildModel;
@@ -136,6 +176,9 @@ namespace clickfly
         public async Task<IEnumerable<Type>> QueryAsync<Type>(QueryAsyncParams queryAsyncParams) where Type : new()
         {
             string querySql = GetParentBuildModel(queryAsyncParams);
+
+            Console.WriteLine(querySql);
+
             Dictionary<string, object> queryParams = queryAsyncParams.queryParams;
 
             IEnumerable<dynamic> result = await _dBContext.GetConnection().QueryAsync<dynamic>(querySql, queryParams);
@@ -148,13 +191,15 @@ namespace clickfly
         public async Task<Type> QuerySingleOrDefaultAsync<Type>(QueryAsyncParams queryAsyncParams)
         {
             string querySql = GetParentBuildModel(queryAsyncParams);
+            Console.WriteLine(querySql);
             Dictionary<string, object> queryParams = queryAsyncParams.queryParams;
 
             dynamic result = await _dBContext.GetConnection().QuerySingleOrDefaultAsync<dynamic>(querySql, queryParams);
-
             string jsonResult = GetJsonResult(result);
-            Type data = JsonConvert.DeserializeObject<Type>(jsonResult);
-            return data;
+
+            Console.WriteLine(jsonResult);
+
+            return JsonConvert.DeserializeObject<Type>(jsonResult);
         }
     }
 }

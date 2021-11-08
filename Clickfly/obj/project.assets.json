@@ -1074,6 +1074,18 @@
           "lib/netstandard2.0/OneSignal.RestAPIv3.Client.dll": {}
         }
       },
+      "QRCoder/1.4.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Drawing.Common": "4.7.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/QRCoder.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/QRCoder.dll": {}
+        }
+      },
       "RazorEngine.NetCore/3.1.0": {
         "type": "package",
         "dependencies": {
@@ -4079,6 +4091,21 @@
         "src/OneSignal.RestAPIv3.Client/Resources/Notifications/NotificationsResource.cs",
         "src/OneSignal.RestAPIv3.Client/Resources/Notifications/WebButtonField.cs",
         "src/OneSignal.RestAPIv3.Client/Serializers/NewtonsoftJsonSerializer.cs"
+      ]
+    },
+    "QRCoder/1.4.1": {
+      "sha512": "W8KwCwsOJe9SI7Cm7XeIMawd08F/US6xNw34lg2Qnx6m7GYYakxbyBQaNoW1Q75oJOmX/32sJUZr6Cix2B6GUQ==",
+      "type": "package",
+      "path": "qrcoder/1.4.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net35/QRCoder.dll",
+        "lib/net40/QRCoder.dll",
+        "lib/netstandard1.1/QRCoder.dll",
+        "lib/netstandard2.0/QRCoder.dll",
+        "qrcoder.1.4.1.nupkg.sha512",
+        "qrcoder.nuspec"
       ]
     },
     "RazorEngine.NetCore/3.1.0": {
@@ -8124,6 +8151,7 @@
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 5.0.10",
       "OneSignal.RestAPIv3.Client >= 1.2.0",
       "PagarmeCoreApi.Standard >= 5.0.2",
+      "QRCoder >= 1.4.1",
       "RazorEngine.NetCore >= 3.1.0",
       "SixLabors.ImageSharp >= 1.0.4",
       "Swashbuckle.AspNetCore >= 5.6.3",
@@ -8261,6 +8289,10 @@
           "OneSignal.RestAPIv3.Client": {
             "target": "Package",
             "version": "[1.2.0, )"
+          },
+          "QRCoder": {
+            "target": "Package",
+            "version": "[1.4.1, )"
           },
           "RazorEngine.NetCore": {
             "target": "Package",

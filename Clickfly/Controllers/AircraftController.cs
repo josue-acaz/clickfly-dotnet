@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/aircrafts")]
     public class AircraftController : BaseController
     {
@@ -22,21 +23,21 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]Aircraft aircraft)
-        {
-            string air_taxi_id = Request.Headers["air_taxi_id"];
+        {  
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            User user = _informer.GetValue<User>(UserTypes.User); 
+            
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            aircraft.air_taxi_id = air_taxi_id;
-            Aircraft _aircraft = await _aircraftService.Save(aircraft);
+            aircraft.air_taxi_id = user.air_taxi_id; // Atribui o id do táxi aéreo respectivo
+            aircraft = await _aircraftService.Save(aircraft);
             await transaction.CommitAsync();
 
             return HttpResponse(aircraft);
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Aircraft>> GetById(string id)
         {
             Aircraft aircraft = await _aircraftService.GetById(id);
@@ -44,16 +45,18 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            User user = _informer.GetValue<User>(UserTypes.User); 
+
+            filter.air_taxi_id = user.air_taxi_id;
             PaginationResult<Aircraft> aircrafts = await _aircraftService.Pagination(filter);
             
             return HttpResponse(aircrafts);
         }
 
         [HttpGet("autocomplete")]
-        [AllowAnonymous]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
             IEnumerable<Aircraft> aircrafts = await _aircraftService.Autocomplete(autocompleteParams);
@@ -61,7 +64,6 @@ namespace clickfly.Controllers
         }
 
         [HttpPost("thumbnail")]
-        [AllowAnonymous]
         public async Task<ActionResult<string>> Thumbnail([FromForm]ThumbnailRequest thumbnailRequest)
         {
             using var transaction = _dataContext.Database.BeginTransaction();
@@ -73,7 +75,6 @@ namespace clickfly.Controllers
         }
 
         [HttpGet("thumbnail")]
-        [AllowAnonymous]
         public async Task<ActionResult<string>> GetThumbnail([FromQuery]GetThumbnailRequest thumbnailRequest)
         {
             string thumbnail = await _aircraftService.GetThumbnail(thumbnailRequest);

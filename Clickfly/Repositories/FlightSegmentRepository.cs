@@ -62,6 +62,7 @@ namespace clickfly.Repositories
 
         public async Task<FlightSegment> GetById(string id)
         {
+            Console.WriteLine("PK" + id);
             string querySql = $@"SELECT 
                 flight_segment.id, 
                 flight_segment.number, 

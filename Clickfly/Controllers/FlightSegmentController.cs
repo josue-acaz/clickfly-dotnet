@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
 using clickfly.Services;
@@ -10,6 +9,7 @@ using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/flight-segments")]
     public class FlightSegmentController : BaseController
     {
@@ -21,7 +21,7 @@ namespace clickfly.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult<FlightSegment>> GetById(string id)
         {
             FlightSegment flightSegment = await _flightSegmentService.GetById(id);
@@ -29,7 +29,7 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult> Save([FromBody]FlightSegment flightSegment)
         {
             using var transaction = _dataContext.Database.BeginTransaction();
@@ -41,7 +41,7 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
             PaginationResult<FlightSegment> flightSegments = await _flightSegmentService.Pagination(filter);
@@ -49,6 +49,7 @@ namespace clickfly.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult> Delete(string id)
         {
             await _flightSegmentService.Delete(id);

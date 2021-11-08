@@ -19,5 +19,6 @@ namespace clickfly
         bool IsValidEmail(string email);
         string GetExpCard(int exp_month, int exp_year);
         string DateTimeToSql(DateTime dateTime);
+        string GenerateQRCode(string value);
     }
 }
