@@ -21,7 +21,6 @@ namespace clickfly.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult<FlightSegment>> GetById(string id)
         {
             FlightSegment flightSegment = await _flightSegmentService.GetById(id);

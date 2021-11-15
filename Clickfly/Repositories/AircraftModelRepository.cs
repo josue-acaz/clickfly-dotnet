@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "aircraft_model.excluded = false";
         protected string[] defaultFields = new string[8];
 
-        public AircraftModelRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public AircraftModelRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             
         }

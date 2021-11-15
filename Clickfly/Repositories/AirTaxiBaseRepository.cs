@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "air_taxi_base.excluded = false";
         protected string[] defaultFields = new string[4];
 
-        public AirTaxiBaseRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public AirTaxiBaseRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             defaultFields[0] = "name";
             defaultFields[1] = "latitude";

@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "customer_address.excluded = false";
         protected string[] defaultFields = new string[10];
 
-        public CustomerAddressRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public CustomerAddressRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             defaultFields[0] = "name";
             defaultFields[1] = "street";

@@ -8,7 +8,7 @@ namespace clickfly.Repositories
 {
     public class BookingStatusRepository : BaseRepository<BookingStatus>, IBookingStatusRepository
     {
-        public BookingStatusRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public BookingStatusRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             
         }
@@ -17,8 +17,6 @@ namespace clickfly.Repositories
         {
             string id = Guid.NewGuid().ToString();
             bookingStatus.id = id;
-
-            Console.WriteLine("\n\n\nAQUIIIIIIIII\n\n");
 
             await _dataContext.BookingStatus.AddAsync(bookingStatus);
             await _dataContext.SaveChangesAsync();

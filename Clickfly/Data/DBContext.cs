@@ -1,5 +1,7 @@
 using System;
 using System.Data;
+using System.Reflection;
+using Dapper.Contrib.Extensions;
 
 namespace clickfly.Data
 {

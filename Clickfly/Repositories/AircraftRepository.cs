@@ -16,9 +16,11 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "aircrafts as aircraft";
         private static string whereSql = "aircraft.excluded = false";
+        private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
+        private static string aircraftSeatingMapSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'seating_map' LIMIT 1";
         protected string[] defaultFields = new string[17];
 
-        public AircraftRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public AircraftRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             defaultFields[0] = "prefix";
             defaultFields[1] = "year";
@@ -59,13 +61,19 @@ namespace clickfly.Repositories
 
         public async Task<Aircraft> GetById(string id)
         {
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND aircraft.id = @id";
-            NpgsqlParameter param = new NpgsqlParameter("id", id);
-            
-            Aircraft aircraft = await _dataContext.Aircrafts
-            .FromSqlRaw(querySql, param)
-            .Include(aircraft => aircraft.model)
-            .FirstOrDefaultAsync();
+            IncludeModel includeAircraftModel = new IncludeModel();
+            includeAircraftModel.As = "model";
+            includeAircraftModel.ForeignKey = "aircraft_model_id";
+
+            QueryOptions queryOptions = new QueryOptions();
+            queryOptions.As = "aircraft";
+            queryOptions.Where = $"{whereSql} AND aircraft.id = @id";
+            queryOptions.Params = new { id = id };
+            queryOptions.AddRawAttribute("thumbnail", aircraftThumbnailSql);
+            queryOptions.AddRawAttribute("seating_map", aircraftSeatingMapSql);
+            queryOptions.Include<AircraftModel>(includeAircraftModel);
+
+            Aircraft aircraft = await _dBAccess.QuerySingleAsync<Aircraft>(queryOptions);
 
             return aircraft;
         }

@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "aircraft_image.excluded = false";
         private static string innerJoinFiles = "files as file on aircraft_image.id = file.resource_id";
 
-        public AircraftImageRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public AircraftImageRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
 
         }

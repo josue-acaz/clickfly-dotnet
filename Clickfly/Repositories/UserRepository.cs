@@ -16,7 +16,7 @@ namespace clickfly.Repositories
         private static string fromSql = "users as _user";
         private static string whereSql = "_user.excluded = false";
 
-        public UserRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public UserRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             
         }

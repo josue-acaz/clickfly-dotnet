@@ -7,5 +7,6 @@ namespace clickfly.ViewModels
     public class AutocompleteParams
     {
         public string text { get; set; }
+        public string air_taxi_id { get; set; }
     }
 }

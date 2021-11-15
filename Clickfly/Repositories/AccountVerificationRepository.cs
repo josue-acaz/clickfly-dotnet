@@ -16,7 +16,7 @@ namespace clickfly.Repositories
         private static string whereSql = "account_verification.excluded = false";
         private static string deleteSql = "UPDATE account_verification SET excluded = true WHERE id = @id";
 
-        public AccountVerificationRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public AccountVerificationRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
 
         }

@@ -14,7 +14,7 @@ namespace clickfly.Repositories
         private static string fromSql = "states as state";
         private static string whereSql = "state.excluded = false";
 
-        public StateRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public StateRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
 
         }

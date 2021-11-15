@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "customer_friend.excluded = false";
         protected string[] defaultFields = new string[8];
 
-        public CustomerFriendRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public CustomerFriendRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             defaultFields[0] = "name";
             defaultFields[1] = "email";

@@ -17,7 +17,7 @@ namespace clickfly.Repositories
         private static string whereSql = "city.excluded = false";
         private static string innerJoinStates = "states as state on state.id = city.state_id";
 
-        public CityRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public CityRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
 
         }

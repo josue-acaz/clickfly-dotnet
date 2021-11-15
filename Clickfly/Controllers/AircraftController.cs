@@ -59,6 +59,10 @@ namespace clickfly.Controllers
         [HttpGet("autocomplete")]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            User user = _informer.GetValue<User>(UserTypes.User); 
+
+            autocompleteParams.air_taxi_id = user.air_taxi_id;
             IEnumerable<Aircraft> aircrafts = await _aircraftService.Autocomplete(autocompleteParams);
             return HttpResponse(aircrafts);
         }

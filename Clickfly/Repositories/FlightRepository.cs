@@ -17,7 +17,7 @@ namespace clickfly.Repositories
         private static string fromSql = "flights as flight";
         private static string whereSql = "flight.excluded = false";
 
-        public FlightRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public FlightRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
 
         }

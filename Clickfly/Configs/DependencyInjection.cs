@@ -18,7 +18,7 @@ namespace clickfly.Configs
             services.AddScoped<IDBContext, DBContext>();
             services.AddScoped<IInformer, Informer>();
             services.AddScoped<IUtils, Utils>();
-            services.AddScoped<IOrm, Orm>();
+            services.AddScoped<IDBAccess, DBAccess>();
 
             services.AddScoped<IStateService, StateService>();
             services.AddScoped<IStateRepository, StateRepository>();

@@ -9,12 +9,14 @@ namespace clickfly.Repositories
     {
         protected readonly IDBContext _dBContext;
         protected readonly IDataContext _dataContext;
+        protected readonly IDBAccess _dBAccess;
         protected readonly IUtils _utils;
 
-        public BaseRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils)
+        public BaseRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils)
         {
             _dBContext = dBContext;
             _dataContext = dataContext;
+            _dBAccess = dBAccess;
             _utils = utils;
         }
 

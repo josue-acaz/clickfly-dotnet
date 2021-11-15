@@ -8,7 +8,7 @@ namespace clickfly.Repositories
 {
     public class BookingPaymentRepository : BaseRepository<BookingPayment>, IBookingPaymentRepository
     {
-        public BookingPaymentRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public BookingPaymentRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             
         }

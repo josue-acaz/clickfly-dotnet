@@ -51,6 +51,8 @@ namespace clickfly.Services
             filter.page_number = 1;
             filter.order = "DESC";
             filter.order_by = "created_at";
+            filter.text = autocompleteParams.text;
+            filter.air_taxi_id = autocompleteParams.air_taxi_id;
 
             PaginationResult<Aircraft> paginationResult = await _aircraftRepository.Pagination(filter);
             List<Aircraft> aircrafts = paginationResult.data;

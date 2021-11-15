@@ -17,7 +17,7 @@ namespace clickfly.Repositories
         private static string fromSql = "aerodromes as aerodrome";
         private static string whereSql = "aerodrome.excluded = false";
 
-        public AerodromeRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public AerodromeRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
 
         }

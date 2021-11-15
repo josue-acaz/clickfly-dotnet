@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "customer_card.excluded = false";
         protected string[] defaultFields = new string[2];
 
-        public CustomerCardRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public CustomerCardRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
             defaultFields[0] = "card_id";
             defaultFields[1] = "customer_id";

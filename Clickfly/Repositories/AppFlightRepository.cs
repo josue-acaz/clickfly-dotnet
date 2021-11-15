@@ -13,18 +13,15 @@ namespace clickfly.Repositories
 {
     public class AppFlightRepository : BaseRepository<FlightSegment>, IAppFlightRepository
     {
-        private readonly IOrm _orm;
-        private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
-
-        private static string flightTimeSql = $"SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))";
-
-        private static string subtotalSql = $"SELECT flight_segment.price_per_seat * @selected_seats";
-
         private static string whereSql = $"flight_segment.excluded = false";
+        private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
+        private static string flightTimeSql = $"SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))";
+        private static string subtotalSql = $"SELECT flight_segment.price_per_seat * @selected_seats";
+        private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
 
-        public AppFlightRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils, IOrm orm) : base(dBContext, dataContext, utils)
+        public AppFlightRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
-            _orm = orm;
+
         }
 
         public async Task<PaginationResult<AppFlight>> Overview(PaginationFilter filter)
@@ -139,28 +136,59 @@ namespace clickfly.Repositories
             int offset = (filter.page_number - 1) * filter.page_size;
             int selected_seats = filter.selected_seats;
 
+            string flight_type = filter.flight_type;
             string origin_city_id = filter.origin_city_id;
             string destination_city_id = filter.destination_city_id;
-            string flight_type = filter.flight_type;
-
             string currentDatetime = _utils.DateTimeToSql(DateTime.Now);
 
-            string querySql = $@"
-                SELECT flight_segment.id,
-                flight_segment.number,
-                flight_segment.departure_datetime,
-                flight_segment.arrival_datetime,
-                flight_segment.price_per_seat,
-                flight_segment.total_seats,
-                flight_segment.type,
-                ({subtotalSql}) AS subtotal, 
-                ({flightTimeSql}) AS flight_time, 
-                ({availableSeatsSql}) AS available_seats ? 
-                flight_segments AS flight_segment 
-                INNER JOIN flights AS flight ON flight_segment.flight_id = flight.id
-                INNER JOIN aerodromes AS origin_aerodrome ON flight_segment.origin_aerodrome_id = origin_aerodrome.id
-                INNER JOIN aerodromes AS destination_aerodrome ON flight_segment.destination_aerodrome_id = destination_aerodrome.id
-                WHERE flight_segment.excluded = false 
+            IncludeModel includeState = new IncludeModel();
+            includeState.As = "state";
+            includeState.ForeignKey = "state_id";
+
+            IncludeModel includeCity = new IncludeModel();
+            includeCity.As = "city";
+            includeCity.ForeignKey = "city_id";
+            includeCity.ThenInclude<State>(includeState);
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeDestinationAerodrome = new IncludeModel();
+            includeDestinationAerodrome.As = "destination_aerodrome";
+            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinationAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeAircraftModel = new IncludeModel();
+            includeAircraftModel.As = "model";
+            includeAircraftModel.ForeignKey = "aircraft_model_id";
+
+            IncludeModel includeAircraft = new IncludeModel();
+            includeAircraft.As = "aircraft";
+            includeAircraft.ForeignKey = "aircraft_id";
+            includeAircraft.AddRawAttribute("subtotal", subtotalSql);
+            includeAircraft.AddRawAttribute("flight_time", flightTimeSql);
+            includeAircraft.AddRawAttribute("available_seats", availableSeatsSql);
+            includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
+            includeAircraft.ThenInclude<AircraftModel>(includeAircraftModel);
+
+            IncludeModel includeFlight = new IncludeModel();
+            includeFlight.As = "flight";
+            includeFlight.ForeignKey = "flight_id";
+
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+            queryParams.Add("flight_type", flight_type);
+            queryParams.Add("origin_city_id", origin_city_id);
+            queryParams.Add("destination_city_id", destination_city_id);
+            queryParams.Add("selected_seats", selected_seats);
+
+            QueryOptions queryOptions = new QueryOptions();
+            queryOptions.As = "flight_segment";
+            queryOptions.Params = queryParams;
+            queryOptions.Where = $@"{whereSql}
                 AND flight.type = @flight_type
                 AND flight_segment.type = 'trip'
                 AND origin_aerodrome.city_id = @origin_city_id
@@ -170,93 +198,12 @@ namespace clickfly.Repositories
                 LIMIT @limit OFFSET @offset
             ";
 
-            Dictionary<string, object> queryParams = new Dictionary<string, object>();
-            
-            queryParams.Add("limit", limit);
-            queryParams.Add("offset", offset);
-            queryParams.Add("selected_seats", selected_seats);
-            queryParams.Add("origin_city_id", origin_city_id);
-            queryParams.Add("destination_city_id", destination_city_id);
-            queryParams.Add("flight_type", flight_type);
+            queryOptions.Include<Flight>(includeFlight);
+            queryOptions.Include<Aircraft>(includeAircraft);
+            queryOptions.Include<Aerodrome>(includeOriginAerodrome);
+            queryOptions.Include<Aerodrome>(includeDestinationAerodrome);
 
-            QueryAsyncParams queryAsyncParams = new QueryAsyncParams();
-
-            queryAsyncParams.tableName = "flight_segments";
-            queryAsyncParams.relationshipName = "flight_segment";
-            queryAsyncParams.querySql = querySql;
-
-            queryAsyncParams.queryParams = queryParams;
-            queryAsyncParams.foreignKey = "flight_segment_id";
-
-            Include includeFlight = new Include();
-            string[] flightAttributes = { "id", "type" };
-
-            includeFlight.attributes = flightAttributes;
-            includeFlight.tableName = "flights";
-            includeFlight.foreignKey = "flight_id";
-            includeFlight.relationshipName = "flight";
-
-            Include includeAircraft = new Include();
-            string[] aircraftAttributes = { "id", "prefix" };
-
-            RawAttribute[] aircraftRawAttributes = new RawAttribute[1];
-            RawAttribute aircraftThumbnail = new RawAttribute();
-            aircraftThumbnail.name = "thumbnail";
-            aircraftThumbnail.query = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
-            aircraftRawAttributes[0] = aircraftThumbnail;
-
-            includeAircraft.tableName = "aircrafts";
-            includeAircraft.foreignKey = "aircraft_id";
-            includeAircraft.relationshipName = "aircraft";
-            includeAircraft.attributes = aircraftAttributes;
-            includeAircraft.rawAttributes = aircraftRawAttributes;
-
-            Include includeAircraftModel = new Include();
-            string[] aircraftModelAttributes = { "id", "name" };
-
-            includeAircraftModel.attributes = aircraftModelAttributes;
-            includeAircraftModel.relationshipName = "model";
-            includeAircraftModel.tableName = "aircraft_models";
-            includeAircraftModel.foreignKey = "aircraft_model_id";
-            includeAircraft.includes.Add(includeAircraftModel);
-    
-            string[] stateAttributes = { "id", "name", "prefix" };
-            string[] cityAttributes = { "id", "name", "state_id" };
-            string[] aerodromeAttributes = { "id", "name", "oaci_code" };
-
-            Include includeState = new Include();
-            includeState.attributes = stateAttributes;
-            includeState.tableName = "states";
-            includeState.foreignKey = "state_id";
-            includeState.relationshipName = "state";
-
-            Include includeCity = new Include();
-            includeCity.attributes = cityAttributes;
-            includeCity.tableName = "cities";
-            includeCity.foreignKey = "city_id";
-            includeCity.relationshipName = "city";
-            includeCity.includes.Add(includeState);
-
-            Include includeOriginAerodrome = new Include();
-            includeOriginAerodrome.attributes = aerodromeAttributes;
-            includeOriginAerodrome.tableName = "aerodromes";
-            includeOriginAerodrome.foreignKey = "origin_aerodrome_id";
-            includeOriginAerodrome.relationshipName = "origin_aerodrome";
-            includeOriginAerodrome.includes.Add(includeCity);
-
-            Include includeDestinationAerodrome = new Include();
-            includeDestinationAerodrome.attributes = aerodromeAttributes;
-            includeDestinationAerodrome.relationshipName = "destination_aerodrome";
-            includeDestinationAerodrome.tableName = "aerodromes";
-            includeDestinationAerodrome.foreignKey = "destination_aerodrome_id";
-            includeDestinationAerodrome.includes.Add(includeCity);
-
-            queryAsyncParams.includes.Add(includeFlight);
-            queryAsyncParams.includes.Add(includeAircraft);
-            queryAsyncParams.includes.Add(includeOriginAerodrome);
-            queryAsyncParams.includes.Add(includeDestinationAerodrome);
-
-            IEnumerable<FlightSegment> flightSegments = await _orm.QueryAsync<FlightSegment>(queryAsyncParams);
+            IEnumerable<FlightSegment> flightSegments = await _dBAccess.QueryAsync<FlightSegment>(queryOptions);
             
             int total_records = await _dataContext.FlightSegments.CountAsync();
             PaginationResult<FlightSegment> paginationResult = _utils.CreatePaginationResult<FlightSegment>(flightSegments.ToList(), filter, total_records);

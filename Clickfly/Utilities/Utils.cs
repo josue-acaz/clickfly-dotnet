@@ -234,5 +234,17 @@ namespace clickfly
 
             return qRUri;
         }
+    
+        public string RandomHexString()
+        {
+            Random random = new Random();
+            Byte[] bytes = new Byte[6];
+            random.NextBytes(bytes);
+
+            string[] hexArray = Array.ConvertAll(bytes, x => x.ToString("X2"));
+            string hexStr = String.Concat(hexArray);
+
+            return hexStr.ToLower();
+        }
     }
 }

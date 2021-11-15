@@ -14,7 +14,7 @@ namespace clickfly.Repositories
         private static string fromSql = "timezones as timezone";
         private static string whereSql = "timezone.excluded = false";
 
-        public TimezoneRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils) : base(dBContext, dataContext, utils)
+        public TimezoneRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
 
         }

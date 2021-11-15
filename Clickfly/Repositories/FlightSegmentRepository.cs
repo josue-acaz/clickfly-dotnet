@@ -13,7 +13,6 @@ namespace clickfly.Repositories
 {
     public class FlightSegmentRepository : BaseRepository<FlightSegment>, IFlightSegmentRepository
     {
-        private readonly IOrm _orm;
         private static string fieldsSql = "*";
         private static string fromSql = "flight_segments as flight_segment";
         private static string whereSql = "flight_segment.excluded = false";
@@ -23,15 +22,13 @@ namespace clickfly.Repositories
             INNER JOIN ( SELECT status.type, status.booking_id FROM booking_status AS status WHERE status.excluded = false ORDER BY status.created_at DESC LIMIT 1 ) AS status ON status.booking_id = booking.id
             WHERE passenger.excluded = false AND booking.excluded = false AND passenger.flight_segment_id = flight_segment.id AND ( status.type::text = 'approved' OR status.type::text = 'pending' )
         ";
-
         private static string availableSeatsSql = $"(SELECT CAST(((flight_segment.total_seats - ({bookedSeatsSql}))) AS INTEGER))";
-
         private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime)))";
+        private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
         protected string[] defaultFields = new string[10];
 
-        public FlightSegmentRepository(IDBContext dBContext, IDataContext dataContext, IUtils utils, IOrm orm) : base(dBContext, dataContext, utils)
+        public FlightSegmentRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
         {
-            _orm = orm;
             defaultFields[0] = "number";
             defaultFields[1] = "departure_datetime";
             defaultFields[2] = "arrival_datetime";
@@ -62,102 +59,52 @@ namespace clickfly.Repositories
 
         public async Task<FlightSegment> GetById(string id)
         {
-            Console.WriteLine("PK" + id);
-            string querySql = $@"SELECT 
-                flight_segment.id, 
-                flight_segment.number, 
-                flight_segment.departure_datetime,
-                flight_segment.arrival_datetime,
-                flight_segment.price_per_seat,
-                flight_segment.total_seats,
-                flight_segment.type,
-                flight_segment.flight_id,
-                flight_segment.aircraft_id,
-                flight_segment.origin_aerodrome_id,
-                flight_segment.destination_aerodrome_id,
-                {flightTimeSql} AS flight_time,
-                {availableSeatsSql} AS available_seats 
-            ? {fromSql} WHERE {whereSql} AND flight_segment.id = @id";
+            IncludeModel includeState = new IncludeModel();
+            includeState.As = "state";
+            includeState.ForeignKey = "state_id";
+
+            IncludeModel includeCity = new IncludeModel();
+            includeCity.As = "city";
+            includeCity.ForeignKey = "city_id";
+            includeCity.ThenInclude<State>(includeState);
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeDestinationAerodrome = new IncludeModel();
+            includeDestinationAerodrome.As = "destination_aerodrome";
+            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinationAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeAircraftModel = new IncludeModel();
+            includeAircraftModel.As = "model";
+            includeAircraftModel.ForeignKey = "aircraft_model_id";
+
+            IncludeModel includeAircraft = new IncludeModel();
+            includeAircraft.As = "aircraft";
+            includeAircraft.ForeignKey = "aircraft_id";
+            includeAircraft.ThenInclude<AircraftModel>(includeAircraftModel);
+            includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
+
+            IncludeModel includeFlight = new IncludeModel();
+            includeFlight.As = "flight";
+            includeFlight.ForeignKey = "flight_id";
+
+            QueryOptions queryOptions = new QueryOptions();
+            queryOptions.As = "flight_segment";
+            queryOptions.Where = $"{whereSql} AND flight_segment.id = @id";
+            queryOptions.Params = new { id = id };
+            queryOptions.AddRawAttribute("flight_time", flightTimeSql);
+            queryOptions.AddRawAttribute("available_seats", availableSeatsSql);
             
-            Dictionary<string, object> queryParams = new Dictionary<string, object>();
-            queryParams.Add("id", id);
-
-            QueryAsyncParams queryAsyncParams = new QueryAsyncParams();
-            queryAsyncParams.querySql = querySql;
-            queryAsyncParams.queryParams = queryParams;
-            queryAsyncParams.relationshipName = "flight_segment";
-            queryAsyncParams.tableName = "flight_segments";
-            queryAsyncParams.foreignKey = "flight_segment_id";
-
-            Include includeFlight = new Include();
-            string[] flightAttributes = { "id", "type" };
-
-            includeFlight.attributes = flightAttributes;
-            includeFlight.tableName = "flights";
-            includeFlight.foreignKey = "flight_id";
-            includeFlight.relationshipName = "flight";
-
-            Include includeAircraft = new Include();
-            string[] aircraftAttributes = { "id", "prefix" };
-
-            RawAttribute[] aircraftRawAttributes = new RawAttribute[1];
-            RawAttribute aircraftThumbnail = new RawAttribute();
-            aircraftThumbnail.name = "thumbnail";
-            aircraftThumbnail.query = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
-            aircraftRawAttributes[0] = aircraftThumbnail;
-
-            includeAircraft.tableName = "aircrafts";
-            includeAircraft.foreignKey = "aircraft_id";
-            includeAircraft.relationshipName = "aircraft";
-            includeAircraft.attributes = aircraftAttributes;
-            includeAircraft.rawAttributes = aircraftRawAttributes;
-
-            Include includeAircraftModel = new Include();
-            string[] aircraftModelAttributes = { "id", "name" };
-
-            includeAircraftModel.attributes = aircraftModelAttributes;
-            includeAircraftModel.relationshipName = "model";
-            includeAircraftModel.tableName = "aircraft_models";
-            includeAircraftModel.foreignKey = "aircraft_model_id";
-            includeAircraft.includes.Add(includeAircraftModel);
-    
-            string[] stateAttributes = { "id", "name", "prefix" };
-            string[] cityAttributes = { "id", "name", "state_id" };
-            string[] aerodromeAttributes = { "id", "name", "oaci_code" };
-
-            Include includeState = new Include();
-            includeState.attributes = stateAttributes;
-            includeState.tableName = "states";
-            includeState.foreignKey = "state_id";
-            includeState.relationshipName = "state";
-
-            Include includeCity = new Include();
-            includeCity.attributes = cityAttributes;
-            includeCity.tableName = "cities";
-            includeCity.foreignKey = "city_id";
-            includeCity.relationshipName = "city";
-            includeCity.includes.Add(includeState);
-
-            Include includeOriginAerodrome = new Include();
-            includeOriginAerodrome.attributes = aerodromeAttributes;
-            includeOriginAerodrome.tableName = "aerodromes";
-            includeOriginAerodrome.foreignKey = "origin_aerodrome_id";
-            includeOriginAerodrome.relationshipName = "origin_aerodrome";
-            includeOriginAerodrome.includes.Add(includeCity);
-
-            Include includeDestinationAerodrome = new Include();
-            includeDestinationAerodrome.attributes = aerodromeAttributes;
-            includeDestinationAerodrome.relationshipName = "destination_aerodrome";
-            includeDestinationAerodrome.tableName = "aerodromes";
-            includeDestinationAerodrome.foreignKey = "destination_aerodrome_id";
-            includeDestinationAerodrome.includes.Add(includeCity);
-
-            queryAsyncParams.includes.Add(includeFlight);
-            queryAsyncParams.includes.Add(includeAircraft);
-            queryAsyncParams.includes.Add(includeOriginAerodrome);
-            queryAsyncParams.includes.Add(includeDestinationAerodrome);
+            queryOptions.Include<Flight>(includeFlight);
+            queryOptions.Include<Aircraft>(includeAircraft);
+            queryOptions.Include<Aerodrome>(includeOriginAerodrome);
+            queryOptions.Include<Aerodrome>(includeDestinationAerodrome);
             
-            FlightSegment flightSegment = await _orm.QuerySingleOrDefaultAsync<FlightSegment>(queryAsyncParams);
+            FlightSegment flightSegment = await _dBAccess.QuerySingleAsync<FlightSegment>(queryOptions);
             
             return flightSegment;
         }

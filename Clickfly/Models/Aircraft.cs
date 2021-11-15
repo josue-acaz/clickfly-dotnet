@@ -37,6 +37,9 @@ namespace clickfly.Models
         public string thumbnail { get; set; }
 
         [NotMapped]
+        public string seating_map { get; set; }
+
+        [NotMapped]
         public string full_name { get { return $"{prefix} • {model?.name}"; } }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace clickfly.Data 
 {
