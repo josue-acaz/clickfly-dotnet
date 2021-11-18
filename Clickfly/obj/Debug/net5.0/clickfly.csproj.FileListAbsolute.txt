@@ -111,3 +111,4 @@
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/ref/clickfly.dll
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.pdb
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.genruntimeconfig.cache
+/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/bin/Debug/net5.0/Slapper.dll

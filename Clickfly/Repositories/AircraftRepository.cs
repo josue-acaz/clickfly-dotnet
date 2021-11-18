@@ -66,7 +66,6 @@ namespace clickfly.Repositories
             includeAircraftModel.ForeignKey = "aircraft_model_id";
 
             QueryOptions queryOptions = new QueryOptions();
-            queryOptions.As = "aircraft";
             queryOptions.Where = $"{whereSql} AND aircraft.id = @id";
             queryOptions.Params = new { id = id };
             queryOptions.AddRawAttribute("thumbnail", aircraftThumbnailSql);

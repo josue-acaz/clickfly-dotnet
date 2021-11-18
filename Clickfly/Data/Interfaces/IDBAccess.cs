@@ -8,7 +8,7 @@ namespace clickfly.Data
 {
     public interface IDBAccess
     {
-        Task<Type> QuerySingleAsync<Type>(QueryOptions options);
-        Task<IEnumerable<Type>> QueryAsync<Type>(QueryOptions options);
+        Task<T> QuerySingleAsync<T>(QueryOptions options);
+        Task<IEnumerable<T>> QueryAsync<T>(QueryOptions options);
     }
 }

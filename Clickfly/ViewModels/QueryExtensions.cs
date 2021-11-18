@@ -17,6 +17,7 @@ namespace clickfly.ViewModels
             bool contains = false;
 
             IEnumerable<Attribute> attributes = propertyInfo.GetCustomAttributes();
+            
             foreach(Attribute attribute in attributes)
             {
                 if(attribute is T)
@@ -33,6 +34,8 @@ namespace clickfly.ViewModels
             List<Property> properties = new List<Property>();
             PropertyInfo[] propertyInfos = typeof(Type).GetProperties();
 
+            List<string> foreignKeys = new List<string>();
+
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
                 Property property = new Property();
@@ -40,17 +43,40 @@ namespace clickfly.ViewModels
                 property.Type = propertyInfo.PropertyType;
 
                 bool isNotMapped = ContainsProperty<NotMappedAttribute>(propertyInfo);
-                if(!isNotMapped)
+                bool isForeignKey = ContainsProperty<ForeignKeyAttribute>(propertyInfo);
+                
+                bool notForeignKey = false;
+                if(isForeignKey)
                 {
-                    Console.WriteLine(propertyInfo.Name);
-                    properties.Add(property);
+                    ForeignKeyAttribute foreignKeyAttribute = propertyInfo.GetCustomAttribute<ForeignKeyAttribute>();
+                    if(foreignKeyAttribute != null)
+                    {
+                        string foreignKeyName = foreignKeyAttribute.Name;
+                        foreignKeys.Add(foreignKeyName);
+
+                        int propertyIndexFK = properties.FindIndex(PR => PR.Name == foreignKeyName);
+                        notForeignKey = propertyIndexFK == -1;
+                        if(!notForeignKey)
+                        {
+                            properties.RemoveAt(propertyIndexFK);
+                        }
+                    }
+                }
+
+                if(!isNotMapped && !isForeignKey)
+                {
+                    notForeignKey = foreignKeys.FindIndex(FK => property.Name == FK) == -1;
+                    if(notForeignKey)
+                    {
+                        properties.Add(property);
+                    }
                 }
             }
 
             return properties;
         }
 
-        protected string[] GetAttributes<Type>()
+        protected List<string> GetAttributes<Type>(List<string> exclude)
         {   
             List<string> attributes = new List<string>();
             List<Property> properties = GetProperties<Type>();
@@ -64,14 +90,21 @@ namespace clickfly.ViewModels
                     propertyType == typeof(System.Int32) ||
                     propertyType == typeof(System.String) ||
                     propertyType == typeof(System.DateTime) ||
-                    propertyType == typeof(System.DateTime?)
+                    propertyType == typeof(System.DateTime?) ||
+                    propertyType == typeof(System.Boolean) ||
+                    propertyType == typeof(System.Boolean?)
                 )
                 {
-                    attributes.Add(propertyName);
+                    bool toExclude = exclude.FindIndex(ex => propertyName == ex) != -1;
+                    
+                    if(!toExclude)
+                    {
+                        attributes.Add(propertyName);
+                    }
                 }
             }
 
-            return attributes.ToArray();
+            return attributes;
         }
         
         protected string GetTableName<T>()
@@ -94,16 +127,21 @@ namespace clickfly.ViewModels
             return getTableNameMethod.Invoke(null, new object[] { typeof(T) }) as string;
         }
     
-        protected string GetAttributesSql(string[] attributes, List<RawAttribute> rawAttributes, string As)
+        protected string GetClassName<T>()
+        {
+            return typeof(T).Name;
+        }
+
+        protected string GetAttributesSql(List<string> attributes, List<RawAttribute> rawAttributes, string As)
         {
             string attributesSql = $"";
             RawAttribute[] RawAttributes = rawAttributes.ToArray();
 
-            for (int i = 0; i < attributes.Length; i++)
+            for (int i = 0; i < attributes.Count; i++)
             {
                 string attribute = attributes[i];
-                attributesSql += $"{As}.{attribute} AS \"{As}.{attribute}\"";
-                bool isLastAttribute = i == attributes.Length -1;
+                attributesSql += $"{As}.{attribute}";
+                bool isLastAttribute = i == attributes.Count -1;
 
                 if(!isLastAttribute)
                 {
@@ -118,13 +156,13 @@ namespace clickfly.ViewModels
                 string name = rawAttribute.Name;
                 string query = rawAttribute.Query;
 
-                attributesSql += $"({query}) AS \"{As}.{name}\"";
+                attributesSql += $"({query}) AS {name}";
             }
 
             return attributesSql;
         }
 
-        protected string GetAttributesSql(List<IncludeModel> includeModels, string parentAs)
+        protected string GetAttributesSql(List<IncludeModel> includeModels, string parentAs, bool nv1)
         {
             string attributesSql = $"";
 
@@ -132,7 +170,110 @@ namespace clickfly.ViewModels
             {
                 attributesSql += ", ";
                 string As = includeModel.As;
-                string AsInclude = $"{parentAs}.{As}";
+                string AsInclude = nv1 ? As : $"{parentAs}_{As}";
+                List<string> attributes = includeModel.Attributes.Include;
+                List<IncludeModel> thenIncludeModels = includeModel.Includes;
+                RawAttribute[] rawAttributes = includeModel.RawAttributes.ToArray();
+
+                for (int i = 0; i < attributes.Count; i++)
+                {
+                    string attribute = attributes[i];
+                    attributesSql += $"{As}.{attribute} AS {AsInclude}_{attribute}";
+                    bool isLastAttribute = i == attributes.Count -1;
+
+                    if(!isLastAttribute)
+                    {
+                        attributesSql += ", ";
+                    }
+                }
+
+                for (int j = 0; j < rawAttributes.Length; j++)
+                {
+                    attributesSql += ", ";
+                    RawAttribute rawAttribute = rawAttributes[j];
+                    string name = rawAttribute.Name;
+                    string query = rawAttribute.Query;
+
+                    attributesSql += $"({query}) AS {AsInclude}_{name}";
+                }
+
+                attributesSql += GetAttributesSql(thenIncludeModels, AsInclude, false);
+            }
+
+            return attributesSql;
+        }
+        
+        protected string IncludeModelsToQuery(List<IncludeModel> includeModels, string parentAs, string parentIncludeSql)
+        {
+            string includeSql = $"";
+            foreach (IncludeModel includeModel in includeModels)
+            {
+                string AS = includeModel.As;
+                string tableName = includeModel.TableName;
+                string foreignKey = includeModel.ForeignKey;
+                bool belongsTo = includeModel.BelongsTo;
+
+                bool alreadyIncluded = parentIncludeSql.Contains($"{tableName} AS {AS}");
+                if(!alreadyIncluded)
+                {
+                    string joinStatementSql = $"{parentAs}.{foreignKey} = {AS}.id";
+
+                    if(belongsTo)
+                    {
+                        joinStatementSql = $"{parentAs}.id = {AS}.{foreignKey}";
+                    }
+
+                    includeSql += $" LEFT OUTER JOIN {tableName} AS {AS} ON {joinStatementSql} ";
+                }
+
+                includeSql += IncludeModelsToQuery(includeModel.Includes, AS, parentIncludeSql);
+                parentIncludeSql += includeSql;
+            }
+
+            return includeSql;
+        }
+        
+        protected string CreateQuery(CreateQueryParams createQueryParams)
+        {
+            string As = createQueryParams.As;
+            string tableName = createQueryParams.TableName;
+            List<string> attributes = createQueryParams.Attributes;
+            string whereSql = createQueryParams.Where;
+            List<IncludeModel> includeModels = createQueryParams.Includes;
+            List<RawAttribute> rawAttributes = createQueryParams.RawAttributes;
+
+            // Default Attributes For Main Model
+            string attributesSql = GetAttributesSql(attributes, rawAttributes, As);
+
+            // Attributes For Include Models
+            if(includeModels.Count > 0)
+            {
+                attributesSql += GetAttributesSql(includeModels, As, true);
+            }
+
+            string querySql = $" SELECT {attributesSql} FROM {tableName} AS {As} ";
+            querySql += IncludeModelsToQuery(includeModels, As, querySql);
+
+            if(whereSql != null)
+            {
+                querySql += $" WHERE {whereSql} ";
+            }
+
+            return querySql;
+        }
+    }
+}
+
+/*
+protected string GetAttributesSql(List<IncludeModel> includeModels, string parentAs, bool nv1)
+        {
+            string attributesSql = $"";
+
+            foreach (IncludeModel includeModel in includeModels)
+            {
+                attributesSql += ", ";
+                string As = includeModel.As;
+                string AsInclude = nv1 ? As : $"{parentAs}.{As}";
                 string[] attributes = includeModel.Attributes;
                 List<IncludeModel> thenIncludeModels = includeModel.Includes;
                 RawAttribute[] rawAttributes = includeModel.RawAttributes.ToArray();
@@ -159,69 +300,9 @@ namespace clickfly.ViewModels
                     attributesSql += $"({query}) AS \"{AsInclude}.{name}\"";
                 }
 
-                attributesSql += GetAttributesSql(thenIncludeModels, AsInclude);
+                attributesSql += GetAttributesSql(thenIncludeModels, AsInclude, false);
             }
 
             return attributesSql;
         }
-        
-        protected string IncludeModelsToQuery(List<IncludeModel> includeModels, string parentAs, string parentIncludeSql)
-        {
-            string includeSql = $"";
-            foreach (IncludeModel includeModel in includeModels)
-            {
-                string AS = includeModel.As;
-                string tableName = includeModel.TableName;
-                string foreignKey = includeModel.ForeignKey;
-
-                bool alreadyIncluded = parentIncludeSql.Contains($"{tableName} AS {AS}");
-                if(!alreadyIncluded)
-                {
-                    includeSql += $" LEFT OUTER JOIN {tableName} AS {AS} ON {parentAs}.{foreignKey} = {AS}.id ";
-                }
-
-                includeSql += IncludeModelsToQuery(includeModel.Includes, AS, parentIncludeSql);
-                parentIncludeSql += includeSql;
-            }
-
-            return includeSql;
-        }
-        
-        protected string CreateQuery(CreateQueryParams createQueryParams)
-        {
-            string As = createQueryParams.As;
-            string tableName = createQueryParams.TableName;
-            string[] attributes = createQueryParams.Attributes;
-            string whereSql = createQueryParams.Where;
-            List<IncludeModel> includeModels = createQueryParams.Includes;
-            List<RawAttribute> rawAttributes = createQueryParams.RawAttributes;
-
-            char firstCharacter = tableName.First();
-            char lastCharacter = tableName.Last();
-
-            if(As == null) // Nomear consulta principal se As não for fornecido
-            {
-                As = $"{firstCharacter}{lastCharacter}0";
-            }
-
-            // Default Attributes For Main Model
-            string attributesSql = GetAttributesSql(attributes, rawAttributes, As);
-
-            // Attributes For Include Models
-            if(includeModels.Count > 0)
-            {
-                attributesSql += GetAttributesSql(includeModels, As);
-            }
-
-            string querySql = $" SELECT {attributesSql} FROM {tableName} AS {As} ";
-            querySql += IncludeModelsToQuery(includeModels, As, querySql);
-
-            if(whereSql != null)
-            {
-                querySql += $" WHERE {whereSql} ";
-            }
-
-            return querySql;
-        }
-    }
-}
+*/

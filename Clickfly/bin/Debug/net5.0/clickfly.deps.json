@@ -59,6 +59,7 @@
           "QRCoder": "1.4.1",
           "RazorEngine.NetCore": "3.1.0",
           "SixLabors.ImageSharp": "1.0.4",
+          "Slapper.AutoMapper": "2.0.5",
           "Swashbuckle.AspNetCore": "5.6.3",
           "System.Drawing.Common": "5.0.2",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
@@ -1305,6 +1306,17 @@
         },
         "compile": {
           "lib/netcoreapp3.1/SixLabors.ImageSharp.dll": {}
+        }
+      },
+      "Slapper.AutoMapper/2.0.5": {
+        "runtime": {
+          "lib/netstandard2.1/Slapper.dll": {
+            "assemblyVersion": "2.0.5.0",
+            "fileVersion": "2.0.5.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.1/Slapper.dll": {}
         }
       },
       "Swashbuckle.AspNetCore/5.6.3": {
@@ -4352,6 +4364,13 @@
       "sha512": "sha512-H2rPiEr2ddBOltOuqRYhpLBAsQXDAhbzMMhhuksnBG2oefup1MXMchALe7yYkKJksNbtxbZHKeM6dn/68I75qw==",
       "path": "sixlabors.imagesharp/1.0.4",
       "hashPath": "sixlabors.imagesharp.1.0.4.nupkg.sha512"
+    },
+    "Slapper.AutoMapper/2.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SDA66WBQSaomaCMFK9+l/bNWHl5p+AZK/yRhH+nQ9ZYCNgnYnIe148qyb9FPtAQHSj7M7Wpoo3jzCc/Bc5IVDA==",
+      "path": "slapper.automapper/2.0.5",
+      "hashPath": "slapper.automapper.2.0.5.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/5.6.3": {
       "type": "package",

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace clickfly.ViewModels
 {
@@ -12,15 +13,17 @@ namespace clickfly.ViewModels
     public class IncludeModel : QueryExtensions {
         public string As { get; set; }
         public string ForeignKey { get; set; }
-        public string[] Attributes { get; set; }
+        public Attributes Attributes { get; set; }
         public string TableName { get; set; }
         public string Where { get; set; }
+        public bool BelongsTo { get; set; }
         public List<IncludeModel> Includes { get; set; }
         public List<RawAttribute> RawAttributes { get; set; }
 
         public IncludeModel()
         {
-            Attributes = new string[0];
+            BelongsTo = false;
+            Attributes = new Attributes();
             Includes = new List<IncludeModel>();
             RawAttributes = new List<RawAttribute>();
         }
@@ -28,13 +31,16 @@ namespace clickfly.ViewModels
         public void ThenInclude<T>(IncludeModel IncludeModel)
         {
             IncludeModel.TableName = GetTableName<T>();
+            List<string> IncludeAttributes = IncludeModel.Attributes.Include;
+            List<string> ExcludeAttributes = IncludeModel.Attributes.Exclude;
 
-            if(IncludeModel.Attributes.Length == 0)
+            if(IncludeAttributes.Count == 0)
             {
-                IncludeModel.Attributes = GetAttributes<T>();
+                IncludeModel.Attributes.Include = GetAttributes<T>(ExcludeAttributes);
             }
 
             Includes.Add(IncludeModel);
+            Slapper.AutoMapper.Configuration.AddIdentifier(typeof(T), "id");
         }
 
         public void AddRawAttribute(string Name, string Query)

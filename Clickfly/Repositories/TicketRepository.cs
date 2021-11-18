@@ -145,7 +145,6 @@ namespace clickfly.Repositories
             queryParams.Add("limit", limit);
             queryParams.Add("offset", offset);
 
-            options.As = "ticket";
             options.Where = whereSql;
             options.Params = queryParams;
             options.Include<Passenger>(includePassenger);

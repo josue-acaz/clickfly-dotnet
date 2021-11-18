@@ -8,6 +8,7 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using BCryptNet = BCrypt.Net.BCrypt;
 using Npgsql;
+using System.Linq;
 
 namespace clickfly.Repositories
 {
@@ -67,14 +68,17 @@ namespace clickfly.Repositories
             IncludeModel includeCustomerCards = new IncludeModel();
             includeCustomerCards.As = "cards";
             includeCustomerCards.ForeignKey = "customer_id";
+            includeCustomerCards.BelongsTo = true;
 
             IncludeModel includeCustomerFriends = new IncludeModel();
             includeCustomerFriends.As = "friends";
             includeCustomerFriends.ForeignKey = "customer_id";
+            includeCustomerFriends.BelongsTo = true;
 
             IncludeModel includeCustomerAddresses = new IncludeModel();
             includeCustomerAddresses.As = "addresses";
             includeCustomerAddresses.ForeignKey = "customer_id";
+            includeCustomerAddresses.BelongsTo = true;
 
             QueryOptions queryOptions = new QueryOptions();
             queryOptions.As = "customer";
@@ -87,7 +91,6 @@ namespace clickfly.Repositories
             queryOptions.AddRawAttribute("thumbnail", customerThumbnailSql);
 
             Customer customer = await _dBAccess.QuerySingleAsync<Customer>(queryOptions);
-            
             return customer;
         }
 

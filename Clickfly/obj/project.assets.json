@@ -1291,6 +1291,15 @@
           "lib/netcoreapp3.1/SixLabors.ImageSharp.dll": {}
         }
       },
+      "Slapper.AutoMapper/2.0.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/Slapper.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.1/Slapper.dll": {}
+        }
+      },
       "Swashbuckle.AspNetCore/5.6.3": {
         "type": "package",
         "dependencies": {
@@ -4380,6 +4389,20 @@
         "sixlabors.imagesharp.1.0.4.nupkg.sha512",
         "sixlabors.imagesharp.128.png",
         "sixlabors.imagesharp.nuspec"
+      ]
+    },
+    "Slapper.AutoMapper/2.0.5": {
+      "sha512": "SDA66WBQSaomaCMFK9+l/bNWHl5p+AZK/yRhH+nQ9ZYCNgnYnIe148qyb9FPtAQHSj7M7Wpoo3jzCc/Bc5IVDA==",
+      "type": "package",
+      "path": "slapper.automapper/2.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "lib/net47/Slapper.dll",
+        "lib/netstandard2.1/Slapper.dll",
+        "slapper.automapper.2.0.5.nupkg.sha512",
+        "slapper.automapper.nuspec"
       ]
     },
     "Swashbuckle.AspNetCore/5.6.3": {
@@ -8154,6 +8177,7 @@
       "QRCoder >= 1.4.1",
       "RazorEngine.NetCore >= 3.1.0",
       "SixLabors.ImageSharp >= 1.0.4",
+      "Slapper.AutoMapper >= 2.0.5",
       "Swashbuckle.AspNetCore >= 5.6.3",
       "System.Drawing.Common >= 5.0.2"
     ]
@@ -8301,6 +8325,10 @@
           "SixLabors.ImageSharp": {
             "target": "Package",
             "version": "[1.0.4, )"
+          },
+          "Slapper.AutoMapper": {
+            "target": "Package",
+            "version": "[2.0.5, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
