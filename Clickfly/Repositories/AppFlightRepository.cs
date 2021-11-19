@@ -193,8 +193,7 @@ namespace clickfly.Repositories
                 AND flight_segment.type = 'trip'
                 AND origin_aerodrome.city_id = @origin_city_id
                 AND destination_aerodrome.city_id = @destination_city_id
-                AND (({availableSeatsSql}) - @selected_seats) >= 0 
-                AND flight_segment.departure_datetime > '{currentDatetime}'::date + (120 * interval '1 minute')
+                
                 LIMIT @limit OFFSET @offset
             ";
 

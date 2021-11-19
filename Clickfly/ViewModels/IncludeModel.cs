@@ -28,11 +28,24 @@ namespace clickfly.ViewModels
             RawAttributes = new List<RawAttribute>();
         }
 
+        public string GetForeignKey()
+        {
+            return "";
+        }
+
         public void ThenInclude<T>(IncludeModel IncludeModel)
         {
             IncludeModel.TableName = GetTableName<T>();
             List<string> IncludeAttributes = IncludeModel.Attributes.Include;
             List<string> ExcludeAttributes = IncludeModel.Attributes.Exclude;
+
+            bool belongsTo = HasProperty<T>(IncludeModel.ForeignKey);
+            IncludeModel.BelongsTo = belongsTo;
+
+            if(!belongsTo) // Remover da consulta a FK
+            {
+                Attributes.Exclude.Add(IncludeModel.ForeignKey);
+            }
 
             if(IncludeAttributes.Count == 0)
             {

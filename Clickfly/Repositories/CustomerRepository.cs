@@ -68,22 +68,24 @@ namespace clickfly.Repositories
             IncludeModel includeCustomerCards = new IncludeModel();
             includeCustomerCards.As = "cards";
             includeCustomerCards.ForeignKey = "customer_id";
-            includeCustomerCards.BelongsTo = true;
 
             IncludeModel includeCustomerFriends = new IncludeModel();
             includeCustomerFriends.As = "friends";
             includeCustomerFriends.ForeignKey = "customer_id";
-            includeCustomerFriends.BelongsTo = true;
 
             IncludeModel includeCustomerAddresses = new IncludeModel();
             includeCustomerAddresses.As = "addresses";
             includeCustomerAddresses.ForeignKey = "customer_id";
-            includeCustomerAddresses.BelongsTo = true;
+
+            /*Verificar porque com o atributo password_hash o Slapper.Automapper Crasha*/
+            List<string> excludeAttributes = new List<string>();
+            excludeAttributes.Add("password_hash");
 
             QueryOptions queryOptions = new QueryOptions();
             queryOptions.As = "customer";
             queryOptions.Where = $"{whereSql} AND customer.id = @id";
             queryOptions.Params = new { id = id };
+            queryOptions.Attributes.Exclude = excludeAttributes;
 
             queryOptions.Include<CustomerCard>(includeCustomerCards);
             queryOptions.Include<CustomerFriend>(includeCustomerFriends);

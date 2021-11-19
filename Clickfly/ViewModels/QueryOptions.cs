@@ -24,8 +24,22 @@ namespace clickfly.ViewModels
         {
             IncludeModel.TableName = GetTableName<T>();
 
+            // Verificar se existe confronto da alias com o id da table
+            // Por exemplo, a table Passenger, tem o alias "passenger" o que fica "passenger_id" em uma relacionamento, o que iria gerar um conflito com a FK
+            // Já a tabela AircraftModel tem o alias "model", isso fica "model_id" o que não irá gerar conflito na tabela, e consequentemente a FK da tabela pai virá null pela regra de remoção da FK
+            string AsId = $"{IncludeModel.As}_id";
+
+            // Verificar se é belongsTo (Se a ForeignKey reside no modelo)
+            bool belongsTo = HasProperty<T>(IncludeModel.ForeignKey);
+            IncludeModel.BelongsTo = belongsTo;
+
             List<string> IncludeAttributes = IncludeModel.Attributes.Include;
             List<string> ExcludeAttributes = IncludeModel.Attributes.Exclude;
+
+            if(!belongsTo && AsId == IncludeModel.ForeignKey) // Remover da consulta a FK
+            {
+                Attributes.Exclude.Add(IncludeModel.ForeignKey); // Excluir da consulta pai
+            }
             
             if(IncludeAttributes.Count == 0)
             {

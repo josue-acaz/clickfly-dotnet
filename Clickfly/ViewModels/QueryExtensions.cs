@@ -29,6 +29,22 @@ namespace clickfly.ViewModels
             return contains;
         }
 
+        protected bool HasProperty<T>(string propertyName)
+        {
+            bool hasProperty = false;
+
+            PropertyInfo[] propertyInfos = typeof(T).GetProperties();
+            foreach (PropertyInfo propertyInfo in propertyInfos)
+            {
+                if(propertyInfo.Name == propertyName)
+                {
+                    hasProperty = true;
+                }
+            }
+
+            return hasProperty;
+        }
+
         protected List<Property> GetProperties<Type>()
         {
             List<Property> properties = new List<Property>();
@@ -43,33 +59,10 @@ namespace clickfly.ViewModels
                 property.Type = propertyInfo.PropertyType;
 
                 bool isNotMapped = ContainsProperty<NotMappedAttribute>(propertyInfo);
-                bool isForeignKey = ContainsProperty<ForeignKeyAttribute>(propertyInfo);
-                
-                bool notForeignKey = false;
-                if(isForeignKey)
-                {
-                    ForeignKeyAttribute foreignKeyAttribute = propertyInfo.GetCustomAttribute<ForeignKeyAttribute>();
-                    if(foreignKeyAttribute != null)
-                    {
-                        string foreignKeyName = foreignKeyAttribute.Name;
-                        foreignKeys.Add(foreignKeyName);
 
-                        int propertyIndexFK = properties.FindIndex(PR => PR.Name == foreignKeyName);
-                        notForeignKey = propertyIndexFK == -1;
-                        if(!notForeignKey)
-                        {
-                            properties.RemoveAt(propertyIndexFK);
-                        }
-                    }
-                }
-
-                if(!isNotMapped && !isForeignKey)
+                if(!isNotMapped)
                 {
-                    notForeignKey = foreignKeys.FindIndex(FK => property.Name == FK) == -1;
-                    if(notForeignKey)
-                    {
-                        properties.Add(property);
-                    }
+                    properties.Add(property);
                 }
             }
 
@@ -88,6 +81,9 @@ namespace clickfly.ViewModels
 
                 if(
                     propertyType == typeof(System.Int32) ||
+                    propertyType == typeof(System.Boolean) ||
+                    propertyType == typeof(System.Decimal) ||
+                    propertyType == typeof(System.Single) ||
                     propertyType == typeof(System.String) ||
                     propertyType == typeof(System.DateTime) ||
                     propertyType == typeof(System.DateTime?) ||
@@ -265,6 +261,31 @@ namespace clickfly.ViewModels
 }
 
 /*
+
+RELACIONAMENTO ONE TO ONE
+
+Has One -> Modelo de referência
+Belongs To -> Onde reside a ForeignKey
+
+Exemplo:
+
+    Passenger has One Ticket
+    Ticket belongs To Passenger
+
+    -- TABLE PASSENGER --
+    Ticket ticket;
+
+    -- TABLE TICKET --
+    Passenger passenger;
+    FK string passenger_id;
+
+
+    QUERY EXAMPLE
+    queryOptions.Include<Passenger>(includePassenger); <- REMOVER O ATRIBUTO passenger_id de Ticket
+    Ticket ticket = await _dbAccess.QuerySingleAsync<Ticket>(queryOptions);
+*/
+
+/*
 protected string GetAttributesSql(List<IncludeModel> includeModels, string parentAs, bool nv1)
         {
             string attributesSql = $"";
@@ -304,5 +325,54 @@ protected string GetAttributesSql(List<IncludeModel> includeModels, string paren
             }
 
             return attributesSql;
+        }
+*/
+
+/*
+protected List<Property> GetProperties<Type>()
+        {
+            List<Property> properties = new List<Property>();
+            PropertyInfo[] propertyInfos = typeof(Type).GetProperties();
+
+            List<string> foreignKeys = new List<string>();
+
+            foreach (PropertyInfo propertyInfo in propertyInfos)
+            {
+                Property property = new Property();
+                property.Name = propertyInfo.Name;
+                property.Type = propertyInfo.PropertyType;
+
+                bool isNotMapped = ContainsProperty<NotMappedAttribute>(propertyInfo);
+                bool isForeignKey = ContainsProperty<ForeignKeyAttribute>(propertyInfo);
+                
+                bool notForeignKey = false;
+                if(isForeignKey)
+                {
+                    ForeignKeyAttribute foreignKeyAttribute = propertyInfo.GetCustomAttribute<ForeignKeyAttribute>();
+                    if(foreignKeyAttribute != null)
+                    {
+                        string foreignKeyName = foreignKeyAttribute.Name;
+                        foreignKeys.Add(foreignKeyName);
+
+                        int propertyIndexFK = properties.FindIndex(PR => PR.Name == foreignKeyName);
+                        notForeignKey = propertyIndexFK == -1;
+                        if(!notForeignKey)
+                        {
+                            properties.RemoveAt(propertyIndexFK);
+                        }
+                    }
+                }
+
+                if(!isNotMapped && !isForeignKey)
+                {
+                    notForeignKey = foreignKeys.FindIndex(FK => property.Name == FK) == -1;
+                    if(notForeignKey)
+                    {
+                        properties.Add(property);
+                    }
+                }
+            }
+
+            return properties;
         }
 */

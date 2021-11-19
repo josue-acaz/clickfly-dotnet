@@ -61,6 +61,7 @@ namespace clickfly.Repositories
 
         public async Task<Aircraft> GetById(string id)
         {
+            /*
             IncludeModel includeAircraftModel = new IncludeModel();
             includeAircraftModel.As = "model";
             includeAircraftModel.ForeignKey = "aircraft_model_id";
@@ -70,6 +71,25 @@ namespace clickfly.Repositories
             queryOptions.Params = new { id = id };
             queryOptions.AddRawAttribute("thumbnail", aircraftThumbnailSql);
             queryOptions.AddRawAttribute("seating_map", aircraftSeatingMapSql);
+            queryOptions.Include<AircraftModel>(includeAircraftModel);
+
+            Aircraft aircraft = await _dBAccess.QuerySingleAsync<Aircraft>(queryOptions);
+            */
+
+            IncludeModel includeAircraftModel = new IncludeModel();
+            includeAircraftModel.As = "model";
+            includeAircraftModel.ForeignKey = "aircraft_model_id";
+
+            IncludeModel includeFlight = new IncludeModel();
+            includeFlight.As = "flights";
+            includeFlight.Where = "flights.excluded = false";
+            includeFlight.ForeignKey = "aircraft_id";
+
+            QueryOptions queryOptions = new QueryOptions();
+            queryOptions.As = "aircraft";
+            queryOptions.Where = $"{whereSql} AND aircraft.id = @id";
+            queryOptions.Params = new { id = id };
+            queryOptions.Include<Flight>(includeFlight);
             queryOptions.Include<AircraftModel>(includeAircraftModel);
 
             Aircraft aircraft = await _dBAccess.QuerySingleAsync<Aircraft>(queryOptions);
