@@ -3,14 +3,27 @@ using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
+using Microsoft.Extensions.Options;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
-    public class TimezoneService : ITimezoneService
+    public class TimezoneService : BaseService, ITimezoneService
     {
         private readonly ITimezoneRepository _timezoneRepository;
 
-        public TimezoneService(ITimezoneRepository timezoneRepository)
+        public TimezoneService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            ITimezoneRepository timezoneRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _timezoneRepository = timezoneRepository;
         }

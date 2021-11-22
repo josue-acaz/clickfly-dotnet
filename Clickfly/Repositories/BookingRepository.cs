@@ -40,9 +40,6 @@ namespace clickfly.Repositories
         public async Task<PaginationResult<Booking>> Pagination(PaginationFilter filter)
         {
             string customerId = filter.customer_id;
-
-            filter.page_number = 2;
-
             List<Booking> bookings = await _dataContext.Bookings
                 .Include(booking => booking.status)
                 .Include(booking => booking.payments)

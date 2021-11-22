@@ -3,14 +3,27 @@ using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
+using clickfly.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace clickfly.Services
 {
-    public class FlightService : IFlightService
+    public class FlightService : BaseService, IFlightService
     {
         private readonly IFlightRepository _flightRepository;
 
-        public FlightService(IFlightRepository flightRepository)
+        public FlightService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            IFlightRepository flightRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _flightRepository = flightRepository;
         }
@@ -28,6 +41,9 @@ namespace clickfly.Services
 
         public async Task<PaginationResult<Flight>> Pagination(PaginationFilter filter)
         {
+            User user = _informer.GetValue<User>(UserTypes.User);
+            filter.air_taxi_id = user.air_taxi_id;
+
             PaginationResult<Flight> paginationResult = await _flightRepository.Pagination(filter);
             return paginationResult;
         }
@@ -42,6 +58,9 @@ namespace clickfly.Services
             }
             else
             {
+                User user = _informer.GetValue<User>(UserTypes.User);
+                flight.air_taxi_id = user.air_taxi_id;
+
                 flight = await _flightRepository.Create(flight);
             }
 

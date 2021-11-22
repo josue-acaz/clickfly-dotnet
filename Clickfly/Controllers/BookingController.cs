@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
@@ -16,7 +17,16 @@ namespace clickfly.Controllers
     {
         private readonly IBookingService _bookingService;
 
-        public BookingController(IDataContext dataContext, IInformer informer, IBookingService bookingService) : base(dataContext, informer)
+        public BookingController(
+            IDataContext dataContext, 
+            IInformer informer, 
+            INotificator notificator,
+            IBookingService bookingService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _bookingService = bookingService;
         }
@@ -37,9 +47,8 @@ namespace clickfly.Controllers
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
-
-            filter.customer_id = customerId;            
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+           
             PaginationResult<Booking> bookings = await _bookingService.Pagination(filter);
             return HttpResponse(bookings);
         }

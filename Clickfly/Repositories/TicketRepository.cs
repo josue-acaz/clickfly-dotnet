@@ -71,12 +71,22 @@ namespace clickfly.Repositories
             includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
             includeDestinationAerodrome.ThenInclude<City>(includeCity);
 
+            IncludeModel includeAirTaxi = new IncludeModel();
+            includeAirTaxi.As = "air_taxi";
+            includeAirTaxi.ForeignKey = "air_taxi_id";
+
+            IncludeModel includeFlight = new IncludeModel();
+            includeFlight.As = "flight";
+            includeFlight.ForeignKey = "flight_id";
+            includeFlight.ThenInclude<AirTaxi>(includeAirTaxi);
+
             IncludeModel includeFlightSegment = new IncludeModel();
             includeFlightSegment.As = "flight_segment";
             includeFlightSegment.ForeignKey = "flight_segment_id";
             includeFlightSegment.ThenInclude<Aircraft>(includeAircraft);
             includeFlightSegment.ThenInclude<Aerodrome>(includeOriginAerodrome);
             includeFlightSegment.ThenInclude<Aerodrome>(includeDestinationAerodrome);
+            includeFlightSegment.ThenInclude<Flight>(includeFlight);
 
             IncludeModel includePassenger = new IncludeModel();
             includePassenger.As = "passenger";

@@ -1,11 +1,12 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Exceptions;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
@@ -14,7 +15,19 @@ namespace clickfly.Services
         private readonly IAirTaxiRepository _airTaxiRepository;
         private readonly IAccessTokenRepository _accessTokenRepository;
 
-        public AirTaxiService(IAirTaxiRepository airTaxiRepository, IOptions<AppSettings> appSettings, IUtils utils, IAccessTokenRepository accessTokenRepository) : base(appSettings, utils)
+        public AirTaxiService(
+            IAirTaxiRepository airTaxiRepository, 
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils, 
+            IAccessTokenRepository accessTokenRepository
+        ) : base(
+            appSettings, 
+            notificator, 
+            informer,
+            utils
+        )
         {
             _airTaxiRepository = airTaxiRepository;
             _accessTokenRepository = accessTokenRepository;

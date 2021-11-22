@@ -11,6 +11,7 @@ using RazorEngine.Templating;
 using System.IO;
 using clickfly.ViewModels;
 using Microsoft.Extensions.Options;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
@@ -20,9 +21,20 @@ namespace clickfly.Services
         private string SMTP_USERNAME { get; set; }
         private string SMTP_PASSWORD { get; set; }
         private string HOST { get; set; }
-        private int PORT = 587;
+        private int PORT { get; set; } = 587;
 
-        public EmailService(HttpClient client, IOptions<AppSettings> appSettings, IUtils utils) : base(appSettings, utils)
+        public EmailService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils, 
+            HttpClient client
+        ) : base(
+            appSettings, 
+            notificator, 
+            informer,
+            utils
+        )
         {   
             HOST = _appSettings.SmtpHost;
             PORT = _appSettings.SmtpPort;

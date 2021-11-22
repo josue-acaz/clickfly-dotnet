@@ -6,11 +6,13 @@ using CoordinateSharp;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.ViewModels;
 using clickfly.Services;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/cores")]
     public class CoreController : BaseController
     {
@@ -18,7 +20,18 @@ namespace clickfly.Controllers
         private readonly IAerodromeService _aerodromeService;
         private readonly ICepService _cepService;
 
-        public CoreController(IDataContext dataContext, IInformer informer, ICoreService coreService, ICepService cepService, IAerodromeService aerodromeService) : base(dataContext, informer)
+        public CoreController(
+            IDataContext dataContext, 
+            IInformer informer, 
+            INotificator notificator,
+            ICoreService coreService, 
+            ICepService cepService, 
+            IAerodromeService aerodromeService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _coreService = coreService;
             _cepService = cepService;

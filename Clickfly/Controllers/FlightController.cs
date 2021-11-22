@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 using Newtonsoft.Json;
@@ -17,7 +18,16 @@ namespace clickfly.Controllers
     {
         private readonly IFlightService _flightService;
 
-        public FlightController(IDataContext dataContext, IInformer informer, IFlightService flightService) : base(dataContext, informer)
+        public FlightController(
+            IDataContext dataContext, 
+            IInformer informer, 
+            INotificator notificator,
+            IFlightService flightService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _flightService = flightService;
         }
@@ -33,11 +43,9 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Save([FromBody]Flight flight)
         {
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            User user = _informer.GetValue<User>(UserTypes.User);
             
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            flight.air_taxi_id = user.air_taxi_id;
             flight = await _flightService.Save(flight);
             await transaction.CommitAsync();
 
@@ -48,11 +56,8 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            User user = _informer.GetValue<User>(UserTypes.User);
-
-            filter.air_taxi_id = user.air_taxi_id;
-            PaginationResult<Flight> flights = await _flightService.Pagination(filter);
             
+            PaginationResult<Flight> flights = await _flightService.Pagination(filter);
             return HttpResponse(flights);
         }
     }

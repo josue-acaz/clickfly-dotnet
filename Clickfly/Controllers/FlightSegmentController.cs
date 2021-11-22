@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
@@ -15,12 +16,22 @@ namespace clickfly.Controllers
     {
         private readonly IFlightSegmentService _flightSegmentService;
 
-        public FlightSegmentController(IDataContext dataContext, IInformer informer, IFlightSegmentService flightSegmentService) : base(dataContext, informer)
+        public FlightSegmentController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            IFlightSegmentService flightSegmentService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _flightSegmentService = flightSegmentService;
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<FlightSegment>> GetById(string id)
         {
             FlightSegment flightSegment = await _flightSegmentService.GetById(id);

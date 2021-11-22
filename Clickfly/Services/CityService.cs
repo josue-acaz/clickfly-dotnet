@@ -3,17 +3,32 @@ using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
+using clickfly.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace clickfly.Services
 {
-    public class CityService : ICityService
+    public class CityService : BaseService, ICityService
     {
         private readonly ICityRepository _cityRepository;
         private readonly ITimezoneRepository _timezoneRepository;
 
         private readonly IStateRepository _stateRepository;
 
-        public CityService(ICityRepository cityRepository, ITimezoneRepository timezoneRepository, IStateRepository stateRepository)
+        public CityService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            ICityRepository cityRepository, 
+            ITimezoneRepository timezoneRepository, 
+            IStateRepository stateRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _cityRepository = cityRepository;
             _timezoneRepository = timezoneRepository;

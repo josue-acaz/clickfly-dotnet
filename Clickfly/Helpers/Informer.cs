@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using clickfly.ViewModels;
 using Newtonsoft.Json;
 
-namespace clickfly
+namespace clickfly.Helpers
 {
     public class Informer : IInformer
     {

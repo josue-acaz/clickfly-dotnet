@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
@@ -16,7 +17,16 @@ namespace clickfly.Controllers
     {
         private readonly ICustomerAddressService _customerAddressService;
 
-        public CustomerAddressController(IDataContext dataContext, IInformer informer, ICustomerAddressService customerAddressService) : base(dataContext, informer)
+        public CustomerAddressController(
+            IDataContext dataContext, 
+            IInformer informer, 
+            INotificator notificator,
+            ICustomerAddressService customerAddressService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _customerAddressService = customerAddressService;
         }

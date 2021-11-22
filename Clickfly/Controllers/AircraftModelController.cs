@@ -5,24 +5,34 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 using Microsoft.AspNetCore.Http;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/aircraft-models")]
     public class AircraftModelController : BaseController
     {
         private readonly IAircraftModelService _aircraftModelService;
 
-        public AircraftModelController(IDataContext dataContext, IInformer informer, IAircraftModelService aircraftModelService) : base(dataContext, informer)
+        public AircraftModelController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            IAircraftModelService aircraftModelService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _aircraftModelService = aircraftModelService;
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]AircraftModel aircraftModel)
         {
             using var transaction = _dataContext.Database.BeginTransaction();
@@ -34,7 +44,6 @@ namespace clickfly.Controllers
         }
 
         [HttpGet("autocomplete")]
-        [AllowAnonymous]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
             IEnumerable<AircraftModel> aircraftModels = await _aircraftModelService.Autocomplete(autocompleteParams);

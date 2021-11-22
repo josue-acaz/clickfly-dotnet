@@ -15,6 +15,7 @@ namespace clickfly.Data
         DbSet<Aerodrome> Aerodromes { get; set; }
         DbSet<AirTaxi> AirTaxis { get; set; }
         DbSet<User> Users { get; set; }
+        DbSet<UserRole> UserRoles { get; set; }
         DbSet<AirTaxiBase> AirTaxiBases { get; set; }
         DbSet<Manufacturer> Manufacturers { get; set; }
         DbSet<AircraftModel> AircraftModels { get; set; }
@@ -35,6 +36,10 @@ namespace clickfly.Data
         DbSet<Passenger> Passengers { get; set; }
         DbSet<Ticket> Tickets { get; set; }
         DbSet<AccessToken> AccessTokens { get; set; }
+        DbSet<FlightSegmentStatus> FlightSegmentStatus { get; set; }
+        DbSet<Permission> Permissions { get; set; }
+        DbSet<PermissionGroup> PermissionGroups { get; set; }
+        DbSet<PermissionResource> PermissionResources { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

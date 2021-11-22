@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using clickfly.Data;
-using clickfly.Repositories;
+using clickfly.Helpers;
 using clickfly.Services;
+using clickfly.Repositories;
 using clickfly.Middlewares;
 using clickfly.ViewModels;
 using PagarmeCoreApi.Standard.Controllers;
@@ -17,8 +18,9 @@ namespace clickfly.Configs
             services.AddScoped<IDataContext, DataContext>();
             services.AddScoped<IDBContext, DBContext>();
             services.AddScoped<IInformer, Informer>();
-            services.AddScoped<IUtils, Utils>();
+            services.AddScoped<INotificator, Notificator>();
             services.AddScoped<IDBAccess, DBAccess>();
+            services.AddScoped<IUtils, Utils>();
 
             services.AddScoped<IStateService, StateService>();
             services.AddScoped<IStateRepository, StateRepository>();

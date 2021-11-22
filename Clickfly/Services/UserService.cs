@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
@@ -19,7 +20,13 @@ namespace clickfly.Services
     {
         private readonly IUserRepository _userRepository;
 
-        public UserService(IOptions<AppSettings> appSettings, IUtils utils, IUserRepository userRepository) : base(appSettings, utils)
+        public UserService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils, 
+            IUserRepository userRepository
+        ) : base(appSettings, notificator, informer, utils)
         {
             _userRepository = userRepository;
         }

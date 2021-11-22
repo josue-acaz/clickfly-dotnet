@@ -3,14 +3,27 @@ using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
+using clickfly.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace clickfly.Services
 {
-    public class StateService : IStateService
+    public class StateService : BaseService, IStateService
     {
         private readonly IStateRepository _stateRepository;
 
-        public StateService(IStateRepository stateRepository)
+        public StateService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            IStateRepository stateRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _stateRepository = stateRepository;
         }

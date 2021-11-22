@@ -4,6 +4,7 @@ using clickfly.Models;
 using clickfly.Repositories;
 using clickfly.ViewModels;
 using clickfly.Exceptions;
+using clickfly.Helpers;
 using PagarmeCoreApi.Standard.Controllers;
 using PagarmeCoreApi.Standard.Models;
 using BCryptNet = BCrypt.Net.BCrypt;
@@ -25,7 +26,16 @@ namespace clickfly.Services
         private readonly IFileRepository _fileRepository;
         private readonly IUploadService _uploadService;
 
-        public CustomerService(IOptions<AppSettings> appSettings, IUtils utils, ICustomerRepository customerRepository, IFileRepository fileRepository, IUploadService uploadService, ICustomersController customersController) : base(appSettings, utils)
+        public CustomerService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils, 
+            ICustomerRepository customerRepository, 
+            IFileRepository fileRepository, 
+            IUploadService uploadService, 
+            ICustomersController customersController
+        ) : base(appSettings, notificator, informer, utils)
         {
             _customerRepository = customerRepository;
             _customersController = customersController;

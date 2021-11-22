@@ -4,16 +4,30 @@ using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Exceptions;
+using clickfly.Helpers;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 
 namespace clickfly.Services
 {
-    public class AerodromeService : IAerodromeService
+    public class AerodromeService : BaseService, IAerodromeService
     {
         private readonly IAerodromeRepository _aerodromeRepository;
         private readonly ICityRepository _cityRepository;
 
-        public AerodromeService(IAerodromeRepository aerodromeRepository, ICityRepository cityRepository)
+        public AerodromeService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            IAerodromeRepository aerodromeRepository, 
+            ICityRepository cityRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _aerodromeRepository = aerodromeRepository;
             _cityRepository = cityRepository;

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.Repositories;
 using clickfly.ViewModels;
+using clickfly.Helpers;
 using Microsoft.Extensions.Options;
 
 namespace clickfly.Services
@@ -11,7 +12,18 @@ namespace clickfly.Services
     {
         private readonly ITicketRepository _ticketRepository;
 
-        public TicketService(IOptions<AppSettings> appSettings, IUtils utils, ITicketRepository ticketRepository) : base(appSettings, utils)
+        public TicketService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils, 
+            ITicketRepository ticketRepository
+        ) : base(
+            appSettings, 
+            notificator, 
+            informer,
+            utils
+        )
         {
             _ticketRepository = ticketRepository;
         }

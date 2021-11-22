@@ -21,6 +21,7 @@ namespace clickfly.Data
         public DbSet<Aerodrome> Aerodromes { get; set; }
         public DbSet<AirTaxi> AirTaxis { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<AirTaxiBase> AirTaxiBases { get; set; }
         public DbSet<Manufacturer> Manufacturers { get; set; }
         public DbSet<AircraftModel> AircraftModels { get; set; }
@@ -41,6 +42,10 @@ namespace clickfly.Data
         public DbSet<Passenger> Passengers { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<AccessToken> AccessTokens { get; set; }
+        public DbSet<FlightSegmentStatus> FlightSegmentStatus { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<PermissionGroup> PermissionGroups { get; set; }
+        public DbSet<PermissionResource> PermissionResources { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

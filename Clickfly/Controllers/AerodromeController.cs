@@ -5,23 +5,33 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/aerodromes")]
     public class AerodromeController : BaseController
     {
         private readonly IAerodromeService _aerodromeService;
 
-        public AerodromeController(IDataContext dataContext, IInformer informer, IAerodromeService aerodromeService) : base(dataContext, informer)
+        public AerodromeController(
+            IDataContext dataContext, 
+            INotificator notificator, 
+            IInformer informer, 
+            IAerodromeService aerodromeService
+        ) : base(
+            dataContext, 
+            notificator, 
+            informer
+        )
         {
             _aerodromeService = aerodromeService;
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]Aerodrome aerodrome)
         {
             using var transaction = _dataContext.Database.BeginTransaction();
@@ -33,16 +43,13 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
             PaginationResult<Aerodrome> aerodromes = await _aerodromeService.Pagination(filter);
-            
             return HttpResponse(aerodromes);
         }
 
         [HttpGet("autocomplete")]
-        [AllowAnonymous]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
             IEnumerable<Aerodrome> aerodromes = await _aerodromeService.Autocomplete(autocompleteParams);

@@ -1,19 +1,34 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.ViewModels;
 using clickfly.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace clickfly.Services
 {
-    public class AircraftImageService : IAircraftImageService
+    public class AircraftImageService : BaseService, IAircraftImageService
     {
         private readonly IAircraftImageRepository _aircraftImageRepository;
         private readonly IFileRepository _fileRepository;
         private readonly IUploadService _uploadService;
 
-        public AircraftImageService(IAircraftImageRepository aircraftImageRepository, IFileRepository fileRepository, IUploadService uploadService)
+        public AircraftImageService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            IAircraftImageRepository aircraftImageRepository, 
+            IFileRepository fileRepository, 
+            IUploadService uploadService
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _aircraftImageRepository = aircraftImageRepository;
             _fileRepository = fileRepository;

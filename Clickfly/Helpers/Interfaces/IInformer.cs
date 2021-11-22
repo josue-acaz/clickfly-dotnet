@@ -1,7 +1,7 @@
 using System;
 using clickfly.ViewModels;
 
-namespace clickfly
+namespace clickfly.Helpers
 {
     public interface IInformer
     {

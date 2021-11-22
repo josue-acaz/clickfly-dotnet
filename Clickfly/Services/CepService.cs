@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using clickfly.ViewModels;
 using Microsoft.Extensions.Options;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
@@ -14,7 +15,13 @@ namespace clickfly.Services
         private readonly HttpClient _httClient;
         private string _format = "json";
 
-        public CepService(HttpClient client, IOptions<AppSettings> appSettings, IUtils utils) : base(appSettings, utils)
+        public CepService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils, 
+            HttpClient client
+        ) : base(appSettings, notificator, informer, utils)
         {
             client.BaseAddress = new Uri(_appSettings.CepApiUrl);
             _httClient = client;

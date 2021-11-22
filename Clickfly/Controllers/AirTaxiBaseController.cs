@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
@@ -16,7 +17,16 @@ namespace clickfly.Controllers
     {
         private readonly IAirTaxiBaseService _airTaxiBaseService;
 
-        public AirTaxiBaseController(IDataContext dataContext, IInformer informer, IAirTaxiBaseService airTaxiBaseService) : base(dataContext, informer)
+        public AirTaxiBaseController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            IAirTaxiBaseService airTaxiBaseService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _airTaxiBaseService = airTaxiBaseService;
         }
@@ -24,12 +34,9 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]AirTaxiBase airTaxiBase)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            User user = _informer.GetValue<User>(UserTypes.User); 
-
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User); 
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            airTaxiBase.air_taxi_id = user.air_taxi_id;
             AirTaxiBase _airTaxiBase = await _airTaxiBaseService.Save(airTaxiBase);
             await transaction.CommitAsync();
 
@@ -47,9 +54,7 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            User user = _informer.GetValue<User>(UserTypes.User);
-
-            filter.air_taxi_id = user.air_taxi_id;
+            
             PaginationResult<AirTaxiBase> airTaxiBases = await _airTaxiBaseService.Pagination(filter);
             return HttpResponse(airTaxiBases);
         }

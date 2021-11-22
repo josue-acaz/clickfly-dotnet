@@ -6,6 +6,7 @@ using clickfly.Repositories;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Exceptions;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
@@ -14,7 +15,14 @@ namespace clickfly.Services
         private readonly IAircraftRepository _aircraftRepository;
         private readonly IFlightSegmentRepository _flightSegmentRepository;
 
-        public CoreService(IOptions<AppSettings> appSettings, IUtils utils, IAircraftRepository aircraftRepository, IFlightSegmentRepository flightSegmentRepository) : base(appSettings, utils)
+        public CoreService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils, 
+            IAircraftRepository aircraftRepository, 
+            IFlightSegmentRepository flightSegmentRepository
+        ) : base(appSettings, notificator, informer, utils)
         {
             _aircraftRepository = aircraftRepository;
             _flightSegmentRepository = flightSegmentRepository;

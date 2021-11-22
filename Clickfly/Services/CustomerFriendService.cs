@@ -3,14 +3,27 @@ using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
+using Microsoft.Extensions.Options;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
-    public class CustomerFriendService : ICustomerFriendService
+    public class CustomerFriendService : BaseService, ICustomerFriendService
     {
         private readonly ICustomerFriendRepository _customerFriendRepository;
 
-        public CustomerFriendService(ICustomerFriendRepository customerFriendRepository)
+        public CustomerFriendService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            ICustomerFriendRepository customerFriendRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _customerFriendRepository = customerFriendRepository;
         }

@@ -4,23 +4,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/aircraft-images")]
     public class AircraftImageController : BaseController
     {
         private readonly IAircraftImageService _aircraftImageService;
 
-        public AircraftImageController(IDataContext dataContext, IInformer informer, IAircraftImageService aircraftImageService) : base(dataContext, informer)
+        public AircraftImageController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            IAircraftImageService aircraftImageService
+        ) : base(
+            dataContext, 
+            notificator, 
+            informer
+        )
         {
             _aircraftImageService = aircraftImageService;
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromForm]AircraftImage aircraftImage)
         {
             using var transaction = _dataContext.Database.BeginTransaction();
@@ -31,7 +41,6 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]AircraftImagePaginationFilter filter)
         {
             PaginationResult<AircraftImage> aircraftImages = await _aircraftImageService.Pagination(filter);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,16 @@ namespace clickfly.Controllers
     {
         private readonly IAircraftService _aircraftService;
 
-        public AircraftController(IDataContext dataContext, IInformer informer, IAircraftService aircraftService) : base(dataContext, informer)
+        public AircraftController(
+            IDataContext dataContext, 
+            INotificator notificator, 
+            IInformer informer, 
+            IAircraftService aircraftService
+        ) : base(
+            dataContext, 
+            notificator, 
+            informer
+        )
         {
             _aircraftService = aircraftService;
         }
@@ -26,11 +36,8 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Save([FromBody]Aircraft aircraft)
         {  
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            User user = _informer.GetValue<User>(UserTypes.User); 
-            
             using var transaction = _dataContext.Database.BeginTransaction();
 
-            aircraft.air_taxi_id = user.air_taxi_id; // Atribui o id do táxi aéreo respectivo
             aircraft = await _aircraftService.Save(aircraft);
             await transaction.CommitAsync();
 
@@ -60,10 +67,8 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            User user = _informer.GetValue<User>(UserTypes.User); 
-
-            autocompleteParams.air_taxi_id = user.air_taxi_id;
             IEnumerable<Aircraft> aircrafts = await _aircraftService.Autocomplete(autocompleteParams);
+            
             return HttpResponse(aircrafts);
         }
 

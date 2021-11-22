@@ -6,22 +6,32 @@ using System.Collections.Generic;
 using clickfly.ViewModels;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/users")]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
 
-        public UserController(IDataContext dataContext, IInformer informer, IUserService userService) : base(dataContext, informer)
+        public UserController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            IUserService userService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _userService = userService;
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<User>> GetById(string id)
         {
             User user = await _userService.GetById(id);
@@ -29,7 +39,6 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]User user)
         {
             using var transaction = _dataContext.Database.BeginTransaction();
@@ -56,7 +65,6 @@ namespace clickfly.Controllers
 
         [HttpGet]
         [Route("authenticated")]
-        [Authorize]
         public string Authenticated() => String.Format("Autenticado - {0}", User.Identity.Name);
 
         [HttpGet]

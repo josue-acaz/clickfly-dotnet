@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using clickfly.Data;
+using clickfly.Helpers;
 using clickfly.ViewModels;
+using clickfly.Exceptions;
 
 namespace clickfly.Controllers
 {
@@ -15,16 +17,30 @@ namespace clickfly.Controllers
     public class BaseController : ControllerBase
     {
         protected readonly IInformer _informer;
+        protected readonly INotificator _notificator;
         protected readonly IDataContext _dataContext;
 
-        protected BaseController(IDataContext dataContext, IInformer informer)
+        protected BaseController(IDataContext dataContext, INotificator notificator, IInformer informer)
         {
             _informer = informer;
+            _notificator = notificator;
             _dataContext = dataContext;
+        }
+
+        protected void Notify(string message)
+        {
+            Notification notification = new Notification(message);
+            _notificator.HandleNotification(notification);
         }
 
         protected ActionResult HttpResponse(object result = null)
         {
+            if(_notificator.HasNotification())
+            {
+                IEnumerable<string> errors = _notificator.GetNotifications().Select(n => n.Message);
+                return BadRequest(errors);
+            }
+
             return Ok(result);
         }
 

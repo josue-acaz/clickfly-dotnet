@@ -5,14 +5,27 @@ using clickfly.ViewModels;
 using clickfly.Repositories;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
-    public class AircraftModelService : IAircraftModelService
+    public class AircraftModelService : BaseService, IAircraftModelService
     {
         private readonly IAircraftModelRepository _aircraftModelRepository;
 
-        public AircraftModelService(IAircraftModelRepository aircraftModelRepository)
+        public AircraftModelService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            IAircraftModelRepository aircraftModelRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _aircraftModelRepository = aircraftModelRepository;
         }

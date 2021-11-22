@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
@@ -14,7 +15,16 @@ namespace clickfly.Controllers
     {
         private readonly IAppFlightService _appFlightService;
 
-        public AppFlightController(IDataContext dataContext, IInformer informer, IAppFlightService appFlightService) : base(dataContext, informer)
+        public AppFlightController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            IAppFlightService appFlightService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _appFlightService = appFlightService;
         }

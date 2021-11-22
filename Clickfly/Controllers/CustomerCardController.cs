@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
@@ -16,7 +17,16 @@ namespace clickfly.Controllers
     {
         private readonly ICustomerCardService _customerCardService;
 
-        public CustomerCardController(IDataContext dataContext, IInformer informer, ICustomerCardService customerCardService) : base(dataContext, informer)
+        public CustomerCardController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            ICustomerCardService customerCardService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _customerCardService = customerCardService;
         }

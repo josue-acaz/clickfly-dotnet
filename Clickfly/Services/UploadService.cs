@@ -8,12 +8,9 @@ using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using clickfly.ViewModels;
-using OneSignal.RestAPIv3.Client;
-using OneSignal.RestAPIv3.Client.Resources.Notifications;
-using OneSignal.RestAPIv3.Client.Resources;
-using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
@@ -21,7 +18,17 @@ namespace clickfly.Services
     {
         private readonly RegionEndpoint regionEndpoint = RegionEndpoint.SAEast1;
 
-        public UploadService(IOptions<AppSettings> appSettings, IUtils utils) : base(appSettings, utils)
+        public UploadService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils
+        ) : base(
+            appSettings, 
+            notificator, 
+            informer,
+            utils
+        )
         {
             
         }

@@ -5,22 +5,32 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/states")]
     public class StateController : BaseController
     {
         private readonly IStateService _stateService;
 
-        public StateController(IDataContext dataContext, IInformer informer, IStateService stateService) : base(dataContext, informer)
+        public StateController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            IStateService stateService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _stateService = stateService;
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<State>> GetById(string id)
         {
             State state = await _stateService.GetById(id);
@@ -28,7 +38,6 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]State state)
         {
             using var transaction = _dataContext.Database.BeginTransaction();

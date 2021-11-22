@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
@@ -19,7 +20,19 @@ namespace clickfly.Controllers
         private readonly IEmailService _emailService;
         private readonly IUtils _utils;
 
-        public CustomerController(IDataContext dataContext, IInformer informer, ICustomerService customerService, IAccountVerificationService accountVerificationService, IEmailService emailService, IUtils utils) : base(dataContext, informer)
+        public CustomerController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            ICustomerService customerService, 
+            IAccountVerificationService accountVerificationService, 
+            IEmailService emailService, 
+            IUtils utils
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _customerService = customerService;
             _accountVerificationService = accountVerificationService;
@@ -28,7 +41,6 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]Customer customer)
         {
             using var transaction = _dataContext.Database.BeginTransaction();

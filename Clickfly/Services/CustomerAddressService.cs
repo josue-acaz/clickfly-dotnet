@@ -3,14 +3,27 @@ using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
+using Microsoft.Extensions.Options;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
-    public class CustomerAddressService : ICustomerAddressService
+    public class CustomerAddressService : BaseService, ICustomerAddressService
     {
         private readonly ICustomerAddressRepository _customerAddressRepository;
 
-        public CustomerAddressService(ICustomerAddressRepository customerAddressRepository)
+        public CustomerAddressService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            ICustomerAddressRepository customerAddressRepository
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _customerAddressRepository = customerAddressRepository;
         }

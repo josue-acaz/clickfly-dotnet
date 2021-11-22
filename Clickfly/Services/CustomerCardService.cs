@@ -6,6 +6,7 @@ using clickfly.Repositories;
 using PagarmeCoreApi.Standard.Controllers;
 using PagarmeCoreApi.Standard.Models;
 using Microsoft.Extensions.Options;
+using clickfly.Helpers;
 
 namespace clickfly.Services
 {
@@ -17,11 +18,13 @@ namespace clickfly.Services
 
         public CustomerCardService(
             IOptions<AppSettings> appSettings, 
+            INotificator notificator,
+            IInformer informer,
             IUtils utils, 
             ICustomerRepository customerRepository, 
             ICustomerCardRepository customerCardRepository, 
             ICustomersController customersController
-        ) : base(appSettings, utils)
+        ) : base(appSettings, notificator, informer, utils)
         {
             _customerRepository = customerRepository;
             _customerCardRepository = customerCardRepository;
@@ -61,14 +64,11 @@ namespace clickfly.Services
 
             Customer customer = await _customerRepository.GetById(customerId);
             string customer_id = customer.customer_id;
-
-            ListCardsResponse listCardsResponse = await _customersController.GetCardsAsync(customer_id, filter.page_number, filter.page_size);
-            GetCardResponse[] cardsResponse = listCardsResponse.Data.ToArray();
-
+            
             for (int index = 0; index < customerCards.Length; index++)
             {
                 CustomerCard customerCard = customerCards[index];
-                GetCardResponse cardResponse = Array.Find<GetCardResponse>(cardsResponse, cardsResponse => cardsResponse.Id == customerCard.card_id);
+                GetCardResponse cardResponse = await _customersController.GetCardAsync(customer_id, customerCard.card_id);
             
                 customerCard.brand = cardResponse.Brand;
                 customerCard.holder_name = cardResponse.HolderName;

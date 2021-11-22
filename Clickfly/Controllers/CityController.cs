@@ -5,22 +5,32 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/cities")]
     public class CityController : BaseController
     {
         private readonly ICityService _cityService;
 
-        public CityController(IDataContext dataContext, IInformer informer, ICityService cityService) : base(dataContext, informer)
+        public CityController(
+            IDataContext dataContext, 
+            IInformer informer, 
+            INotificator notificator,
+            ICityService cityService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _cityService = cityService;
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]City city)
         {
             using var transaction = _dataContext.Database.BeginTransaction();

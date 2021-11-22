@@ -5,22 +5,32 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/timezones")]
     public class TimezoneController : BaseController
     {
         private readonly ITimezoneService _timezoneService;
 
-        public TimezoneController(IDataContext dataContext, IInformer informer, ITimezoneService timezoneService) : base(dataContext, informer)
+        public TimezoneController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            ITimezoneService timezoneService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _timezoneService = timezoneService;
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]Timezone timezone)
         {
             using var transaction = _dataContext.Database.BeginTransaction();

@@ -5,23 +5,33 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
+    [Authorize]
     [Route("/tickets")]
     public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
 
-        public TicketController(IDataContext dataContext, IInformer informer, ITicketService ticketService) : base(dataContext, informer)
+        public TicketController(
+            IDataContext dataContext, 
+            INotificator notificator,
+            IInformer informer, 
+            ITicketService ticketService
+        ) : base(
+            dataContext, 
+            notificator,
+            informer
+        )
         {
             _ticketService = ticketService;
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Ticket>> GetById(string id)
         {
             Ticket ticket = await _ticketService.GetById(id);

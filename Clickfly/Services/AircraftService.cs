@@ -6,16 +6,31 @@ using clickfly.Repositories;
 using clickfly.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using clickfly.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace clickfly.Services
 {
-    public class AircraftService : IAircraftService
+    public class AircraftService : BaseService, IAircraftService
     {
         private readonly IAircraftRepository _aircraftRepository;
         private readonly IFileRepository _fileRepository;
         private readonly IUploadService _uploadService;
 
-        public AircraftService(IAircraftRepository aircraftRepository, IFileRepository fileRepository, IUploadService uploadService)
+        public AircraftService(
+            IOptions<AppSettings> appSettings, 
+            INotificator notificator, 
+            IInformer informer,
+            IUtils utils,
+            IAircraftRepository aircraftRepository, 
+            IFileRepository fileRepository, 
+            IUploadService uploadService
+        ) : base(
+            appSettings,
+            notificator,
+            informer,
+            utils
+        )
         {
             _aircraftRepository = aircraftRepository;
             _fileRepository = fileRepository;
@@ -46,13 +61,15 @@ namespace clickfly.Services
 
         public async Task<IEnumerable<Aircraft>> Autocomplete(AutocompleteParams autocompleteParams)
         {
+            User user = _informer.GetValue<User>(UserTypes.User);
+
             PaginationFilter filter = new PaginationFilter();
             filter.page_size = 10;
             filter.page_number = 1;
             filter.order = "DESC";
             filter.order_by = "created_at";
             filter.text = autocompleteParams.text;
-            filter.air_taxi_id = autocompleteParams.air_taxi_id;
+            filter.air_taxi_id = user.air_taxi_id;
 
             PaginationResult<Aircraft> paginationResult = await _aircraftRepository.Pagination(filter);
             List<Aircraft> aircrafts = paginationResult.data;
@@ -76,6 +93,9 @@ namespace clickfly.Services
             }
             else
             {
+                User user = _informer.GetValue<User>(UserTypes.User); 
+                aircraft.air_taxi_id = user.air_taxi_id;
+
                 aircraft = await _aircraftRepository.Create(aircraft);
             }
 

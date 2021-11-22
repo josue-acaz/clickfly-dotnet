@@ -55,6 +55,9 @@ namespace clickfly.Services
                 
                 flightSegment.number = number;
                 flightSegment = await _flightSegmentRepository.Create(flightSegment);
+
+                // Enviar notificação de novo voo
+                
             }
 
             return flightSegment;

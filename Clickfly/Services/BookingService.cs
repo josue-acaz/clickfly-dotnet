@@ -5,6 +5,7 @@ using clickfly.Models;
 using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Exceptions;
+using clickfly.Helpers;
 using PagarmeCoreApi.Standard.Models;
 using PagarmeCoreApi.Standard.Controllers;
 using System.Collections.Generic;
@@ -28,6 +29,8 @@ namespace clickfly.Services
 
         public BookingService(
             IOptions<AppSettings> appSettings, 
+            INotificator notificator,
+            IInformer informer,
             IUtils utils, 
             IBookingRepository bookingRepository, 
             ICustomerRepository customerRepository, 
@@ -40,7 +43,7 @@ namespace clickfly.Services
             IPassengerRepository passengerRepository,
             ITicketRepository ticketRepository,
             IOrdersController ordersController
-        ) : base(appSettings, utils)
+        ) : base(appSettings, notificator, informer, utils)
         {
             _customerRepository = customerRepository;
             _flightSegmentRepository = flightSegmentRepository;
@@ -68,6 +71,9 @@ namespace clickfly.Services
 
         public async Task<PaginationResult<Booking>> Pagination(PaginationFilter filter)
         {
+            Customer customer = _informer.GetValue<Customer>(UserTypes.Customer);
+
+            filter.customer_id = customer.id;
             PaginationResult<Booking> paginationResult = await _bookingRepository.Pagination(filter);
             return paginationResult;
         }
@@ -200,6 +206,19 @@ namespace clickfly.Services
                 passenger.document_type = customer.document_type;
                 passenger.booking_id = bookingId;
                 passenger.flight_segment_id = flightSegmentId;
+
+                string boardingUrl = $"https://www.dashboard.clickfly.app/boardings/{flightSegmentId}/passengers/{passenger.id}";
+
+                // Adicionar os bilhetes de passagem se o status de reserva for "APPROVED"
+                if(bookingStatus == BookingStatusTypes.Approved)
+                {
+                    Ticket ticket = new Ticket();
+                    ticket.id = Guid.NewGuid().ToString();
+                    ticket.qr_code = boardingUrl/*_utils.GenerateQRCode(boardingUrl)*/;
+                    ticket.passenger_id = passenger.id;
+                    ticket.flight_segment_id = flightSegmentId;
+                    passenger.ticket = ticket;
+                }
 
                 await _passengerRepository.Create(passenger);
             }
