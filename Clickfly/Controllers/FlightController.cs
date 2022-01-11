@@ -7,8 +7,8 @@ using clickfly.Data;
 using clickfly.Models;
 using clickfly.Helpers;
 using clickfly.Services;
-using clickfly.ViewModels;
 using Newtonsoft.Json;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
@@ -35,7 +35,9 @@ namespace clickfly.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Flight>> GetById(string id)
         {
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
             Flight flight = await _flightService.GetById(id);
+            
             return HttpResponse(flight);
         }
 
@@ -43,7 +45,6 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Save([FromBody]Flight flight)
         {
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            
             using var transaction = _dataContext.Database.BeginTransaction();
 
             flight = await _flightService.Save(flight);
@@ -56,8 +57,8 @@ namespace clickfly.Controllers
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            
             PaginationResult<Flight> flights = await _flightService.Pagination(filter);
+            
             return HttpResponse(flights);
         }
     }

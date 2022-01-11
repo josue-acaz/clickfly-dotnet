@@ -12,3 +12,5 @@ Adicionar endpoint em applicationUrl propriedade => Properties/lauchSettings.jso
 
 # PARA GERAR O QRCODE
 `apt-get update && apt-get install -y apt-utils libgdiplus libc6-dev`
+
+if(innerType != null)

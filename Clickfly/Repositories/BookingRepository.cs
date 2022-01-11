@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
     public class BookingRepository : BaseRepository<Booking>, IBookingRepository
     {
-        public BookingRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public BookingRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
             
         }

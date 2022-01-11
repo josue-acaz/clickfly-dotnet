@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "aircraft_image.excluded = false";
         private static string innerJoinFiles = "files as file on aircraft_image.id = file.resource_id";
 
-        public AircraftImageRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AircraftImageRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }
@@ -71,7 +71,7 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public Task<AircraftImage> Update(AircraftImage aircraftImage, string[] fields = null)
+        public Task<AircraftImage> Update(AircraftImage aircraftImage)
         {
             throw new NotImplementedException();
         }

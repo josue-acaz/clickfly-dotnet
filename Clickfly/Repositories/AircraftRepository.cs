@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -18,27 +18,10 @@ namespace clickfly.Repositories
         private static string whereSql = "aircraft.excluded = false";
         private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
         private static string aircraftSeatingMapSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'seating_map' LIMIT 1";
-        protected string[] defaultFields = new string[17];
 
-        public AircraftRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AircraftRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "prefix";
-            defaultFields[1] = "year";
-            defaultFields[2] = "crew";
-            defaultFields[3] = "passengers";
-            defaultFields[4] = "empty_weight";
-            defaultFields[5] = "autonomy";
-            defaultFields[6] = "maximum_takeoff_weight";
-            defaultFields[7] = "maximum_speed";
-            defaultFields[8] = "cruising_speed";
-            defaultFields[9] = "range";
-            defaultFields[10] = "fixed_price";
-            defaultFields[11] = "fixed_price_radius";
-            defaultFields[12] = "price_per_km";
-            defaultFields[13] = "description";
-            defaultFields[14] = "pressurized";
-            defaultFields[15] = "aircraft_model_id";
-            defaultFields[16] = "updated_at";
+
         }
 
         public async Task<Aircraft> Create(Aircraft aircraft)
@@ -61,21 +44,6 @@ namespace clickfly.Repositories
 
         public async Task<Aircraft> GetById(string id)
         {
-            /*
-            IncludeModel includeAircraftModel = new IncludeModel();
-            includeAircraftModel.As = "model";
-            includeAircraftModel.ForeignKey = "aircraft_model_id";
-
-            QueryOptions queryOptions = new QueryOptions();
-            queryOptions.Where = $"{whereSql} AND aircraft.id = @id";
-            queryOptions.Params = new { id = id };
-            queryOptions.AddRawAttribute("thumbnail", aircraftThumbnailSql);
-            queryOptions.AddRawAttribute("seating_map", aircraftSeatingMapSql);
-            queryOptions.Include<AircraftModel>(includeAircraftModel);
-
-            Aircraft aircraft = await _dBAccess.QuerySingleAsync<Aircraft>(queryOptions);
-            */
-
             IncludeModel includeAircraftModel = new IncludeModel();
             includeAircraftModel.As = "model";
             includeAircraftModel.ForeignKey = "aircraft_model_id";
@@ -85,14 +53,16 @@ namespace clickfly.Repositories
             includeFlight.Where = "flights.excluded = false";
             includeFlight.ForeignKey = "aircraft_id";
 
-            QueryOptions queryOptions = new QueryOptions();
-            queryOptions.As = "aircraft";
-            queryOptions.Where = $"{whereSql} AND aircraft.id = @id";
-            queryOptions.Params = new { id = id };
-            queryOptions.Include<Flight>(includeFlight);
-            queryOptions.Include<AircraftModel>(includeAircraftModel);
+            SelectOptions options = new SelectOptions();
+            options.As = "aircraft";
+            options.Where = $"{whereSql} AND aircraft.id = @id";
+            options.Params = new { id = id };
+            options.AddRawAttribute("thumbnail", aircraftThumbnailSql);
+            options.AddRawAttribute("seating_map", aircraftSeatingMapSql);
+            options.Include<Flight>(includeFlight);
+            options.Include<AircraftModel>(includeAircraftModel);
 
-            Aircraft aircraft = await _dBAccess.QuerySingleAsync<Aircraft>(queryOptions);
+            Aircraft aircraft = await _dapperWrapper.QuerySingleAsync<Aircraft>(options);
 
             return aircraft;
         }
@@ -130,22 +100,19 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public async Task<Aircraft> Update(Aircraft aircraft, string[] fields = null)
+        public async Task<Aircraft> Update(Aircraft aircraft)
         {
-            if(fields == null)
-            {
-                fields = defaultFields;
-            }
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
 
-            GetFieldsSqlParams fieldsSqlParams = new GetFieldsSqlParams();
-            fieldsSqlParams.action = "UPDATE";
-            fieldsSqlParams.fields = fields;
+            UpdateOptions options = new UpdateOptions();
+            options.Data = aircraft;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
 
-            string fieldsToUpdate = _utils.GetFieldsSql(fieldsSqlParams);
-            string querySql = $"UPDATE aircrafts SET {fieldsToUpdate} WHERE id = @id";
-
-            await _dBContext.GetConnection().ExecuteAsync(querySql, aircraft, _dBContext.GetTransaction());
-
+            await _dapperWrapper.UpdateAsync<Aircraft>(options);
             return aircraft;
         }
     }

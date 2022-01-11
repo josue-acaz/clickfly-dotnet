@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using clickfly.ViewModels;
 using clickfly.Models;
 using System.Collections.Generic;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {

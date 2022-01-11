@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using clickfly.ViewModels;
 using Microsoft.AspNetCore.Http;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {

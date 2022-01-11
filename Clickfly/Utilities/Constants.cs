@@ -53,9 +53,14 @@ namespace clickfly
     };
 
     static class Resources {
+        public const string Users = "users";
         public const string Customers = "customers";
         public const string Aircrafts = "aircrafts";
         public const string AircraftImages = "aircraft_images";
+        public const string Flights = "flights";
+        public const string FlightSegments = "flight_segments";
+        public const string AirTaxis = "air_taxis";
+        public const string AirTaxiBases = "air_taxi_bases";
     };
 
     static class FieldNames {
@@ -70,5 +75,21 @@ namespace clickfly
     static class FlightSegmentTypes {
         public const string Trip = "trip";
         public const string Transfer = "transfer";
+    };
+
+    static class FlightSegmentStatusTypes {
+        public const string Active = "active";
+        public const string Inactive = "inactive";
+        public const string Running = "running";
+        public const string Finished = "finished";
+        public const string Canceled = "canceled";
+        public const string Expired = "expired";
+    };
+
+    static class Actions {
+        public const string Create = "create";
+        public const string Update = "update";
+        public const string Read = "read";
+        public const string Delete = "delete";
     };
 }

@@ -6,6 +6,7 @@ using clickfly.Models;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -16,7 +17,12 @@ namespace clickfly.Repositories
         private static string whereSql = "access_token.excluded = false";
         private static string deleteSql = "UPDATE access_tokens SET excluded = true WHERE id = @id";
 
-        public AccessTokenRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AccessTokenRepository(
+            IDBContext dBContext, 
+            IDataContext dataContext, 
+            IDapperWrapper dapperWrapper, 
+            IUtils utils
+        ) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }

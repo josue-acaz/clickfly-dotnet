@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -16,20 +16,10 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "customer_addresses as customer_address";
         private static string whereSql = "customer_address.excluded = false";
-        protected string[] defaultFields = new string[10];
 
-        public CustomerAddressRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public CustomerAddressRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "name";
-            defaultFields[1] = "street";
-            defaultFields[2] = "number";
-            defaultFields[3] = "zipcode";
-            defaultFields[4] = "neighborhood";
-            defaultFields[5] = "state";
-            defaultFields[6] = "city";
-            defaultFields[7] = "address_id";
-            defaultFields[8] = "complement";
-            defaultFields[9] = "customer_id";
+
         }
 
         public async Task<CustomerAddress> Create(CustomerAddress customerAddress)
@@ -76,22 +66,19 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public async Task<CustomerAddress> Update(CustomerAddress customerAddress, string[] fields = null)
+        public async Task<CustomerAddress> Update(CustomerAddress customerAddress)
         {
-            if(fields == null)
-            {
-                fields = defaultFields;
-            }
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
 
-            GetFieldsSqlParams fieldsSqlParams = new GetFieldsSqlParams();
-            fieldsSqlParams.action = "UPDATE";
-            fieldsSqlParams.fields = fields;
+            UpdateOptions options = new UpdateOptions();
+            options.Data = customerAddress;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
 
-            string fieldsToUpdate = _utils.GetFieldsSql(fieldsSqlParams);
-            string querySql = $"UPDATE customer_addresses SET {fieldsToUpdate} WHERE id = @id";
-
-            await _dBContext.GetConnection().ExecuteAsync(querySql, customerAddress, _dBContext.GetTransaction());
-
+            await _dapperWrapper.UpdateAsync<CustomerAddress>(options);
             return customerAddress;
         }
     }

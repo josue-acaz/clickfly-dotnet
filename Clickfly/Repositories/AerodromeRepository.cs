@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -17,7 +17,7 @@ namespace clickfly.Repositories
         private static string fromSql = "aerodromes as aerodrome";
         private static string whereSql = "aerodrome.excluded = false";
 
-        public AerodromeRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AerodromeRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }

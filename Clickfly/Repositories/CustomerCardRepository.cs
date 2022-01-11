@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "customer_card.excluded = false";
         protected string[] defaultFields = new string[2];
 
-        public CustomerCardRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public CustomerCardRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
             defaultFields[0] = "card_id";
             defaultFields[1] = "customer_id";
@@ -68,22 +68,19 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public async Task<CustomerCard> Update(CustomerCard customerCard, string[] fields = null)
+        public async Task<CustomerCard> Update(CustomerCard customerCard)
         {
-            if(fields == null)
-            {
-                fields = defaultFields;
-            }
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
 
-            GetFieldsSqlParams fieldsSqlParams = new GetFieldsSqlParams();
-            fieldsSqlParams.action = "UPDATE";
-            fieldsSqlParams.fields = fields;
+            UpdateOptions options = new UpdateOptions();
+            options.Data = customerCard;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
 
-            string fieldsToUpdate = _utils.GetFieldsSql(fieldsSqlParams);
-            string querySql = $"UPDATE customer_cards SET {fieldsToUpdate} WHERE id = @id";
-
-            await _dBContext.GetConnection().ExecuteAsync(querySql, customerCard, _dBContext.GetTransaction());
-
+            await _dapperWrapper.UpdateAsync<CustomerCard>(options);
             return customerCard;
         }
     }

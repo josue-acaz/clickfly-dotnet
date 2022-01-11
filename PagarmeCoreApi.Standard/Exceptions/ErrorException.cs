@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PagarmeCoreApi.Standard.Http.Client;
-
 using PagarmeCoreApi.Standard.Models;
 using PagarmeCoreApi.Standard;
 using PagarmeCoreApi.Standard.Utilities;

@@ -46,8 +46,15 @@ namespace clickfly.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AirTaxiBase>> GetById(string id)
         {
-            AirTaxiBase airTaxiBase = await _airTaxiBaseService.GetById(id);
-            return HttpResponse(airTaxiBase);
+            try
+            {
+                AirTaxiBase airTaxiBase = await _airTaxiBaseService.GetById(id);
+                return HttpResponse(airTaxiBase);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet]

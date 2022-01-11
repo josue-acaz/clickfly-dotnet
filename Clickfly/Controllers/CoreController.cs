@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using clickfly.Data;
 using clickfly.Models;
 using clickfly.Helpers;
-using clickfly.ViewModels;
 using clickfly.Services;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {

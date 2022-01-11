@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "aircraft_model.excluded = false";
         protected string[] defaultFields = new string[8];
 
-        public AircraftModelRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AircraftModelRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
             
         }
@@ -59,7 +59,7 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public Task<AircraftModel> Update(AircraftModel aircraftModel, string[] fields = null)
+        public Task<AircraftModel> Update(AircraftModel aircraftModel)
         {
             throw new NotImplementedException();
         }

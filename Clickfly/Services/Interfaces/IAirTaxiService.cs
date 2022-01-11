@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using clickfly.ViewModels;
 using clickfly.Models;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -10,5 +10,6 @@ namespace clickfly.Services
         Task<AirTaxi> Save(AirTaxi airTaxi);
         Task<AirTaxi> GetById(string id);
         Task<AirTaxi> GetByAccessToken(string token);
+        Task<PaginationResult<AirTaxi>> Pagination(PaginationFilter filter);
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using clickfly.ViewModels;
 using clickfly.Models;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -9,7 +9,7 @@ namespace clickfly.Repositories
     {
         Task<AirTaxiBase> Create(AirTaxiBase airTaxiBase);
         Task<AirTaxiBase> GetById(string id);
-        Task<AirTaxiBase> Update(AirTaxiBase airTaxiBase, string[] fields = null);
+        Task<AirTaxiBase> Update(AirTaxiBase airTaxiBase);
         Task Delete(string id);
         Task<PaginationResult<AirTaxiBase>> Pagination(PaginationFilter filter);
     }

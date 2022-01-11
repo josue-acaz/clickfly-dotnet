@@ -1,10 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
+using clickfly.ViewModels;
+using clickfly.Exceptions;
 
 namespace clickfly.Services
 {
@@ -14,12 +15,16 @@ namespace clickfly.Services
 
         public AirTaxiBaseService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils,
             IAirTaxiBaseRepository airTaxiBaseRepository
         ) : base(
             appSettings,
+            systemLogRepository,
+            permissionRepository,
             notificator,
             informer,
             utils
@@ -51,14 +56,16 @@ namespace clickfly.Services
         public async Task<AirTaxiBase> Save(AirTaxiBase airTaxiBase)
         {
             bool update = airTaxiBase.id != "";
+            User user = _informer.GetValue<User>(UserTypes.User);
 
             if(update)
             {
+                airTaxiBase.updated_by = user.id;
                 airTaxiBase = await _airTaxiBaseRepository.Update(airTaxiBase);
             }
             else
             {
-                User user = _informer.GetValue<User>(UserTypes.User);
+                airTaxiBase.created_by = user.id;
                 airTaxiBase.air_taxi_id = user.air_taxi_id;
 
                 airTaxiBase = await _airTaxiBaseRepository.Create(airTaxiBase);

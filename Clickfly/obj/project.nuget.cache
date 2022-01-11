@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Qm2VY7RTr23w7XlAz4G4/2vocjeGLNznfcPOQNh6EDAnG3LWXp05MECZHARna/NmXXy0lIWVV1dOevhrFix/kQ==",
+  "dgSpecHash": "/15HBcGuDK3cZ+meA/UYqbqDIm9Jr8E0fvOAg98Fe9MseUZxVQb13A+/48uYtpij+pmBv8r+By+ocCg05TqzVw==",
   "success": true,
   "projectFilePath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/clickfly.csproj",
   "expectedPackageFiles": [
@@ -100,7 +100,6 @@
     "/Users/piquiatuba/.nuget/packages/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/sixlabors.imagesharp/1.0.4/sixlabors.imagesharp.1.0.4.nupkg.sha512",
-    "/Users/piquiatuba/.nuget/packages/slapper.automapper/2.0.5/slapper.automapper.2.0.5.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/swashbuckle.aspnetcore/5.6.3/swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/swashbuckle.aspnetcore.swagger/5.6.3/swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/swashbuckle.aspnetcore.swaggergen/5.6.3/swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",

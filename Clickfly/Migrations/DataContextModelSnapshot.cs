@@ -1023,6 +1023,72 @@ namespace clickfly.Migrations
                     b.ToTable("manufacturers");
                 });
 
+            modelBuilder.Entity("clickfly.Models.Newsletter", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("code")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("text");
+
+                    b.Property<string>("details")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.ToTable("newsletters");
+                });
+
+            modelBuilder.Entity("clickfly.Models.NewsletterSubscriber", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("newsletter_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("subscriber_id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("newsletter_id");
+
+                    b.HasIndex("subscriber_id");
+
+                    b.ToTable("newsletter_subscribers");
+                });
+
             modelBuilder.Entity("clickfly.Models.Passenger", b =>
                 {
                     b.Property<string>("id")
@@ -1084,7 +1150,16 @@ namespace clickfly.Migrations
                     b.Property<string>("id")
                         .HasColumnType("text");
 
-                    b.Property<bool>("create")
+                    b.Property<bool>("_create")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("_delete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("_read")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("_update")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("created_at")
@@ -1092,9 +1167,6 @@ namespace clickfly.Migrations
 
                     b.Property<string>("created_by")
                         .HasColumnType("text");
-
-                    b.Property<bool>("delete")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -1104,12 +1176,6 @@ namespace clickfly.Migrations
 
                     b.Property<string>("permission_resource_id")
                         .HasColumnType("text");
-
-                    b.Property<bool>("read")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("update")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
@@ -1169,6 +1235,9 @@ namespace clickfly.Migrations
                     b.Property<string>("id")
                         .HasColumnType("text");
 
+                    b.Property<string>("_table")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
@@ -1179,9 +1248,6 @@ namespace clickfly.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("table")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("updated_at")
@@ -1226,6 +1292,86 @@ namespace clickfly.Migrations
                     b.HasKey("id");
 
                     b.ToTable("states");
+                });
+
+            modelBuilder.Entity("clickfly.Models.Subscriber", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("text");
+
+                    b.Property<string>("details")
+                        .HasColumnType("text");
+
+                    b.Property<string>("email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("unsubscribed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.ToTable("subscribers");
+                });
+
+            modelBuilder.Entity("clickfly.Models.SystemLog", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("_object")
+                        .HasColumnType("text");
+
+                    b.Property<string>("action")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ip")
+                        .HasColumnType("text");
+
+                    b.Property<string>("resource")
+                        .HasColumnType("text");
+
+                    b.Property<string>("resource_id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("text");
+
+                    b.Property<string>("user_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("user_type")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.ToTable("system_logs");
                 });
 
             modelBuilder.Entity("clickfly.Models.Ticket", b =>
@@ -1316,14 +1462,9 @@ namespace clickfly.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("password_hash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("role")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("updated_at")
@@ -1333,7 +1474,6 @@ namespace clickfly.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("username")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("id");
@@ -1348,6 +1488,9 @@ namespace clickfly.Migrations
                     b.Property<string>("id")
                         .HasColumnType("text");
 
+                    b.Property<string>("allowed_systems")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
@@ -1356,6 +1499,9 @@ namespace clickfly.Migrations
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("label")
+                        .HasColumnType("text");
 
                     b.Property<string>("name")
                         .HasColumnType("text");
@@ -1369,6 +1515,53 @@ namespace clickfly.Migrations
                     b.HasKey("id");
 
                     b.ToTable("user_roles");
+                });
+
+            modelBuilder.Entity("clickfly.Models.UserRolePermission", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("_create")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("_delete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("_read")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("_update")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("permission_resource_id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("text");
+
+                    b.Property<string>("user_role_id")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("permission_resource_id");
+
+                    b.HasIndex("user_role_id");
+
+                    b.ToTable("user_role_permissions");
                 });
 
             modelBuilder.Entity("clickfly.Models.AccountVerification", b =>
@@ -1578,6 +1771,21 @@ namespace clickfly.Migrations
                     b.Navigation("flight_segment");
                 });
 
+            modelBuilder.Entity("clickfly.Models.NewsletterSubscriber", b =>
+                {
+                    b.HasOne("clickfly.Models.Newsletter", "newsletter")
+                        .WithMany()
+                        .HasForeignKey("newsletter_id");
+
+                    b.HasOne("clickfly.Models.Subscriber", "subscriber")
+                        .WithMany()
+                        .HasForeignKey("subscriber_id");
+
+                    b.Navigation("newsletter");
+
+                    b.Navigation("subscriber");
+                });
+
             modelBuilder.Entity("clickfly.Models.Passenger", b =>
                 {
                     b.HasOne("clickfly.Models.Booking", "booking")
@@ -1647,6 +1855,21 @@ namespace clickfly.Migrations
                     b.Navigation("air_taxi");
                 });
 
+            modelBuilder.Entity("clickfly.Models.UserRolePermission", b =>
+                {
+                    b.HasOne("clickfly.Models.PermissionResource", "permissionResource")
+                        .WithMany()
+                        .HasForeignKey("permission_resource_id");
+
+                    b.HasOne("clickfly.Models.UserRole", "userRole")
+                        .WithMany("permissions")
+                        .HasForeignKey("user_role_id");
+
+                    b.Navigation("permissionResource");
+
+                    b.Navigation("userRole");
+                });
+
             modelBuilder.Entity("clickfly.Models.Aircraft", b =>
                 {
                     b.Navigation("flights");
@@ -1686,6 +1909,11 @@ namespace clickfly.Migrations
                 });
 
             modelBuilder.Entity("clickfly.Models.PermissionGroup", b =>
+                {
+                    b.Navigation("permissions");
+                });
+
+            modelBuilder.Entity("clickfly.Models.UserRole", b =>
                 {
                     b.Navigation("permissions");
                 });

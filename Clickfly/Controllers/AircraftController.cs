@@ -7,8 +7,8 @@ using clickfly.Data;
 using clickfly.Models;
 using clickfly.Helpers;
 using clickfly.Services;
-using clickfly.ViewModels;
 using Microsoft.AspNetCore.Http;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {

@@ -40,7 +40,11 @@ namespace clickfly.Data
         DbSet<Permission> Permissions { get; set; }
         DbSet<PermissionGroup> PermissionGroups { get; set; }
         DbSet<PermissionResource> PermissionResources { get; set; }
-
+        DbSet<UserRolePermission> UserRolePermissions { get; set; }
+        DbSet<SystemLog> SystemLogs { get; set; }
+        DbSet<Newsletter> Newsletters { get; set; }
+        DbSet<Subscriber> Subscribers { get; set; }
+        DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

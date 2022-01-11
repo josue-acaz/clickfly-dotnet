@@ -7,7 +7,6 @@ using Amazon.S3;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using clickfly.ViewModels;
 using OneSignal.RestAPIv3.Client;
 using OneSignal.RestAPIv3.Client.Resources.Notifications;
 using OneSignal.RestAPIv3.Client.Resources;
@@ -16,24 +15,37 @@ using clickfly.Helpers;
 using FluentValidation;
 using FluentValidation.Results;
 using clickfly.Models;
+using clickfly.Repositories;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
     public class BaseService
     {
+        protected readonly IInformer _informer;
         protected readonly AppSettings _appSettings;
         protected readonly INotificator _notificator;
-        protected readonly IInformer _informer;
         protected readonly OneSignalClient _oneSignalClient;
+        protected readonly IPermissionRepository _permissionRepository;
+        protected readonly ISystemLogRepository _systemLogRepository;
         protected readonly IUtils _utils;
-
-        public BaseService(IOptions<AppSettings> appSettings, INotificator notificator, IInformer informer, IUtils utils)
+        
+        public BaseService(
+            IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
+            INotificator notificator, 
+            IInformer informer, 
+            IUtils utils
+        )
         {
-            _appSettings = appSettings.Value;
-            _notificator = notificator;
-            _informer = informer;
-            _oneSignalClient = new OneSignalClient(_appSettings.OneSignalAppKey);
             _utils = utils;
+            _informer = informer;
+            _notificator = notificator;
+            _appSettings = appSettings.Value;
+            _permissionRepository = permissionRepository;
+            _systemLogRepository = systemLogRepository;
+            _oneSignalClient = new OneSignalClient(_appSettings.OneSignalAppKey);
         }
 
         protected void Notify(string message)

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace clickfly.ViewModels
+namespace clickfly.Data
 {
-    public class QueryOptions : QueryExtensions {
-        public string As { get; set; } /*Opcional, caso não seja fornecido será usado o nome da classe*/
+    public class SelectOptions : QueryExtensions
+    {
+        public string PK { get; set; }
+        public string As { get; set; } /*Opcional, caso não seja fornecido será usado o nome da classe e/ou somente o nome dos campos*/
         public string Query { get; set; }
         public string Where { get; set; }
         public object Params { get; set; }
@@ -13,7 +15,7 @@ namespace clickfly.ViewModels
         public List<IncludeModel> Includes { get; set; }
         public List<RawAttribute> RawAttributes { get; set; }
 
-        public QueryOptions()
+        public SelectOptions()
         {
             Attributes = new Attributes();
             Includes = new List<IncludeModel>();
@@ -22,11 +24,10 @@ namespace clickfly.ViewModels
 
         internal void Include<T>(IncludeModel IncludeModel)
         {
-            IncludeModel.TableName = GetTableName<T>();
+            string pk = GetPK<T>();
 
-            // Verificar se existe confronto da alias com o id da table
-            // Por exemplo, a table Passenger, tem o alias "passenger" o que fica "passenger_id" em uma relacionamento, o que iria gerar um conflito com a FK
-            // Já a tabela AircraftModel tem o alias "model", isso fica "model_id" o que não irá gerar conflito na tabela, e consequentemente a FK da tabela pai virá null pela regra de remoção da FK
+            IncludeModel.PK = pk;
+            IncludeModel.TableName = GetTableName<T>();
             string AsId = $"{IncludeModel.As}_id";
 
             // Verificar se é belongsTo (Se a ForeignKey reside no modelo)
@@ -47,7 +48,7 @@ namespace clickfly.ViewModels
             }
             
             Includes.Add(IncludeModel);
-            Slapper.AutoMapper.Configuration.AddIdentifier(typeof(T), "id");
+            Slapper.AutoMapper.Configuration.AddIdentifier(typeof(T), pk);
         }
 
         internal void AddRawAttribute(string Name, string Query)

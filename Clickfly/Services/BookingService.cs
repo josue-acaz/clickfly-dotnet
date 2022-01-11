@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Exceptions;
 using clickfly.Helpers;
@@ -10,6 +9,7 @@ using PagarmeCoreApi.Standard.Models;
 using PagarmeCoreApi.Standard.Controllers;
 using System.Collections.Generic;
 using System.Linq;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -29,6 +29,8 @@ namespace clickfly.Services
 
         public BookingService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator,
             IInformer informer,
             IUtils utils, 
@@ -43,7 +45,7 @@ namespace clickfly.Services
             IPassengerRepository passengerRepository,
             ITicketRepository ticketRepository,
             IOrdersController ordersController
-        ) : base(appSettings, notificator, informer, utils)
+        ) : base(appSettings, systemLogRepository, permissionRepository, notificator, informer, utils)
         {
             _customerRepository = customerRepository;
             _flightSegmentRepository = flightSegmentRepository;

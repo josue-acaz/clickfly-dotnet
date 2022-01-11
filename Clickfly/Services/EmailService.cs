@@ -9,9 +9,10 @@ using Microsoft.Extensions.Configuration;
 using RazorEngine;
 using RazorEngine.Templating;
 using System.IO;
-using clickfly.ViewModels;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
+using clickfly.ViewModels;
+using clickfly.Repositories;
 
 namespace clickfly.Services
 {
@@ -25,12 +26,16 @@ namespace clickfly.Services
 
         public EmailService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils, 
             HttpClient client
         ) : base(
-            appSettings, 
+            appSettings,
+            systemLogRepository,
+            permissionRepository, 
             notificator, 
             informer,
             utils

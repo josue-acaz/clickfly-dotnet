@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {

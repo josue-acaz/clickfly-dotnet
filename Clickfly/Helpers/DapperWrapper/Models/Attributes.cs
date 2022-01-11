@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
-namespace clickfly.ViewModels
+namespace clickfly.Data
 {
     public class Attributes {
         public List<string> Include { get; set; }

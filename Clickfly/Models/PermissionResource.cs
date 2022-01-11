@@ -7,6 +7,6 @@ namespace clickfly.Models
     public class PermissionResource : BaseEntity
     {
         public string name { get; set; }
-        public string table { get; set; }
+        public string _table { get; set; }
     }
 }

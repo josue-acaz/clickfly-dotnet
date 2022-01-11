@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using PagarmeCoreApi.Standard.Controllers;
 using PagarmeCoreApi.Standard.Models;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -18,13 +18,15 @@ namespace clickfly.Services
 
         public CustomerCardService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator,
             IInformer informer,
             IUtils utils, 
             ICustomerRepository customerRepository, 
             ICustomerCardRepository customerCardRepository, 
             ICustomersController customersController
-        ) : base(appSettings, notificator, informer, utils)
+        ) : base(appSettings, systemLogRepository, permissionRepository, notificator, informer, utils)
         {
             _customerRepository = customerRepository;
             _customerCardRepository = customerCardRepository;

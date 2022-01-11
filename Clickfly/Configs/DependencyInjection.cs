@@ -19,7 +19,7 @@ namespace clickfly.Configs
             services.AddScoped<IDBContext, DBContext>();
             services.AddScoped<IInformer, Informer>();
             services.AddScoped<INotificator, Notificator>();
-            services.AddScoped<IDBAccess, DBAccess>();
+            services.AddScoped<IDapperWrapper, DapperWrapper>();
             services.AddScoped<IUtils, Utils>();
 
             services.AddScoped<IStateService, StateService>();
@@ -27,6 +27,18 @@ namespace clickfly.Configs
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IUserRoleService, UserRoleService>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+
+            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
+
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
+            services.AddScoped<IPermissionGroupRepository, PermissionGroupRepository>();
+            
+            services.AddScoped<IPermissionResourceService, PermissionResourceService>();
+            services.AddScoped<IPermissionResourceRepository, PermissionResourceRepository>();
 
             services.AddScoped<ITimezoneService, TimezoneService>();
             services.AddScoped<ITimezoneRepository, TimezoneRepository>();
@@ -96,14 +108,26 @@ namespace clickfly.Configs
 
             services.AddScoped<IAppFlightService, AppFlightService>();
             services.AddScoped<IAppFlightRepository, AppFlightRepository>();
+
+            services.AddScoped<ISystemLogService, SystemLogService>();
+            services.AddScoped<ISystemLogRepository, SystemLogRepository>();
             
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<ICepService, CepService>();
 
             // Pagar.me
+            services.AddScoped<ChargesController, ChargesController>();
             services.AddScoped<ICustomersController, CustomersController>();
+            services.AddScoped<IInvoicesController, InvoicesController>();
             services.AddScoped<IOrdersController, OrdersController>();
+            services.AddScoped<IPlansController, PlansController>();
+            services.AddScoped<IRecipientsController, RecipientsController>();
+            services.AddScoped<ISellersController, SellersController>();
+            services.AddScoped<ISubscriptionsController, SubscriptionsController>();
+            services.AddScoped<ITokensController, TokensController>();
+            services.AddScoped<ITransactionsController, TransactionsController>();
+            services.AddScoped<ITransfersController, TransfersController>();
 
             return services;
         }

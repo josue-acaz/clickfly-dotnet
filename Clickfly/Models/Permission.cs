@@ -6,10 +6,10 @@ namespace clickfly.Models
     [Table("permissions")]
     public class Permission : BaseEntity
     {
-        public bool create { get; set; }
-        public bool read { get; set; }
-        public bool update { get; set; }
-        public bool delete { get; set; }
+        public bool _create { get; set; }
+        public bool _read { get; set; }
+        public bool _update { get; set; }
+        public bool _delete { get; set; }
         public string permission_group_id { get; set; }
 
         [ForeignKey("permission_group_id")]
@@ -19,5 +19,8 @@ namespace clickfly.Models
 
         [ForeignKey("permission_resource_id")]
         public PermissionResource permissionResource { get; set; }
+
+        [NotMapped]
+        public string permission_resource_name { get; set; }
     }
 }

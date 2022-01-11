@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -14,12 +14,16 @@ namespace clickfly.Services
 
         public CustomerFriendService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils,
             ICustomerFriendRepository customerFriendRepository
         ) : base(
             appSettings,
+            systemLogRepository,
+            permissionRepository,
             notificator,
             informer,
             utils

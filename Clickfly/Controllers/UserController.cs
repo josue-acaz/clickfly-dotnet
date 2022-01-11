@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
-using clickfly.ViewModels;
 using clickfly.Data;
 using clickfly.Models;
 using clickfly.Helpers;
 using clickfly.Services;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
@@ -39,14 +39,40 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        //[Authorize(Roles = "administrator,general_administrator")]
         public async Task<ActionResult> Save([FromBody]User user)
         {
+            //GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
             using var transaction = _dataContext.Database.BeginTransaction();
 
             User _user = await _userService.Save(user);
             await transaction.CommitAsync();
 
             return HttpResponse(_user);
+        }
+
+        [HttpPut("update-role")]
+        [Authorize(Roles = "administrator,general_administrator")]
+        public async Task<ActionResult> UpdateRole([FromBody]UpdateRole updateRole)
+        {
+            //GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+            using var transaction = _dataContext.Database.BeginTransaction();
+
+            Console.WriteLine("AQUII");
+
+            User _user = await _userService.UpdateRole(updateRole);
+            await transaction.CommitAsync();
+
+            return HttpResponse(_user);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "general_administrator,administrator")]
+        public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
+        { 
+            PaginationResult<User> users = await _userService.Pagination(filter);
+            return HttpResponse(users);
         }
 
         [HttpPost]

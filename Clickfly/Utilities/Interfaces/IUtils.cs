@@ -10,7 +10,6 @@ namespace clickfly
     public interface IUtils
     {
         string RandomBytes(int length);
-        string GetFieldsSql(GetFieldsSqlParams getFieldsSqlParams);
         string GetBulkSql(string[] ids);
         Installment[] GetInstallments(float subtotal, int max = 8);
         PaginationResult<Type> CreatePaginationResult<Type>(List<Type> data, PaginationFilter filter, int totalRecords);

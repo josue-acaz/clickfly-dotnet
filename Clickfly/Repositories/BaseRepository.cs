@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Dapper;
 using clickfly.Models;
 using clickfly.Data;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -9,14 +10,14 @@ namespace clickfly.Repositories
     {
         protected readonly IDBContext _dBContext;
         protected readonly IDataContext _dataContext;
-        protected readonly IDBAccess _dBAccess;
+        protected readonly  IDapperWrapper _dapperWrapper;
         protected readonly IUtils _utils;
 
-        public BaseRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils)
+        public BaseRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils)
         {
             _dBContext = dBContext;
             _dataContext = dataContext;
-            _dBAccess = dBAccess;
+            _dapperWrapper = dapperWrapper;
             _utils = utils;
         }
 

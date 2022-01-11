@@ -7,8 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using clickfly.Data;
 using clickfly.Helpers;
-using clickfly.ViewModels;
 using clickfly.Exceptions;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {

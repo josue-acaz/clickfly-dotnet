@@ -5,9 +5,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -15,11 +15,11 @@ namespace clickfly.Repositories
     {
         private static string whereSql = $"flight_segment.excluded = false";
         private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
-        private static string flightTimeSql = $"SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))";
+        private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))) / 60";
         private static string subtotalSql = $"SELECT flight_segment.price_per_seat * @selected_seats";
         private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
 
-        public AppFlightRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AppFlightRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }
@@ -167,9 +167,7 @@ namespace clickfly.Repositories
             IncludeModel includeAircraft = new IncludeModel();
             includeAircraft.As = "aircraft";
             includeAircraft.ForeignKey = "aircraft_id";
-            includeAircraft.AddRawAttribute("subtotal", subtotalSql);
             includeAircraft.AddRawAttribute("flight_time", flightTimeSql);
-            includeAircraft.AddRawAttribute("available_seats", availableSeatsSql);
             includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
             includeAircraft.ThenInclude<AircraftModel>(includeAircraftModel);
 
@@ -185,10 +183,10 @@ namespace clickfly.Repositories
             queryParams.Add("destination_city_id", destination_city_id);
             queryParams.Add("selected_seats", selected_seats);
 
-            QueryOptions queryOptions = new QueryOptions();
-            queryOptions.As = "flight_segment";
-            queryOptions.Params = queryParams;
-            queryOptions.Where = $@"{whereSql}
+            SelectOptions options = new SelectOptions();
+            options.As = "flight_segment";
+            options.Params = queryParams;
+            options.Where = $@"{whereSql}
                 AND flight.type = @flight_type
                 AND flight_segment.type = 'trip'
                 AND origin_aerodrome.city_id = @origin_city_id
@@ -197,13 +195,15 @@ namespace clickfly.Repositories
                 AND flight_segment.departure_datetime > '{currentDatetime}'::date + (120 * interval '1 minute')
                 LIMIT @limit OFFSET @offset
             ";
+            options.AddRawAttribute("subtotal", subtotalSql);
+            options.AddRawAttribute("available_seats", availableSeatsSql);
 
-            queryOptions.Include<Flight>(includeFlight);
-            queryOptions.Include<Aircraft>(includeAircraft);
-            queryOptions.Include<Aerodrome>(includeOriginAerodrome);
-            queryOptions.Include<Aerodrome>(includeDestinationAerodrome);
+            options.Include<Flight>(includeFlight);
+            options.Include<Aircraft>(includeAircraft);
+            options.Include<Aerodrome>(includeOriginAerodrome);
+            options.Include<Aerodrome>(includeDestinationAerodrome);
 
-            IEnumerable<FlightSegment> flightSegments = await _dBAccess.QueryAsync<FlightSegment>(queryOptions);
+            IEnumerable<FlightSegment> flightSegments = await _dapperWrapper.QueryAsync<FlightSegment>(options);
             
             int total_records = await _dataContext.FlightSegments.CountAsync();
             PaginationResult<FlightSegment> paginationResult = _utils.CreatePaginationResult<FlightSegment>(flightSegments.ToList(), filter, total_records);

@@ -4,9 +4,10 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using clickfly.ViewModels;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
+using clickfly.ViewModels;
+using clickfly.Repositories;
 
 namespace clickfly.Services
 {
@@ -17,11 +18,13 @@ namespace clickfly.Services
 
         public CepService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils, 
             HttpClient client
-        ) : base(appSettings, notificator, informer, utils)
+        ) : base(appSettings, systemLogRepository, permissionRepository, notificator, informer, utils)
         {
             client.BaseAddress = new Uri(_appSettings.CepApiUrl);
             _httClient = client;

@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Exceptions;
 using clickfly.Helpers;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -18,12 +18,16 @@ namespace clickfly.Services
         public AirTaxiService(
             IAirTaxiRepository airTaxiRepository, 
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils, 
             IAccessTokenRepository accessTokenRepository
         ) : base(
-            appSettings, 
+            appSettings,
+            systemLogRepository,
+            permissionRepository, 
             notificator, 
             informer,
             utils
@@ -44,19 +48,22 @@ namespace clickfly.Services
 
             string airTaxiId = accessToken.resource_id;
 
-            List<string> fields = new List<string>();
-            fields.Add("id"); // <-- Obrigatório informar o Id para o método GetById
-            fields.Add("name");
-
-            AirTaxi airTaxi = await _airTaxiRepository.GetById(airTaxiId, fields.ToArray());
+            AirTaxi airTaxi = await _airTaxiRepository.GetById(airTaxiId);
             airTaxi.id = null; // <-- Remover Id antes de mandar para o cliente
 
             return airTaxi;
         }
 
-        public Task<AirTaxi> GetById(string id)
+        public async Task<AirTaxi> GetById(string id)
         {
-            throw new NotImplementedException();
+            AirTaxi airTaxi = await _airTaxiRepository.GetById(id);
+            return airTaxi;
+        }
+
+        public async Task<PaginationResult<AirTaxi>> Pagination(PaginationFilter filter)
+        {
+            PaginationResult<AirTaxi> paginationResult = await _airTaxiRepository.Pagination(filter);
+            return paginationResult;
         }
 
         public async Task<AirTaxi> Save(AirTaxi airTaxi)
@@ -65,7 +72,7 @@ namespace clickfly.Services
 
             if(update)
             {
-                
+                airTaxi = await _airTaxiRepository.Update(airTaxi);
             }
             else
             {

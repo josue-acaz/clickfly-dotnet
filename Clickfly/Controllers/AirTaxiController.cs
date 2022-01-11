@@ -7,6 +7,7 @@ using clickfly.Data;
 using clickfly.Models;
 using clickfly.Helpers;
 using clickfly.Services;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
@@ -46,6 +47,20 @@ namespace clickfly.Controllers
         {
             AirTaxi airTaxi = await _airTaxiService.GetByAccessToken(token);
             return HttpResponse(airTaxi);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AirTaxi>> GetById(string id)
+        {
+            AirTaxi airTaxi = await _airTaxiService.GetById(id);
+            return HttpResponse(airTaxi);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
+        { 
+            PaginationResult<AirTaxi> airTaxis = await _airTaxiService.Pagination(filter);
+            return HttpResponse(airTaxis);
         }
     }
 }

@@ -46,6 +46,11 @@ namespace clickfly.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<PermissionGroup> PermissionGroups { get; set; }
         public DbSet<PermissionResource> PermissionResources { get; set; }
+        public DbSet<UserRolePermission> UserRolePermissions { get; set; }
+        public DbSet<SystemLog> SystemLogs { get; set; }
+        public DbSet<Newsletter> Newsletters { get; set; }
+        public DbSet<Subscriber> Subscribers { get; set; }
+        public DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

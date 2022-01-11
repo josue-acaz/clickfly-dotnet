@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Npgsql;
 using Dapper;
 using System.Collections.Generic;
 using System.Linq;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -17,7 +17,7 @@ namespace clickfly.Repositories
         private static string fromSql = "flights as flight";
         private static string whereSql = "flight.excluded = false";
 
-        public FlightRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public FlightRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }

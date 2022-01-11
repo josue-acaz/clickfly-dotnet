@@ -1,27 +1,27 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
+using Microsoft.Extensions.Options;
 
 namespace clickfly.Repositories
 {
     public class AirTaxiRepository : BaseRepository<AirTaxi>, IAirTaxiRepository
     {
+        private readonly AppSettings _appSettings;
         private static string fieldsSql = "*";
         private static string fromSql = "air_taxis as air_taxi";
         private static string whereSql = "air_taxi.excluded = false";
-        protected string[] defaultFields = new string[8];
 
-        public AirTaxiRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AirTaxiRepository(IOptions<AppSettings> appSettings, IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "name";
-            defaultFields[1] = "email";
-            defaultFields[2] = "phone_number";
-            defaultFields[3] = "cnpj";
+            _appSettings = appSettings.Value;
         }
         
         public async Task<AirTaxi> Create(AirTaxi airTaxi)
@@ -40,33 +40,64 @@ namespace clickfly.Repositories
             throw new System.NotImplementedException();
         }
 
-        public async Task<AirTaxi> GetById(string id, string[] fields = null)
+        public async Task<AirTaxi> GetById(string id)
         {
-            if(fields != null)
-            {
-                GetFieldsSqlParams fieldsSqlParams = new GetFieldsSqlParams();
-                fieldsSqlParams._as = "air_taxi";
-                fieldsSqlParams.action = "GET";
-                fieldsSqlParams.fields = fields;
+            SelectOptions options = new SelectOptions();
+            options.As = "air_taxi";
+            options.Where = $"{whereSql} AND id = @id";
+            options.Params = new { id = id };
 
-                fieldsSql = _utils.GetFieldsSql(fieldsSqlParams);
-            }
-
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND air_taxi.id = @id";
-            object param = new { id = id };
-            
-            AirTaxi airTaxi = await _dBContext.GetConnection().QuerySingleOrDefaultAsync<AirTaxi>(querySql, param, _dBContext.GetTransaction());
+            AirTaxi airTaxi = await _dapperWrapper.QuerySingleAsync<AirTaxi>(options);
             return airTaxi;
         }
 
-        public Task<PaginationResult<AirTaxi>> Pagination(PaginationFilter filter)
+        public async Task<PaginationResult<AirTaxi>> Pagination(PaginationFilter filter)
         {
-            throw new System.NotImplementedException();
+            int limit = filter.page_size;
+            int offset = (filter.page_number - 1) * filter.page_size;
+
+            var queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+
+            IncludeModel includeAccessToken = new IncludeModel();
+            includeAccessToken.As = "access_token";
+            includeAccessToken.ForeignKey = "resource_id";
+            
+            SelectOptions options = new SelectOptions();
+            options.As = "air_taxi";
+            options.Where = whereSql;
+            options.Params = queryParams;
+            options.Include<AccessToken>(includeAccessToken);
+            
+            options.AddRawAttribute("dashboard_url", $"CONCAT('{_appSettings.DashboardUrl}', '/login?ref=', air_taxi.name, '&token=', access_token.token)");
+
+            int total_records = _dapperWrapper.Count<AirTaxi>(new CountOptions {
+                As = "air_taxi",
+                Where = whereSql,
+                Params = queryParams,
+            });
+
+            IEnumerable<AirTaxi> airTaxis = await _dapperWrapper.QueryAsync<AirTaxi>(options);
+            PaginationResult<AirTaxi> paginationResult = _utils.CreatePaginationResult<AirTaxi>(airTaxis.ToList(), filter, total_records);
+
+            return paginationResult;
         }
 
-        public Task Update(AirTaxi airTaxi)
+        public async Task<AirTaxi> Update(AirTaxi airTaxi)
         {
-            throw new System.NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = airTaxi;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<AirTaxi>(options);
+            return airTaxi;
         }
     }
 }

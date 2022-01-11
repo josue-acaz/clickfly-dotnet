@@ -52,42 +52,6 @@ namespace clickfly
             return result;
         }
     
-        public string GetFieldsSql(GetFieldsSqlParams getFieldsSqlParams)
-        {
-            string _as = getFieldsSqlParams._as;
-            string action = getFieldsSqlParams.action;
-            string[] fields = getFieldsSqlParams.fields;
-
-            if(_as != null)
-            {
-                _as += ".";
-            }
-
-            string fieldsToUpdate = "";
-            for (int index = 0; index < fields.Length; index++)
-            {
-                string field = fields[index];
-                bool isLastField = index == fields.Length - 1;
-
-                if(action == "UPDATE")
-                {
-                    fieldsToUpdate += $"{_as}{field} = @{field}";
-                }
-                else
-                {
-                    fieldsToUpdate += $"{_as}{field}";
-                }
-                
-                if(!isLastField)
-                {
-                    fieldsToUpdate += $", ";
-                }
-            }
-
-            Console.WriteLine(fieldsToUpdate);
-            return fieldsToUpdate;
-        }
-    
         public string GetBulkSql(string[] ids)
         {
             string bulkSql = "{";

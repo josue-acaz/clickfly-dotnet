@@ -29,3 +29,16 @@ namespace clickfly
         public string WebsiteUrl { get; set; }
     }
 }
+
+
+/*
+
+MANAGER -> Grupo de permissão e/ou alterar permissões
+FUNCIONARIO -> Grupo de permissão e/ou alterar permissões
+ADMINISTRADOR -> Grupo de permissão e/ou alterar permissões
+
+-- PERMISSÕES ADICIONAIS
+1. Permissão para criar x recursos
+2. Permissão para criar y recursos
+3. Permissão para criar z recursos
+*/

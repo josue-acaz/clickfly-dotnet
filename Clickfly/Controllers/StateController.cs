@@ -7,6 +7,7 @@ using clickfly.Data;
 using clickfly.Models;
 using clickfly.Helpers;
 using clickfly.Services;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {

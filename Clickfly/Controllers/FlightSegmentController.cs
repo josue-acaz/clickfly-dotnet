@@ -42,10 +42,14 @@ namespace clickfly.Controllers
         [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult> Save([FromBody]FlightSegment flightSegment)
         {
+            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
             using var transaction = _dataContext.Database.BeginTransaction();
 
             FlightSegment _flightSegment = await _flightSegmentService.Save(flightSegment);
             await transaction.CommitAsync();
+
+            // Enviar notificação de novo voo
+            await _flightSegmentService.SendNotification(_flightSegment.id);
 
             return HttpResponse(_flightSegment);
         }

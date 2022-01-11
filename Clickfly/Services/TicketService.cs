@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.Repositories;
-using clickfly.ViewModels;
 using clickfly.Helpers;
 using Microsoft.Extensions.Options;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -14,12 +14,16 @@ namespace clickfly.Services
 
         public TicketService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils, 
             ITicketRepository ticketRepository
         ) : base(
-            appSettings, 
+            appSettings,
+            systemLogRepository,
+            permissionRepository, 
             notificator, 
             informer,
             utils

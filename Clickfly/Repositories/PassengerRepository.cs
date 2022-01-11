@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -18,7 +18,7 @@ namespace clickfly.Repositories
         private static string whereSql = "passenger.excluded = false";
         protected string[] defaultFields = new string[9];
 
-        public PassengerRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public PassengerRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
             defaultFields[0] = "name";
             defaultFields[1] = "email";
@@ -61,7 +61,7 @@ namespace clickfly.Repositories
             await _dataContext.Passengers.AddRangeAsync(passengers);
         }
 
-        public Task<Passenger> Update(Passenger passenger, string[] fields = null)
+        public Task<Passenger> Update(Passenger passenger)
         {
             throw new NotImplementedException();
         }

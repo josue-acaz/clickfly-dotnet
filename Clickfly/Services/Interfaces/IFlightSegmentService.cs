@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using clickfly.ViewModels;
 using clickfly.Models;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -11,5 +11,6 @@ namespace clickfly.Services
         Task<PaginationResult<FlightSegment>> Pagination(PaginationFilter filter);
         Task<FlightSegment> GetById(string id);
         Task Delete(string id);
+        Task SendNotification(string id);
     }
 }

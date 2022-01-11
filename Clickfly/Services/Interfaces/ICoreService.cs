@@ -1,7 +1,7 @@
 using System;
 using CoordinateSharp;
-using clickfly.ViewModels;
 using System.Threading.Tasks;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {

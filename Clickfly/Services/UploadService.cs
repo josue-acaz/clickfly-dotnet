@@ -7,10 +7,11 @@ using Amazon.S3;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using clickfly.ViewModels;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using clickfly.Helpers;
+using clickfly.ViewModels;
+using clickfly.Repositories;
 
 namespace clickfly.Services
 {
@@ -20,11 +21,15 @@ namespace clickfly.Services
 
         public UploadService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils
         ) : base(
-            appSettings, 
+            appSettings,
+            systemLogRepository,
+            permissionRepository, 
             notificator, 
             informer,
             utils

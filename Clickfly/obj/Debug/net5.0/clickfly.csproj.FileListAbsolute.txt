@@ -103,6 +103,7 @@
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.TagHelpers.output.cache
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.RazorCoreGenerate.cache
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/Razor/Templates/ActivateAccount.cshtml.g.cs
+/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/Razor/Templates/UserLoginCredentials.cshtml.g.cs
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.RazorTargetAssemblyInfo.cache
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.RazorTargetAssemblyInfo.cs
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.Views.pdb
@@ -111,4 +112,3 @@
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/ref/clickfly.dll
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.pdb
 /Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/Debug/net5.0/clickfly.genruntimeconfig.cache
-/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/bin/Debug/net5.0/Slapper.dll

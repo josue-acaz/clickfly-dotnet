@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -16,12 +16,16 @@ namespace clickfly.Services
 
         public AircraftModelService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils,
             IAircraftModelRepository aircraftModelRepository
         ) : base(
             appSettings,
+            systemLogRepository,
+            permissionRepository,
             notificator,
             informer,
             utils

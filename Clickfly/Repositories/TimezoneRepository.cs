@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -14,7 +14,7 @@ namespace clickfly.Repositories
         private static string fromSql = "timezones as timezone";
         private static string whereSql = "timezone.excluded = false";
 
-        public TimezoneRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public TimezoneRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }

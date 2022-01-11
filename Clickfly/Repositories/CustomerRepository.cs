@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using BCryptNet = BCrypt.Net.BCrypt;
 using Npgsql;
 using System.Linq;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -18,19 +18,10 @@ namespace clickfly.Repositories
         private static string fromSql = "customers as customer";
         private static string whereSql = "customer.excluded = false";
         private static string customerThumbnailSql = $@"SELECT url FROM files WHERE resource_id = customer.id AND resource = 'customers' AND field_name = 'thumbnail' LIMIT 1";
-        protected string[] defaultFields = new string[9];
 
-        public CustomerRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public CustomerRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "name";
-            defaultFields[1] = "email";
-            defaultFields[2] = "phone_number";
-            defaultFields[3] = "emergency_phone_number";
-            defaultFields[4] = "document";
-            defaultFields[5] = "document_type";
-            defaultFields[6] = "type";
-            defaultFields[7] = "birthdate";
-            defaultFields[8] = "customer_id";
+
         }
 
         public async Task<Customer> Create(Customer customer)
@@ -68,31 +59,34 @@ namespace clickfly.Repositories
             IncludeModel includeCustomerCards = new IncludeModel();
             includeCustomerCards.As = "cards";
             includeCustomerCards.ForeignKey = "customer_id";
+            includeCustomerCards.Where = "cards.excluded = false ORDER BY cards.created_at DESC";
 
             IncludeModel includeCustomerFriends = new IncludeModel();
             includeCustomerFriends.As = "friends";
             includeCustomerFriends.ForeignKey = "customer_id";
+            includeCustomerFriends.Where = "friends.excluded = false ORDER BY friends.created_at DESC";
 
             IncludeModel includeCustomerAddresses = new IncludeModel();
             includeCustomerAddresses.As = "addresses";
             includeCustomerAddresses.ForeignKey = "customer_id";
+            includeCustomerAddresses.Where = "addresses.excluded = false ORDER BY addresses.created_at DESC";
 
             /*Verificar porque com o atributo password_hash o Slapper.Automapper Crasha*/
             List<string> excludeAttributes = new List<string>();
             excludeAttributes.Add("password_hash");
 
-            QueryOptions queryOptions = new QueryOptions();
-            queryOptions.As = "customer";
-            queryOptions.Where = $"{whereSql} AND customer.id = @id";
-            queryOptions.Params = new { id = id };
-            queryOptions.Attributes.Exclude = excludeAttributes;
+            SelectOptions options = new SelectOptions();
+            options.As = "customer";
+            options.Where = $"{whereSql} AND customer.id = @id";
+            options.Params = new { id = id };
+            options.Attributes.Exclude = excludeAttributes;
 
-            queryOptions.Include<CustomerCard>(includeCustomerCards);
-            queryOptions.Include<CustomerFriend>(includeCustomerFriends);
-            queryOptions.Include<CustomerAddress>(includeCustomerAddresses);
-            queryOptions.AddRawAttribute("thumbnail", customerThumbnailSql);
+            options.Include<CustomerCard>(includeCustomerCards);
+            options.Include<CustomerFriend>(includeCustomerFriends);
+            options.Include<CustomerAddress>(includeCustomerAddresses);
+            options.AddRawAttribute("thumbnail", customerThumbnailSql);
 
-            Customer customer = await _dBAccess.QuerySingleAsync<Customer>(queryOptions);
+            Customer customer = await _dapperWrapper.QuerySingleAsync<Customer>(options);
             return customer;
         }
 
@@ -137,22 +131,19 @@ namespace clickfly.Repositories
             return isValid;
         }
 
-        public async Task<Customer> Update(Customer customer, string[] fields = null)
+        public async Task<Customer> Update(Customer customer)
         {
-            if(fields == null)
-            {
-                fields = defaultFields;
-            }
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
 
-            GetFieldsSqlParams fieldsSqlParams = new GetFieldsSqlParams();
-            fieldsSqlParams.action = "UPDATE";
-            fieldsSqlParams.fields = fields;
+            UpdateOptions options = new UpdateOptions();
+            options.Data = customer;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
 
-            string fieldsToUpdate = _utils.GetFieldsSql(fieldsSqlParams);
-            string querySql = $"UPDATE customers SET {fieldsToUpdate} WHERE id = @id";
-
-            await _dBContext.GetConnection().ExecuteAsync(querySql, customer, _dBContext.GetTransaction());
-
+            await _dapperWrapper.UpdateAsync<Customer>(options);
             return customer;
         }
     }

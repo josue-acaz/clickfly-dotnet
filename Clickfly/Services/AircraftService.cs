@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using clickfly.Helpers;
 using Microsoft.Extensions.Options;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -19,6 +19,8 @@ namespace clickfly.Services
 
         public AircraftService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils,
@@ -27,6 +29,8 @@ namespace clickfly.Services
             IUploadService uploadService
         ) : base(
             appSettings,
+            systemLogRepository,
+            permissionRepository,
             notificator,
             informer,
             utils

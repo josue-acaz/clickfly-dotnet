@@ -7,8 +7,8 @@ using clickfly.Data;
 using clickfly.Models;
 using clickfly.Helpers;
 using clickfly.Services;
-using clickfly.ViewModels;
 using Newtonsoft.Json;
+using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
@@ -30,7 +30,7 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
+        public ActionResult Pagination([FromQuery]PaginationFilter filter)
         {
             GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
 

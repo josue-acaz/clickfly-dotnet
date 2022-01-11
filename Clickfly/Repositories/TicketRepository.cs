@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Npgsql;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -19,7 +19,7 @@ namespace clickfly.Repositories
         private static string whereSql = "ticket.excluded = false";
         private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
 
-        public TicketRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public TicketRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }
@@ -92,7 +92,7 @@ namespace clickfly.Repositories
             includePassenger.As = "passenger";
             includePassenger.ForeignKey = "passenger_id";
 
-            QueryOptions options = new QueryOptions();
+            SelectOptions options = new SelectOptions();
 
             options.As = "ticket";
             options.Where = $"{whereSql} AND ticket.id = @id";
@@ -100,7 +100,7 @@ namespace clickfly.Repositories
             options.Include<Passenger>(includePassenger);
             options.Include<FlightSegment>(includeFlightSegment);
 
-            Ticket ticket = await _dBAccess.QuerySingleAsync<Ticket>(options);
+            Ticket ticket = await _dapperWrapper.QuerySingleAsync<Ticket>(options);
 
             return ticket;
         }
@@ -150,7 +150,7 @@ namespace clickfly.Repositories
             includePassenger.As = "passenger";
             includePassenger.ForeignKey = "passenger_id";
 
-            QueryOptions options = new QueryOptions();
+            SelectOptions options = new SelectOptions();
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);
             queryParams.Add("offset", offset);
@@ -161,7 +161,7 @@ namespace clickfly.Repositories
             options.Include<FlightSegment>(includeFlightSegment);
 
             int total_records = await _dataContext.Tickets.CountAsync();
-            IEnumerable<Ticket> tickets = await _dBAccess.QueryAsync<Ticket>(options);
+            IEnumerable<Ticket> tickets = await _dapperWrapper.QueryAsync<Ticket>(options);
 
             PaginationResult<Ticket> paginationResult = _utils.CreatePaginationResult<Ticket>(tickets.ToList(), filter, total_records);
 

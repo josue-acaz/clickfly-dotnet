@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using clickfly.ViewModels;
 using clickfly.Models;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -9,7 +9,7 @@ namespace clickfly.Repositories
     {
         Task<CustomerAddress> Create(CustomerAddress customerAddress);
         Task<CustomerAddress> GetById(string id);
-        Task<CustomerAddress> Update(CustomerAddress customerAddress, string[] fields = null);
+        Task<CustomerAddress> Update(CustomerAddress customerAddress);
         Task Delete(string id);
         Task<PaginationResult<CustomerAddress>> Pagination(PaginationFilter filter);
     }

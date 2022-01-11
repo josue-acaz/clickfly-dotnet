@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using clickfly.Repositories;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Exceptions;
 using clickfly.Helpers;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -17,12 +17,14 @@ namespace clickfly.Services
 
         public CoreService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils, 
             IAircraftRepository aircraftRepository, 
             IFlightSegmentRepository flightSegmentRepository
-        ) : base(appSettings, notificator, informer, utils)
+        ) : base(appSettings, systemLogRepository, permissionRepository, notificator, informer, utils)
         {
             _aircraftRepository = aircraftRepository;
             _flightSegmentRepository = flightSegmentRepository;

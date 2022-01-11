@@ -6,6 +6,7 @@ using clickfly.Models;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -16,7 +17,7 @@ namespace clickfly.Repositories
         private static string whereSql = "account_verification.excluded = false";
         private static string deleteSql = "UPDATE account_verification SET excluded = true WHERE id = @id";
 
-        public AccountVerificationRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public AccountVerificationRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
 
         }

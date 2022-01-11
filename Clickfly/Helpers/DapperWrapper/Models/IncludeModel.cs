@@ -1,21 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace clickfly.ViewModels
+namespace clickfly.Data
 {
-    public class RawAttribute
-    {
-        public string Name { get; set; }
-        public string Query { get; set; }
-    }
-
     public class IncludeModel : QueryExtensions {
         public string As { get; set; }
         public string ForeignKey { get; set; }
         public Attributes Attributes { get; set; }
         public string TableName { get; set; }
         public string Where { get; set; }
+        public string PK { get; set; }
         public bool BelongsTo { get; set; }
         public List<IncludeModel> Includes { get; set; }
         public List<RawAttribute> RawAttributes { get; set; }
@@ -28,13 +22,11 @@ namespace clickfly.ViewModels
             RawAttributes = new List<RawAttribute>();
         }
 
-        public string GetForeignKey()
-        {
-            return "";
-        }
-
         public void ThenInclude<T>(IncludeModel IncludeModel)
         {
+            string pk = GetPK<T>();
+
+            IncludeModel.PK = pk;
             IncludeModel.TableName = GetTableName<T>();
             List<string> IncludeAttributes = IncludeModel.Attributes.Include;
             List<string> ExcludeAttributes = IncludeModel.Attributes.Exclude;
@@ -53,7 +45,7 @@ namespace clickfly.ViewModels
             }
 
             Includes.Add(IncludeModel);
-            Slapper.AutoMapper.Configuration.AddIdentifier(typeof(T), "id");
+            Slapper.AutoMapper.Configuration.AddIdentifier(typeof(T), pk);
         }
 
         public void AddRawAttribute(string Name, string Query)

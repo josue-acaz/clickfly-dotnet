@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Exceptions;
 using clickfly.Helpers;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -17,6 +17,8 @@ namespace clickfly.Services
 
         public AerodromeService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils,
@@ -24,6 +26,8 @@ namespace clickfly.Services
             ICityRepository cityRepository
         ) : base(
             appSettings,
+            systemLogRepository,
+            permissionRepository,
             notificator,
             informer,
             utils

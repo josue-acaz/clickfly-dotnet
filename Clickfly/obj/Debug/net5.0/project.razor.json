@@ -15619,6 +15619,11 @@
   "RootNamespace": "clickfly",
   "Documents": [
     {
+      "FilePath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/Templates/UserLoginCredentials.cshtml",
+      "TargetPath": "Templates\\UserLoginCredentials.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/Templates/ActivateAccount.cshtml",
       "TargetPath": "Templates\\ActivateAccount.cshtml",
       "FileKind": "mvc"

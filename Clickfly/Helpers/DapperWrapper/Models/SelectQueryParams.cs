@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace clickfly.ViewModels
+namespace clickfly.Data
 {
-    public class CreateQueryParams {
+    public class SelectQueryParams {
+        public string PK { get; set; }
         public string As { get; set; }
         public string TableName { get; set; }
         public List<string> Attributes { get; set; }
@@ -11,7 +12,7 @@ namespace clickfly.ViewModels
         public List<IncludeModel> Includes { get; set; }
         public List<RawAttribute> RawAttributes { get; set; }
 
-        public CreateQueryParams()
+        public SelectQueryParams()
         {
             Attributes = new List<string>();
             Includes = new List<IncludeModel>();

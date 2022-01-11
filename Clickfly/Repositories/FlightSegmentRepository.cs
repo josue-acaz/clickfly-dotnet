@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
-using clickfly.ViewModels;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using clickfly.ViewModels;
 
 namespace clickfly.Repositories
 {
@@ -16,18 +16,12 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "flight_segments as flight_segment";
         private static string whereSql = "flight_segment.excluded = false";
-        private static string bookedSeatsSql = $@"
-            SELECT COALESCE(count(passenger.id), 0) AS  booked_seats FROM passengers AS passenger 
-            INNER JOIN bookings AS booking ON booking.id = passenger.booking_id 
-            INNER JOIN ( SELECT status.type, status.booking_id FROM booking_status AS status WHERE status.excluded = false ORDER BY status.created_at DESC LIMIT 1 ) AS status ON status.booking_id = booking.id
-            WHERE passenger.excluded = false AND booking.excluded = false AND passenger.flight_segment_id = flight_segment.id AND ( status.type::text = 'approved' OR status.type::text = 'pending' )
-        ";
-        private static string availableSeatsSql = $"(SELECT CAST(((flight_segment.total_seats - ({bookedSeatsSql}))) AS INTEGER))";
-        private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime)))";
+        private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
+        private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))) / 60";
         private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
         protected string[] defaultFields = new string[10];
 
-        public FlightSegmentRepository(IDBContext dBContext, IDataContext dataContext, IDBAccess dBAccess, IUtils utils) : base(dBContext, dataContext, dBAccess, utils)
+        public FlightSegmentRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
             defaultFields[0] = "number";
             defaultFields[1] = "departure_datetime";
@@ -92,19 +86,19 @@ namespace clickfly.Repositories
             includeFlight.As = "flight";
             includeFlight.ForeignKey = "flight_id";
 
-            QueryOptions queryOptions = new QueryOptions();
-            queryOptions.As = "flight_segment";
-            queryOptions.Where = $"{whereSql} AND flight_segment.id = @id";
-            queryOptions.Params = new { id = id };
-            queryOptions.AddRawAttribute("flight_time", flightTimeSql);
-            queryOptions.AddRawAttribute("available_seats", availableSeatsSql);
+            SelectOptions options = new SelectOptions();
+            options.As = "flight_segment";
+            options.Where = $"{whereSql} AND flight_segment.id = @id";
+            options.Params = new { id = id };
+            options.AddRawAttribute("flight_time", flightTimeSql);
+            options.AddRawAttribute("available_seats", availableSeatsSql);
             
-            queryOptions.Include<Flight>(includeFlight);
-            queryOptions.Include<Aircraft>(includeAircraft);
-            queryOptions.Include<Aerodrome>(includeOriginAerodrome);
-            queryOptions.Include<Aerodrome>(includeDestinationAerodrome);
+            options.Include<Flight>(includeFlight);
+            options.Include<Aircraft>(includeAircraft);
+            options.Include<Aerodrome>(includeOriginAerodrome);
+            options.Include<Aerodrome>(includeDestinationAerodrome);
             
-            FlightSegment flightSegment = await _dBAccess.QuerySingleAsync<FlightSegment>(queryOptions);
+            FlightSegment flightSegment = await _dapperWrapper.QuerySingleAsync<FlightSegment>(options);
             
             return flightSegment;
         }
@@ -131,22 +125,19 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public async Task<FlightSegment> Update(FlightSegment flightSegment, string[] fields = null)
+        public async Task<FlightSegment> Update(FlightSegment flightSegment)
         {
-            if(fields == null)
-            {
-                fields = defaultFields;
-            }
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
 
-            GetFieldsSqlParams fieldsSqlParams = new GetFieldsSqlParams();
-            fieldsSqlParams.action = "UPDATE";
-            fieldsSqlParams.fields = fields;
+            UpdateOptions options = new UpdateOptions();
+            options.Data = flightSegment;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
 
-            string fieldsToUpdate = _utils.GetFieldsSql(fieldsSqlParams);
-            string querySql = $"UPDATE flight_segments SET {fieldsToUpdate} WHERE id = @id";
-
-            await _dBContext.GetConnection().ExecuteAsync(querySql, flightSegment, _dBContext.GetTransaction());
-
+            await _dapperWrapper.UpdateAsync<FlightSegment>(options);
             return flightSegment;
         }
     }

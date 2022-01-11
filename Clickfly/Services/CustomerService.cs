@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.Repositories;
-using clickfly.ViewModels;
 using clickfly.Exceptions;
 using clickfly.Helpers;
 using PagarmeCoreApi.Standard.Controllers;
@@ -15,6 +14,7 @@ using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -28,6 +28,8 @@ namespace clickfly.Services
 
         public CustomerService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils, 
@@ -35,7 +37,7 @@ namespace clickfly.Services
             IFileRepository fileRepository, 
             IUploadService uploadService, 
             ICustomersController customersController
-        ) : base(appSettings, notificator, informer, utils)
+        ) : base(appSettings, systemLogRepository, permissionRepository, notificator, informer, utils)
         {
             _customerRepository = customerRepository;
             _customersController = customersController;

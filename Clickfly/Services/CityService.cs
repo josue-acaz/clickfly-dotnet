@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using clickfly.Models;
-using clickfly.ViewModels;
 using clickfly.Repositories;
 using clickfly.Helpers;
 using Microsoft.Extensions.Options;
+using clickfly.ViewModels;
 
 namespace clickfly.Services
 {
@@ -17,6 +17,8 @@ namespace clickfly.Services
 
         public CityService(
             IOptions<AppSettings> appSettings, 
+            ISystemLogRepository systemLogRepository,
+            IPermissionRepository permissionRepository,
             INotificator notificator, 
             IInformer informer,
             IUtils utils,
@@ -25,6 +27,8 @@ namespace clickfly.Services
             IStateRepository stateRepository
         ) : base(
             appSettings,
+            systemLogRepository,
+            permissionRepository,
             notificator,
             informer,
             utils
