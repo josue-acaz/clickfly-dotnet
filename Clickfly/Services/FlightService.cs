@@ -104,8 +104,7 @@ namespace clickfly.Services
                 flight.air_taxi_id = user.air_taxi_id;
                 flight = await _flightRepository.Create(flight);
             }
-
-            flight = await _flightRepository.GetById(flight.id);
+            
             return flight;
         }
     }

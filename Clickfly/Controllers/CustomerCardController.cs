@@ -34,38 +34,70 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]CustomerCard customerCard)
         {
-            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            customerCard.customer_id = customerId;
-            customerCard = await _customerCardService.Save(customerCard);
-            await transaction.CommitAsync();
+                customerCard.customer_id = customerId;
+                customerCard = await _customerCardService.Save(customerCard);
+                await transaction.CommitAsync();
 
-            return HttpResponse(customerCard);
+                return HttpResponse(customerCard);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+            try
+            {
+                string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
             
-            filter.customer_id = customerId;
-            PaginationResult<CustomerCard> customerCards = await _customerCardService.Pagination(filter);
-            return HttpResponse(customerCards);
+                filter.customer_id = customerId;
+                PaginationResult<CustomerCard> customerCards = await _customerCardService.Pagination(filter);
+                return HttpResponse(customerCards);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerCard>> GetById(string id)
         {
-            CustomerCard customerCard = await _customerCardService.GetById(id);
-            return HttpResponse(customerCard);
+            try
+            {
+                CustomerCard customerCard = await _customerCardService.GetById(id);
+                return HttpResponse(customerCard);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            await _customerCardService.Delete(id);
-            return HttpResponse();
+            try
+            {
+                await _customerCardService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

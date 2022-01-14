@@ -43,19 +43,35 @@ namespace clickfly.Repositories
 
         public async Task<Flight> GetById(string id)
         {
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND flight.id = @id";
-            NpgsqlParameter param = new NpgsqlParameter("id", id);
-            
-            Flight flight = await _dataContext.Flights
-            .FromSqlRaw(querySql, param)
-            .Include(flight => flight.aircraft)
-            .ThenInclude(aircraft => aircraft.model)
-            .Include(flight => flight.segments)
-            .ThenInclude(flightSegment => flightSegment.origin_aerodrome)
-            .Include(flight => flight.segments)
-            .ThenInclude(flightSegment => flightSegment.destination_aerodrome)
-            .FirstOrDefaultAsync();
+            SelectOptions options = new SelectOptions();
+            options.Where = $"{whereSql} AND flight.id = @id";
+            options.Params = new { id = id };
 
+            IncludeModel includeAircraft = new IncludeModel();
+            includeAircraft.As = "aircraft";
+            includeAircraft.ForeignKey = "aircraft_id";
+            includeAircraft.ThenInclude<AircraftModel>(new IncludeModel{
+                As = "model",
+                ForeignKey = "aircraft_model_id",
+            });
+
+            IncludeModel includeSegments = new IncludeModel();
+            includeSegments.As = "segments";
+            includeSegments.ForeignKey = "flight_id";
+
+            includeSegments.ThenInclude<Aerodrome>(new IncludeModel{
+                As = "origin_aerodrome",
+                ForeignKey = "origin_aerodrome_id"
+            });
+            includeSegments.ThenInclude<Aerodrome>(new IncludeModel{
+                As = "destination_aerodrome",
+                ForeignKey = "destination_aerodrome_id"
+            });
+
+            options.Include<Aircraft>(includeAircraft);
+            options.Include<FlightSegment>(includeSegments);
+
+            Flight flight = await _dapperWrapper.QuerySingleAsync<Flight>(options);
             return flight;
         }
 

@@ -41,6 +41,31 @@ namespace clickfly
             return password;
         }
 
+        public bool IsStrongPassword(string password)
+        {
+            int minSize = 6;
+
+            string numbers = "0123456789";
+            string alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+            for (int i = 0; i < password.Length; i++)
+            {
+                if(i < password.Length - 3)
+                {
+                    string search = password.Substring(i, 3);
+                    if(alphabet.Contains(search) || numbers.Contains(search))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // Verificando tamanho minimo
+            if (password.Length < minSize) return false;
+            
+            return true;
+        }
+
         public PaginationResult<Type> CreatePaginationResult<Type>(List<Type> data, PaginationFilter filter, int totalRecords)
         {
             PaginationResult<Type> result = new PaginationResult<Type>(data, filter.page_number, filter.page_size);

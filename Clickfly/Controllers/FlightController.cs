@@ -35,31 +35,57 @@ namespace clickfly.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Flight>> GetById(string id)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            Flight flight = await _flightService.GetById(id);
-            
-            return HttpResponse(flight);
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                Flight flight = await _flightService.GetById(id);
+                
+                return HttpResponse(flight);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Flight flight)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            flight = await _flightService.Save(flight);
-            await transaction.CommitAsync();
+                flight = await _flightService.Save(flight);
+                await transaction.CommitAsync();
 
-            return HttpResponse(flight);
+                flight = await _flightService.GetById(flight.id);
+
+                return HttpResponse(flight);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            PaginationResult<Flight> flights = await _flightService.Pagination(filter);
-            
-            return HttpResponse(flights);
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                PaginationResult<Flight> flights = await _flightService.Pagination(filter);
+                
+                return HttpResponse(flights);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

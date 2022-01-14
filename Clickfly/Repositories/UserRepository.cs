@@ -42,6 +42,20 @@ namespace clickfly.Repositories
             return user;
         }   
 
+        public async Task UpdatePassword(string user_id, string password)
+        {
+
+            string querySql = $"UPDATE users SET password_hash = @password_hash WHERE id = @user_id";
+            string password_hash = BCryptNet.HashPassword(password);
+
+            object queryParams = new {
+                user_id = user_id,
+                password_hash = password_hash,
+            };
+
+            await _dBContext.GetConnection().ExecuteAsync(querySql, queryParams, _dBContext.GetTransaction());
+        }
+
         public async Task Delete(string id)
         {
             string querySql = $"UPDATE users as _user set _user.excluded = true WHERE _user.id = @id";
@@ -52,15 +66,23 @@ namespace clickfly.Repositories
 
         public async Task<User> GetById(string id)
         {
-            string querySql = $@"
-                SELECT {fieldsSql}, user_role.label as role FROM {fromSql} 
-                INNER JOIN {innerJoinPermissionGroup} 
-                INNER JOIN {innerJoinUserRole} 
-                WHERE {whereSql} AND _user.id = @id
-            ";
+            IncludeModel includePermissionGroup = new IncludeModel();
+            includePermissionGroup.As = "permission_group";
+            includePermissionGroup.ForeignKey = "user_id";
+            includePermissionGroup.ThenInclude<UserRole>(new IncludeModel{
+                As = "user_role",
+                ForeignKey = "user_role_id",
+            });
 
-            object param = new { id = id };
-            User user = await _dBContext.GetConnection().QueryFirstOrDefaultAsync<User>(querySql, param);
+            SelectOptions options = new SelectOptions();
+            options.As = "_user";
+            options.Where = $"{whereSql} AND _user.id = @id";
+            options.Params = new { id = id };
+
+            options.AddRawAttribute("role", "user_role.name");
+            options.Include<PermissionGroup>(includePermissionGroup);
+
+            User user = await _dapperWrapper.QuerySingleAsync<User>(options);
             return user;
         }
 
@@ -70,21 +92,36 @@ namespace clickfly.Repositories
             int offset = (filter.page_number - 1) * filter.page_size;
             string air_taxi_id = filter.air_taxi_id;
 
-            string querySql = $@"
-                SELECT {fieldsSql}, user_role.label as role FROM {fromSql} 
-                INNER JOIN {innerJoinPermissionGroup} 
-                INNER JOIN {innerJoinUserRole} 
-                WHERE {whereSql} AND _user.air_taxi_id = @air_taxi_id
-                LIMIT @limit OFFSET @offset
-            ";
+            string where = $"{whereSql} AND _user.air_taxi_id = @air_taxi_id";
+            
+            filter.exclude.ForEach(ex => {
+                where += $" AND user_role.{ex.name} != '{ex.value}' ";
+            });
+            
+            where += " LIMIT @limit OFFSET @offset ";
 
-            Dictionary<string, object> _params = new Dictionary<string, object>();
-            _params.Add("limit", limit);
-            _params.Add("offset", offset);
-            _params.Add("air_taxi_id", air_taxi_id);
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+            queryParams.Add("air_taxi_id", air_taxi_id);
 
-            IEnumerable<User> users = await _dBContext.GetConnection().QueryAsync<User>(querySql, _params);
-            int total_records = _dBContext.GetConnection().ExecuteScalar<int>($"SELECT COUNT(*) AS total_records FROM ({querySql}) users", _params);
+            IncludeModel includePermissionGroup = new IncludeModel();
+            includePermissionGroup.As = "permission_group";
+            includePermissionGroup.ForeignKey = "user_id";
+            includePermissionGroup.ThenInclude<UserRole>(new IncludeModel{
+                As = "user_role",
+                ForeignKey = "user_role_id",
+            });
+
+            SelectOptions options = new SelectOptions();
+            options.As = "_user";
+            options.Where = where;
+            options.Params = queryParams;
+            options.Include<PermissionGroup>(includePermissionGroup);
+            options.AddRawAttribute("role", "user_role.label");
+
+            IEnumerable<User> users = await _dapperWrapper.QueryAsync<User>(options);
+            int total_records = users.Count();
 
             PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
             PaginationResult<User> paginationResult = _utils.CreatePaginationResult<User>(users.ToList(), paginationFilter, total_records);
@@ -110,29 +147,59 @@ namespace clickfly.Repositories
 
         public async Task<User> GetByEmail(string email)
         {
-            string querySql = $@"
-                SELECT {fieldsSql}, user_role.name as role FROM {fromSql} 
-                LEFT OUTER JOIN {innerJoinPermissionGroup} 
-                LEFT OUTER JOIN {innerJoinUserRole} 
-                WHERE {whereSql} AND _user.email = @email
-            ";
-
             object param = new { email = email };
-            User user = await _dBContext.GetConnection().QueryFirstOrDefaultAsync<User>(querySql, param);
+
+            IncludeModel includePermissionGroup = new IncludeModel();
+            includePermissionGroup.As = "permission_group";
+            includePermissionGroup.ForeignKey = "user_id";
+            includePermissionGroup.ThenInclude<UserRole>(new IncludeModel{
+                As = "user_role",
+                ForeignKey = "user_role_id",
+            });
+            
+            SelectOptions options = new SelectOptions();
+            options.As = "_user";
+            options.Params = param;
+            options.Where = $"{whereSql} AND _user.email = @email";
+
+            options.Include<PermissionGroup>(includePermissionGroup);
+            options.Include<AirTaxi>(new IncludeModel{
+                As = "air_taxi",
+                ForeignKey = "air_taxi_id",
+            });
+
+            options.AddRawAttribute("role", "user_role.name");
+
+            User user = await _dapperWrapper.QuerySingleAsync<User>(options);
             return user;
         }
 
         public async Task<User> GetByUsername(string username)
         {
-            string querySql = $@"
-                SELECT {fieldsSql}, user_role.name as role FROM {fromSql} 
-                LEFT OUTER JOIN {innerJoinPermissionGroup} 
-                LEFT OUTER JOIN {innerJoinUserRole} 
-                WHERE {whereSql} AND _user.username = @username
-            ";
-
             object param = new { username = username };
-            User user = await _dBContext.GetConnection().QueryFirstOrDefaultAsync<User>(querySql, param);
+
+            IncludeModel includePermissionGroup = new IncludeModel();
+            includePermissionGroup.As = "permission_group";
+            includePermissionGroup.ForeignKey = "user_id";
+            includePermissionGroup.ThenInclude<UserRole>(new IncludeModel{
+                As = "user_role",
+                ForeignKey = "user_role_id",
+            });
+            
+            SelectOptions options = new SelectOptions();
+            options.As = "_user";
+            options.Params = param;
+            options.Where = $"{whereSql} AND _user.username = @username";
+
+            options.Include<PermissionGroup>(includePermissionGroup);
+            options.Include<AirTaxi>(new IncludeModel{
+                As = "air_taxi",
+                ForeignKey = "air_taxi_id",
+            });
+
+            options.AddRawAttribute("role", "user_role.name");
+
+            User user = await _dapperWrapper.QuerySingleAsync<User>(options);
             return user;
         }
     }

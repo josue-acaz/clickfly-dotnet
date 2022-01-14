@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using clickfly.Helpers;
 using System.Collections.Generic;
 using clickfly.ViewModels;
+using System.Linq;
 
 namespace clickfly.Services
 {
@@ -41,12 +42,34 @@ namespace clickfly.Services
 
         public async Task<IEnumerable<UserRole>> Autocomplete(AutocompleteParams autocompleteParams)
         {
+            User authUser = _informer.GetValue<User>(UserTypes.User);
+            string role = authUser.role;
+
             PaginationFilter filter = new PaginationFilter();
             filter.page_size = 10;
             filter.page_number = 1;
             filter.order = "DESC";
             filter.order_by = "created_at";
             filter.text = autocompleteParams.text;
+
+            // Excluir perfis de mesmo nível e acima
+            string[] roles = new string[]{
+                UserRoles.GENERAL_ADMINISTRATOR,
+                UserRoles.ADMINISTRATOR,
+                UserRoles.MANAGER,
+                UserRoles.EMPLOYEE,
+            };
+
+            int index = Array.FindIndex(roles, x => x == role);
+            string[] excludeRoles = roles.Take(index + 1).ToArray();
+
+            for (int i = 0; i < excludeRoles.Length; i++)
+            {
+                filter.exclude.Add(new ExcludeFilterAttribute{
+                    name = "name",
+                    value = excludeRoles[i]
+                });
+            }
 
             PaginationResult<UserRole> paginationResult = await _userRoleRepository.Pagination(filter);
             List<UserRole> user_roles = paginationResult.data;

@@ -5,6 +5,13 @@ namespace clickfly
     static class UserTypes {
         public const string User = "user";
         public const string Customer = "customer";
+    }
+
+    static class UserRoles {
+        public const string EMPLOYEE = "employee";
+        public const string MANAGER = "manager";
+        public const string ADMINISTRATOR = "administrator";
+        public const string GENERAL_ADMINISTRATOR = "general_administrator";
     };
 
     static class UserIdTypes {

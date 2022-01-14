@@ -9,6 +9,7 @@ namespace clickfly.Services
     {
         Task<User> Save(User user);
         Task<User> UpdateRole(UpdateRole updateRole);
+        Task ChangePassword(ChangePassword changePassword);
         Task<PaginationResult<User>> Pagination(PaginationFilter filter);
         Task<User> GetById(string id);
         Task Delete(string id);

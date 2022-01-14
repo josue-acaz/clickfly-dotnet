@@ -34,21 +34,37 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]PermissionResource permissionResource)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            permissionResource = await _permissionResourceService.Save(permissionResource);
-            await transaction.CommitAsync();
+                permissionResource = await _permissionResourceService.Save(permissionResource);
+                await transaction.CommitAsync();
 
-            return HttpResponse(permissionResource);
+                return HttpResponse(permissionResource);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("autocomplete")]
         [Authorize(Roles = "general_administrator,administrator")]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         { 
-            IEnumerable<PermissionResource> permission_resources = await _permissionResourceService.Autocomplete(autocompleteParams);
-            return HttpResponse(permission_resources);
+            try
+            {
+                IEnumerable<PermissionResource> permission_resources = await _permissionResourceService.Autocomplete(autocompleteParams);
+                return HttpResponse(permission_resources);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

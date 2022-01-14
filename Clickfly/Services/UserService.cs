@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using clickfly.Helpers;
 using clickfly.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace clickfly.Services
 {
@@ -81,6 +82,34 @@ namespace clickfly.Services
             return authenticated;
         }
 
+        public async Task ChangePassword(ChangePassword changePassword)
+        {
+            User authUser = _informer.GetValue<User>(UserTypes.User);
+            User user = await _userRepository.GetById(authUser.id);
+
+            if(changePassword.password != changePassword.confirm_password)
+            {
+                Notify("Senhas digitadas são diferentes.");
+                return;
+            }
+
+            bool isEquals = BCryptNet.Verify(changePassword.actual_password, user.password_hash);
+            if(!isEquals)
+            {
+                Notify("Senha atual não confere.");
+                return;
+            }
+
+            bool isStrongPassword = _utils.IsStrongPassword(changePassword.password);
+            if(!isStrongPassword)
+            {
+                Notify("A senha deve conter pelo menos 6 caracteres e não pode ser uma sequência de letras ou números.");
+                return;
+            }
+
+            await _userRepository.UpdatePassword(authUser.id, changePassword.password);
+        }
+
         public Task Delete(string id)
         {
             throw new NotImplementedException();
@@ -94,6 +123,28 @@ namespace clickfly.Services
 
         public async Task<PaginationResult<User>> Pagination(PaginationFilter filter)
         {
+            User authUser = _informer.GetValue<User>(UserTypes.User);
+            string role = authUser.role;
+
+            // Excluir perfis de mesmo nível e acima
+            string[] roles = new string[]{
+                UserRoles.GENERAL_ADMINISTRATOR,
+                UserRoles.ADMINISTRATOR,
+                UserRoles.MANAGER,
+                UserRoles.EMPLOYEE,
+            };
+
+            int index = Array.FindIndex(roles, x => x == role);
+            string[] excludeRoles = roles.Take(index + 1).ToArray();
+
+            for (int i = 0; i < excludeRoles.Length; i++)
+            {
+                filter.exclude.Add(new ExcludeFilterAttribute{
+                    name = "name",
+                    value = excludeRoles[i]
+                });
+            }
+            
             PaginationResult<User> paginationResult = await _userRepository.Pagination(filter);
             return paginationResult;
         }
@@ -138,12 +189,9 @@ namespace clickfly.Services
                 permissionGroup.user_role_id = userRole.id;
                 permissionGroup.allowed = true;
 
-                Console.WriteLine($"Permissions: {permissions.Count}");
-
                 permissionGroup = await _permissionGroupRepository.Create(permissionGroup);
                 foreach(UserRolePermission userRolePermission in permissions)
                 {
-                    Console.WriteLine(userRolePermission.id);
                     Permission permission = new Permission();
                     permission.permission_group_id = permissionGroup.id;
                     permission.permission_resource_id = userRolePermission.permission_resource_id;
@@ -193,39 +241,36 @@ namespace clickfly.Services
             User user = await _userRepository.GetById(updateRole.user_id);
             UserRole currentRole = await _userRoleRepository.GetByUserId(user.id);
 
-            if(user.role != currentRole.name)
+            UserRole userRole = await _userRoleRepository.GetByName(updateRole.role);
+            if(userRole == null)
             {
-                UserRole userRole = await _userRoleRepository.GetByName(updateRole.role);
-                if(userRole == null)
-                {
-                    throw new UnauthorizedException("Permissão negada.");
-                }
+                throw new UnauthorizedException("Permissão negada.");
+            }
 
-                // Atualizar grupo
-                PermissionGroup permissionGroup = await _permissionGroupRepository.GetByUserId(user.id);
-                permissionGroup.user_role_id = userRole.id;
+            // Atualizar grupo
+            PermissionGroup permissionGroup = await _permissionGroupRepository.GetByUserId(user.id);
+            permissionGroup.user_role_id = userRole.id;
 
-                // Excluir permissões atuais
-                foreach(Permission p in permissionGroup.permissions)
-                {
-                    await _permissionRepository.Delete(p.id);
-                }
+            // Excluir permissões atuais
+            foreach(Permission p in permissionGroup.permissions)
+            {
+                await _permissionRepository.Delete(p.id);
+            }
 
-                permissionGroup = await _permissionGroupRepository.Update(permissionGroup);
+            permissionGroup = await _permissionGroupRepository.Update(permissionGroup);
 
-                // Atribuir novas permissões
-                foreach(UserRolePermission p in userRole.permissions)
-                {
-                    Permission permission = new Permission();
-                    permission.permission_group_id = permissionGroup.id;
-                    permission.permission_resource_id = p.permission_resource_id;
-                    permission._create = p._create;
-                    permission._read = p._read;
-                    permission._update = p._update;
-                    permission._delete = p._delete;
+            // Atribuir novas permissões
+            foreach(UserRolePermission p in userRole.permissions)
+            {
+                Permission permission = new Permission();
+                permission.permission_group_id = permissionGroup.id;
+                permission.permission_resource_id = p.permission_resource_id;
+                permission._create = p._create;
+                permission._read = p._read;
+                permission._update = p._update;
+                permission._delete = p._delete;
 
-                    permission = await _permissionRepository.Create(permission);
-                }
+                permission = await _permissionRepository.Create(permission);
             }
 
             return user;

@@ -372,11 +372,6 @@ namespace clickfly.Data
             List<string> defaultAttributes = options.Attributes.Include.Count > 0 ? options.Attributes.Include : GetAttributes<T>(options.Attributes.Exclude);
             List<RawAttribute> rawAttributes = options.RawAttributes;
 
-            foreach(string att in defaultAttributes)
-            {
-                Console.WriteLine(att);
-            }
-
             SelectQueryParams queryParams = new SelectQueryParams();
             queryParams.TableName = tableName;
             queryParams.Attributes = defaultAttributes;

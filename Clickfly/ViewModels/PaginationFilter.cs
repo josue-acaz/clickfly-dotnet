@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 
 namespace clickfly.ViewModels
 {
+    public class ExcludeFilterAttribute
+    {
+        public string name { get; set; }
+        public string value { get; set; }
+    };
+
     public class PaginationFilter
     {
         public int page_number { get; set; }
@@ -23,10 +29,12 @@ namespace clickfly.ViewModels
         public string flight_type { get; set; }
         public string flight_segment_type { get; set; }
         public string air_taxi_id { get; set; }
+        public List<ExcludeFilterAttribute> exclude { get; set; }
         public PaginationFilter()
         {
             this.page_number = 1;
             this.page_size = 10;
+            this.exclude = new List<ExcludeFilterAttribute>();
         }
         public PaginationFilter(int page_number,int page_size)
         {

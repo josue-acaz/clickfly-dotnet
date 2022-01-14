@@ -33,18 +33,35 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromForm]AircraftImage aircraftImage)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
-            AircraftImage _aircraftImage = await _aircraftImageService.Save(aircraftImage);
-            await transaction.CommitAsync();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
+            
+                aircraftImage = await _aircraftImageService.Save(aircraftImage);
+                await transaction.CommitAsync();
 
-            return HttpResponse(aircraftImage);
+                return HttpResponse(aircraftImage);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]AircraftImagePaginationFilter filter)
         {
-            PaginationResult<AircraftImage> aircraftImages = await _aircraftImageService.Pagination(filter);
-            return HttpResponse(aircraftImages);
+            try
+            {
+                PaginationResult<AircraftImage> aircraftImages = await _aircraftImageService.Pagination(filter);
+                return HttpResponse(aircraftImages);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

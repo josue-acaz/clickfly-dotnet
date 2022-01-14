@@ -4,7 +4,6 @@ using clickfly.Data;
 using clickfly.Helpers;
 using clickfly.Services;
 using clickfly.Repositories;
-using clickfly.Middlewares;
 using clickfly.ViewModels;
 using PagarmeCoreApi.Standard.Controllers;
 using System;
@@ -130,25 +129,6 @@ namespace clickfly.Configs
             services.AddScoped<ITransfersController, TransfersController>();
 
             return services;
-        }
-
-        public static IServiceCollection AddErrorHandler(this IServiceCollection services, Action<ErrorHandlerOptions> options = default)
-        {
-            options = options ?? (opts => {});
-            services.Configure(options);
-            return services;
-        }
-
-        public static IApplicationBuilder UseErrorHandler(this IApplicationBuilder app)
-        {
-            return app.UseMiddleware<ErrorHandler>();
-        }
-        public static IApplicationBuilder UseErrorHandler(this IApplicationBuilder app, Action<ErrorHandlerOptions> options = default)
-        {
-            ErrorHandlerOptions config = new ErrorHandlerOptions();
-            options.Invoke(config);
-
-            return app.UseMiddleware<ErrorHandler>(config);
         }
     }
 }

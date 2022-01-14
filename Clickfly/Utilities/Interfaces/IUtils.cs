@@ -11,6 +11,7 @@ namespace clickfly
     {
         string RandomBytes(int length);
         string GetBulkSql(string[] ids);
+        bool IsStrongPassword(string password);
         Installment[] GetInstallments(float subtotal, int max = 8);
         PaginationResult<Type> CreatePaginationResult<Type>(List<Type> data, PaginationFilter filter, int totalRecords);
         string GetBookingStatus(string chargeStatus);

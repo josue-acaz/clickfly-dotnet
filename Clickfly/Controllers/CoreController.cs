@@ -42,57 +42,95 @@ namespace clickfly.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<double>> GetFlightTime([FromQuery]FlightTimeRequest flightTimeRequest)
         {
-            double flightTime = await _coreService.GetFlightTime(flightTimeRequest);
-            return flightTime;
+            try
+            {
+                double flightTime = await _coreService.GetFlightTime(flightTimeRequest);
+                return flightTime;
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("flight-price")]
         [AllowAnonymous]
         public async Task<ActionResult<double>> GetFlightPrice([FromQuery]FlightPriceRequest flightPriceRequest)
         {
-            double flightPrice = await _coreService.GetFlightPrice(flightPriceRequest);
-            return flightPrice;
+            try
+            {
+                double flightPrice = await _coreService.GetFlightPrice(flightPriceRequest);
+                return flightPrice;
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("flight-subtotal")]
         [AllowAnonymous]
         public async Task<ActionResult<double>> GetFlightSubtotal([FromQuery]FlightSubtotalRequest flightSubtotalRequest)
         {
-            Console.WriteLine(flightSubtotalRequest.selected_seats);
-            Console.WriteLine(flightSubtotalRequest.flight_segment_id);
-            double flightPrice = await _coreService.GetFlightSubtotal(flightSubtotalRequest);
-            return flightPrice;
+            try
+            {
+                double flightPrice = await _coreService.GetFlightSubtotal(flightSubtotalRequest);
+                return flightPrice;
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("distance-between-aerodromes")]
         [AllowAnonymous]
         public async Task<ActionResult<double>> GetDistanceBetweenAerodromes([FromQuery]DistanceBetweenAerodromesRequest distanceBetweenAerodromesRequest)
         {
-            string originAerodromeId = distanceBetweenAerodromesRequest.origin_aerodrome_id;
-            string destinationAerodromeId = distanceBetweenAerodromesRequest.destination_aerodrome_id;
+            try
+            {
+                string originAerodromeId = distanceBetweenAerodromesRequest.origin_aerodrome_id;
+                string destinationAerodromeId = distanceBetweenAerodromesRequest.destination_aerodrome_id;
 
-            Aerodrome originAerodrome = await _aerodromeService.GetById(originAerodromeId);
-            Aerodrome destinationAerodrome = await _aerodromeService.GetById(destinationAerodromeId);
+                Aerodrome originAerodrome = await _aerodromeService.GetById(originAerodromeId);
+                Aerodrome destinationAerodrome = await _aerodromeService.GetById(destinationAerodromeId);
 
-            Coordinate p1 = new Coordinate();
-            Coordinate p2 = new Coordinate();
+                Coordinate p1 = new Coordinate();
+                Coordinate p2 = new Coordinate();
 
-            p1.Latitude = new CoordinatePart(originAerodrome.latitude, CoordinateType.Lat);
-            p2.Longitude = new CoordinatePart(originAerodrome.longitude, CoordinateType.Long);
+                p1.Latitude = new CoordinatePart(originAerodrome.latitude, CoordinateType.Lat);
+                p2.Longitude = new CoordinatePart(originAerodrome.longitude, CoordinateType.Long);
 
-            p2.Latitude = new CoordinatePart(destinationAerodrome.latitude, CoordinateType.Lat);
-            p2.Longitude = new CoordinatePart(destinationAerodrome.longitude, CoordinateType.Long);
+                p2.Latitude = new CoordinatePart(destinationAerodrome.latitude, CoordinateType.Lat);
+                p2.Longitude = new CoordinatePart(destinationAerodrome.longitude, CoordinateType.Long);
 
-            double distance = _coreService.GetDistanceBetweenCoordinates(p1, p2);
-            return distance;
+                double distance = _coreService.GetDistanceBetweenCoordinates(p1, p2);
+                return distance;
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("installments")]
         [AllowAnonymous]
         public async Task<ActionResult<Installment[]>> GetInstallments([FromQuery]InstallmentsRequest installmentsRequest)
         {
-            Installment[] installments = await _coreService.GetInstallments(installmentsRequest);
-            return installments;
+            try
+            {
+                Installment[] installments = await _coreService.GetInstallments(installmentsRequest);
+                return installments;
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     
         [HttpGet("current-datetime")]
@@ -106,8 +144,16 @@ namespace clickfly.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<ConsultCepResponse>> ConsultCep(string cep)
         {
-            ConsultCepResponse consultCepResponse = await _cepService.ConsultCep(cep);
-            return consultCepResponse;
+            try
+            {
+                ConsultCepResponse consultCepResponse = await _cepService.ConsultCep(cep);
+                return consultCepResponse;
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

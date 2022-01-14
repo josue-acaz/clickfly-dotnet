@@ -34,23 +34,39 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Booking booking)
         {
-            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            booking.customer_id = customerId;
-            CreateBookingResponse createBookingResponse = await _bookingService.Save(booking);
-            await transaction.CommitAsync();
+                booking.customer_id = customerId;
+                CreateBookingResponse createBookingResponse = await _bookingService.Save(booking);
+                await transaction.CommitAsync();
 
-            return HttpResponse(createBookingResponse);
+                return HttpResponse(createBookingResponse);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
            
-            PaginationResult<Booking> bookings = await _bookingService.Pagination(filter);
-            return HttpResponse(bookings);
+                PaginationResult<Booking> bookings = await _bookingService.Pagination(filter);
+                return HttpResponse(bookings);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

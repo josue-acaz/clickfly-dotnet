@@ -87,8 +87,6 @@ namespace clickfly.Services
             double selected_seats = flightSubtotalRequest.selected_seats;
             string flight_segment_id = flightSubtotalRequest.flight_segment_id;
 
-            Console.WriteLine(flight_segment_id);
-
             FlightSegment flightSegment = await _flightSegmentRepository.GetById(flight_segment_id);
             
             if(flightSegment == null)

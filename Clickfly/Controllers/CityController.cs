@@ -34,12 +34,20 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]City city)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            City _city = await _cityService.Save(city);
-            await transaction.CommitAsync();
+                city = await _cityService.Save(city);
+                await transaction.CommitAsync();
 
-            return HttpResponse(_city);
+                return HttpResponse(city);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

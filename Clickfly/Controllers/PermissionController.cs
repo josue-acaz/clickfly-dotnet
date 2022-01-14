@@ -34,21 +34,37 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Permission permission)
         {  
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            permission = await _permissionService.Save(permission);
-            await transaction.CommitAsync();
+                permission = await _permissionService.Save(permission);
+                await transaction.CommitAsync();
 
-            return HttpResponse(permission);
+                return HttpResponse(permission);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         { 
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            PaginationResult<Permission> permissions = await _permissionService.Pagination(filter);
-            return HttpResponse(permissions);
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                PaginationResult<Permission> permissions = await _permissionService.Pagination(filter);
+                return HttpResponse(permissions);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

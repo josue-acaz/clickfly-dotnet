@@ -33,16 +33,32 @@ namespace clickfly.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Overview([FromQuery]PaginationFilter filter)
         {
-            PaginationResult<AppFlight> flights = await _appFlightService.Overview(filter);
-            return HttpResponse(flights);
+            try
+            {
+                PaginationResult<AppFlight> flights = await _appFlightService.Overview(filter);
+                return HttpResponse(flights);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            PaginationResult<FlightSegment> flightSegments = await _appFlightService.Pagination(filter);
-            return HttpResponse(flightSegments);
+            try
+            {
+                PaginationResult<FlightSegment> flightSegments = await _appFlightService.Pagination(filter);
+                return HttpResponse(flightSegments);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

@@ -48,7 +48,6 @@ namespace clickfly.Repositories
 
         public async Task Delete(string id)
         {
-            Console.WriteLine($"Excluir {id}");
             object param = new { id = id };
             await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
 
@@ -111,8 +110,8 @@ namespace clickfly.Repositories
         {
             string querySql = $@"
                 SELECT {fieldsSql} FROM {fromSql}
-                {innerJoinPermissionGroup} 
-                {innerJoinPermissionResource}
+                INNER JOIN {innerJoinPermissionGroup} 
+                INNER JOIN {innerJoinPermissionResource}
                 WHERE {whereSql} AND permission_group.user_id = @user_id
                 AND permission_resource._table = @table LIMIT 1
             ";
@@ -130,7 +129,8 @@ namespace clickfly.Repositories
         {
             string querySql = $@"
                 SELECT permission._{action} AS has_permission FROM {fromSql}
-                {innerJoinPermissionGroup} {innerJoinPermissionResource}
+                INNER JOIN {innerJoinPermissionGroup} 
+                INNER JOIN {innerJoinPermissionResource}
                 WHERE {whereSql} AND permission_group.user_id = @user_id
                 AND permission_resource._table = @table LIMIT 1
             ";

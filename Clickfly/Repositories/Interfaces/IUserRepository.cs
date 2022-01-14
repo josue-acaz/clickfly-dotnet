@@ -11,6 +11,7 @@ namespace clickfly.Repositories
         Task<User> GetById(string id);
         Task<User> GetByEmail(string email);
         Task<User> GetByUsername(string username);
+        Task UpdatePassword(string user_id, string password);
         Task<User> Update(User user);
         Task Delete(string id);
         Task<PaginationResult<User>> Pagination(PaginationFilter filter);

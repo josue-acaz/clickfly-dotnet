@@ -34,26 +34,50 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Aerodrome aerodrome)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            Aerodrome _aerodrome = await _aerodromeService.Save(aerodrome);
-            await transaction.CommitAsync();
+                aerodrome = await _aerodromeService.Save(aerodrome);
+                await transaction.CommitAsync();
 
-            return HttpResponse(_aerodrome);
+                return HttpResponse(aerodrome);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            PaginationResult<Aerodrome> aerodromes = await _aerodromeService.Pagination(filter);
-            return HttpResponse(aerodromes);
+            try
+            {
+                PaginationResult<Aerodrome> aerodromes = await _aerodromeService.Pagination(filter);
+                return HttpResponse(aerodromes);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("autocomplete")]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
-            IEnumerable<Aerodrome> aerodromes = await _aerodromeService.Autocomplete(autocompleteParams);
-            return HttpResponse(aerodromes);
+            try
+            {
+                IEnumerable<Aerodrome> aerodromes = await _aerodromeService.Autocomplete(autocompleteParams);
+                return HttpResponse(aerodromes);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

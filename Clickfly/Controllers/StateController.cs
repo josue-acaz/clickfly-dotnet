@@ -34,19 +34,35 @@ namespace clickfly.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<State>> GetById(string id)
         {
-            State state = await _stateService.GetById(id);
-            return HttpResponse(state);
+            try
+            {
+                State state = await _stateService.GetById(id);
+                return HttpResponse(state);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]State state)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            State _state = await _stateService.Save(state);
-            await transaction.CommitAsync();
+                state = await _stateService.Save(state);
+                await transaction.CommitAsync();
 
-            return HttpResponse(_state);
+                return HttpResponse(state);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

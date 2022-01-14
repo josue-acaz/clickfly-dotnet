@@ -34,27 +34,51 @@ namespace clickfly.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetById(string id)
         {
-            Ticket ticket = await _ticketService.GetById(id);
-            return HttpResponse(ticket);
+            try
+            {
+                Ticket ticket = await _ticketService.GetById(id);
+                return HttpResponse(ticket);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]Ticket ticket)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            ticket = await _ticketService.Save(ticket);
-            await transaction.CommitAsync();
+                ticket = await _ticketService.Save(ticket);
+                await transaction.CommitAsync();
 
-            return HttpResponse(ticket);
+                return HttpResponse(ticket);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            PaginationResult<Ticket> tickets = await _ticketService.Pagination(filter);
-            return HttpResponse(tickets);
+            try
+            {
+                PaginationResult<Ticket> tickets = await _ticketService.Pagination(filter);
+                return HttpResponse(tickets);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

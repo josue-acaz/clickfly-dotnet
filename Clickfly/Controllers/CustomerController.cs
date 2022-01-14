@@ -43,50 +43,66 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Customer customer)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
-
-            string customerType = customer.type;
-            if(customerType == CustomerTypes.Company)
+            try
             {
-                customer.document_type = DocumentTypes.CNPJ;
+                using var transaction = _dataContext.Database.BeginTransaction();
+
+                string customerType = customer.type;
+                if(customerType == CustomerTypes.Company)
+                {
+                    customer.document_type = DocumentTypes.CNPJ;
+                }
+
+                Customer _customer = await _customerService.Save(customer);
+
+                string token = _utils.RandomBytes(30);
+
+                AccountVerification accountVerification = new AccountVerification();
+                accountVerification.token = token;
+                accountVerification.expires = DateTime.Now;
+                accountVerification.customer_id = _customer.id;
+
+                accountVerification = await _accountVerificationService.Save(accountVerification);
+                await transaction.CommitAsync();
+
+                // Enviar email
+                ActivateAccount activateAccount = new ActivateAccount();
+                activateAccount.customer_name = _customer.name;
+                activateAccount.activation_link = $"https://clickfly.app/activate-account?token={token}";
+
+                EmailRequest emailRequest = new EmailRequest();
+                emailRequest.from = "noreply@clickfly.app";
+                emailRequest.fromName = "ClickFly";
+                emailRequest.subject = "Ativação de conta";
+                emailRequest.to = _customer.email;
+                emailRequest.templateName = "ActivateAccount";
+                emailRequest.modelType = typeof(ActivateAccount);
+                emailRequest.model = activateAccount;
+
+                //_emailService.SendEmail(emailRequest);
+
+                return HttpResponse(_customer);
             }
-
-            Customer _customer = await _customerService.Save(customer);
-
-            string token = _utils.RandomBytes(30);
-
-            AccountVerification accountVerification = new AccountVerification();
-            accountVerification.token = token;
-            accountVerification.expires = DateTime.Now;
-            accountVerification.customer_id = _customer.id;
-
-            accountVerification = await _accountVerificationService.Save(accountVerification);
-            await transaction.CommitAsync();
-
-            // Enviar email
-            ActivateAccount activateAccount = new ActivateAccount();
-            activateAccount.customer_name = _customer.name;
-            activateAccount.activation_link = $"https://clickfly.app/activate-account?token={token}";
-
-            EmailRequest emailRequest = new EmailRequest();
-            emailRequest.from = "noreply@clickfly.app";
-            emailRequest.fromName = "ClickFly";
-            emailRequest.subject = "Ativação de conta";
-            emailRequest.to = _customer.email;
-            emailRequest.templateName = "ActivateAccount";
-            emailRequest.modelType = typeof(ActivateAccount);
-            emailRequest.model = activateAccount;
-
-            //_emailService.SendEmail(emailRequest);
-
-            return HttpResponse(_customer);
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Aircraft>> GetById(string id)
         {
-            Customer customer = await _customerService.GetById(id);
-            return HttpResponse(customer);
+            try
+            {
+                Customer customer = await _customerService.GetById(id);
+                return HttpResponse(customer);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
         
         [HttpPost]
@@ -94,19 +110,35 @@ namespace clickfly.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<Authenticated>> Authenticate([FromBody]AuthenticateParams authenticateParams)
         {
-            Authenticated authenticated = await _customerService.Authenticate(authenticateParams);
-            return authenticated;
+            try
+            {
+                Authenticated authenticated = await _customerService.Authenticate(authenticateParams);
+                return authenticated;
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpPost("thumbnail")]
         public async Task<ActionResult<string>> Thumbnail([FromForm]ThumbnailRequest thumbnailRequest)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            string url = await _customerService.Thumbnail(thumbnailRequest);
-            await transaction.CommitAsync();
+                string url = await _customerService.Thumbnail(thumbnailRequest);
+                await transaction.CommitAsync();
 
-            return HttpResponse(url);
+                return HttpResponse(url);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

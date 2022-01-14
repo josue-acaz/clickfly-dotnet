@@ -90,7 +90,13 @@ namespace clickfly.Repositories
             int offset = (filter.page_number - 1) * filter.page_size;
             string text = filter.text;
 
-            string where = $"{whereSql} AND user_role.name ILIKE @text LIMIT @limit OFFSET @offset";
+            string where = $"{whereSql} AND user_role.name ILIKE @text";
+
+            filter.exclude.ForEach(ex => {
+                where += $" AND user_role.{ex.name} != '{ex.value}' ";
+            });
+
+            where += " LIMIT @limit OFFSET @offset ";
 
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);

@@ -70,7 +70,6 @@ namespace clickfly
             services.ResolveDependencies();
             services.AddControllers().AddNewtonsoftJson();
             services.AddControllers();
-            //services.AddErrorHandler();
 
             byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
@@ -113,15 +112,8 @@ namespace clickfly
             //app.UseHttpsRedirection();
 
             app.UseRouting();
-            
             app.UseAuthentication();
             app.UseAuthorization();
-
-            /*
-            app.UseErrorHandler(options => {
-                options.isOperational = true;
-            });
-            */
 
             app.UseEndpoints(endpoints =>
             {

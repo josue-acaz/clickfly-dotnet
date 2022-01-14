@@ -34,33 +34,65 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]AirTaxi airTaxi)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            AirTaxi _airTaxi = await _airTaxiService.Save(airTaxi);
-            await transaction.CommitAsync();
+                AirTaxi _airTaxi = await _airTaxiService.Save(airTaxi);
+                await transaction.CommitAsync();
 
-            return HttpResponse(_airTaxi);
+                return HttpResponse(_airTaxi);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("getInfo/{token}")]
         public async Task<ActionResult<AirTaxi>> GetInfo(string token)
         {
-            AirTaxi airTaxi = await _airTaxiService.GetByAccessToken(token);
-            return HttpResponse(airTaxi);
+            try
+            {
+                AirTaxi airTaxi = await _airTaxiService.GetByAccessToken(token);
+                return HttpResponse(airTaxi);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AirTaxi>> GetById(string id)
         {
-            AirTaxi airTaxi = await _airTaxiService.GetById(id);
-            return HttpResponse(airTaxi);
+            try
+            {
+                AirTaxi airTaxi = await _airTaxiService.GetById(id);
+                return HttpResponse(airTaxi);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         { 
-            PaginationResult<AirTaxi> airTaxis = await _airTaxiService.Pagination(filter);
-            return HttpResponse(airTaxis);
+            try
+            {
+                PaginationResult<AirTaxi> airTaxis = await _airTaxiService.Pagination(filter);
+                return HttpResponse(airTaxis);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

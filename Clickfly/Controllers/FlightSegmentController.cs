@@ -34,40 +34,72 @@ namespace clickfly.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<FlightSegment>> GetById(string id)
         {
-            FlightSegment flightSegment = await _flightSegmentService.GetById(id);
-            return HttpResponse(flightSegment);
+            try
+            {
+                FlightSegment flightSegment = await _flightSegmentService.GetById(id);
+                return HttpResponse(flightSegment);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpPost]
-        [Authorize(Roles = "employee,manager")]
+        [Authorize(Roles = "employee,manager,administrator")]
         public async Task<ActionResult> Save([FromBody]FlightSegment flightSegment)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            FlightSegment _flightSegment = await _flightSegmentService.Save(flightSegment);
-            await transaction.CommitAsync();
+                FlightSegment _flightSegment = await _flightSegmentService.Save(flightSegment);
+                await transaction.CommitAsync();
 
-            // Enviar notificação de novo voo
-            await _flightSegmentService.SendNotification(_flightSegment.id);
+                // Enviar notificação de novo voo
+                await _flightSegmentService.SendNotification(_flightSegment.id);
 
-            return HttpResponse(_flightSegment);
+                return HttpResponse(_flightSegment);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            PaginationResult<FlightSegment> flightSegments = await _flightSegmentService.Pagination(filter);
-            return HttpResponse(flightSegments);
+            try
+            {
+                PaginationResult<FlightSegment> flightSegments = await _flightSegmentService.Pagination(filter);
+                return HttpResponse(flightSegments);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult> Delete(string id)
         {
-            await _flightSegmentService.Delete(id);
-            return HttpResponse();
+            try
+            {
+                await _flightSegmentService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

@@ -35,19 +35,35 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]AircraftModel aircraftModel)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            AircraftModel _aircraftModel = await _aircraftModelService.Save(aircraftModel);
-            await transaction.CommitAsync();
+                AircraftModel _aircraftModel = await _aircraftModelService.Save(aircraftModel);
+                await transaction.CommitAsync();
 
-            return HttpResponse(_aircraftModel);
+                return HttpResponse(_aircraftModel);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("autocomplete")]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
-            IEnumerable<AircraftModel> aircraftModels = await _aircraftModelService.Autocomplete(autocompleteParams);
-            return HttpResponse(aircraftModels);
+            try
+            {
+                IEnumerable<AircraftModel> aircraftModels = await _aircraftModelService.Autocomplete(autocompleteParams);
+                return HttpResponse(aircraftModels);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

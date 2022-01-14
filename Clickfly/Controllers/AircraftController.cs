@@ -35,59 +35,107 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Aircraft aircraft)
         {  
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            aircraft = await _aircraftService.Save(aircraft);
-            await transaction.CommitAsync();
+                aircraft = await _aircraftService.Save(aircraft);
+                await transaction.CommitAsync();
 
-            return HttpResponse(aircraft);
+                return HttpResponse(aircraft);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Aircraft>> GetById(string id)
         {
-            Aircraft aircraft = await _aircraftService.GetById(id);
-            return HttpResponse(aircraft);
+            try
+            {
+                Aircraft aircraft = await _aircraftService.GetById(id);
+                return HttpResponse(aircraft);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            User user = _informer.GetValue<User>(UserTypes.User); 
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                User user = _informer.GetValue<User>(UserTypes.User); 
 
-            filter.air_taxi_id = user.air_taxi_id;
-            PaginationResult<Aircraft> aircrafts = await _aircraftService.Pagination(filter);
-            
-            return HttpResponse(aircrafts);
+                filter.air_taxi_id = user.air_taxi_id;
+                PaginationResult<Aircraft> aircrafts = await _aircraftService.Pagination(filter);
+                
+                return HttpResponse(aircrafts);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("autocomplete")]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            IEnumerable<Aircraft> aircrafts = await _aircraftService.Autocomplete(autocompleteParams);
-            
-            return HttpResponse(aircrafts);
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                IEnumerable<Aircraft> aircrafts = await _aircraftService.Autocomplete(autocompleteParams);
+                
+                return HttpResponse(aircrafts);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpPost("thumbnail")]
         public async Task<ActionResult<string>> Thumbnail([FromForm]ThumbnailRequest thumbnailRequest)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            string url = await _aircraftService.Thumbnail(thumbnailRequest);
-            await transaction.CommitAsync();
+                string url = await _aircraftService.Thumbnail(thumbnailRequest);
+                await transaction.CommitAsync();
 
-            return HttpResponse(url);
+                return HttpResponse(url);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("thumbnail")]
         public async Task<ActionResult<string>> GetThumbnail([FromQuery]GetThumbnailRequest thumbnailRequest)
         {
-            string thumbnail = await _aircraftService.GetThumbnail(thumbnailRequest);
-            return HttpResponse(thumbnail);
+            try
+            {
+                string thumbnail = await _aircraftService.GetThumbnail(thumbnailRequest);
+                return HttpResponse(thumbnail);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

@@ -34,40 +34,72 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]CustomerAddress customerAddress)
         {
-            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            customerAddress.customer_id = customerId;
-            customerAddress = await _customerAddressService.Save(customerAddress);
+                customerAddress.customer_id = customerId;
+                customerAddress = await _customerAddressService.Save(customerAddress);
 
-            await transaction.CommitAsync();
+                await transaction.CommitAsync();
 
-            return HttpResponse(customerAddress);
+                return HttpResponse(customerAddress);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+            try
+            {
+                string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
 
-            filter.customer_id = customerId;
-            PaginationResult<CustomerAddress> customerAddresses = await _customerAddressService.Pagination(filter);
-            
-            return HttpResponse(customerAddresses);
+                filter.customer_id = customerId;
+                PaginationResult<CustomerAddress> customerAddresses = await _customerAddressService.Pagination(filter);
+                
+                return HttpResponse(customerAddresses);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerAddress>> GetById(string id)
         {
-            CustomerAddress customerAddress = await _customerAddressService.GetById(id);
-            return HttpResponse(customerAddress);
+            try
+            {
+                CustomerAddress customerAddress = await _customerAddressService.GetById(id);
+                return HttpResponse(customerAddress);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            await _customerAddressService.Delete(id);
-            return HttpResponse();
+            try
+            {
+                await _customerAddressService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

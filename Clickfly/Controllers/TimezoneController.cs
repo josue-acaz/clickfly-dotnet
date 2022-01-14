@@ -34,12 +34,20 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Timezone timezone)
         {
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            Timezone _timezone = await _timezoneService.Save(timezone);
-            await transaction.CommitAsync();
+                timezone = await _timezoneService.Save(timezone);
+                await transaction.CommitAsync();
 
-            return HttpResponse(_timezone);
+                return HttpResponse(timezone);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

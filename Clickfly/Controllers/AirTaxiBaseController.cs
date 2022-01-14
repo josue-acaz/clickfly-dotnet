@@ -34,13 +34,21 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]AirTaxiBase airTaxiBase)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User); 
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User); 
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            AirTaxiBase _airTaxiBase = await _airTaxiBaseService.Save(airTaxiBase);
-            await transaction.CommitAsync();
+                AirTaxiBase _airTaxiBase = await _airTaxiBaseService.Save(airTaxiBase);
+                await transaction.CommitAsync();
 
-            return HttpResponse(_airTaxiBase);
+                return HttpResponse(_airTaxiBase);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("{id}")]
@@ -51,19 +59,28 @@ namespace clickfly.Controllers
                 AirTaxiBase airTaxiBase = await _airTaxiBaseService.GetById(id);
                 return HttpResponse(airTaxiBase);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                Notify(ex.ToString());
+                return HttpResponse();
             }
         }
 
         [HttpGet]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            
-            PaginationResult<AirTaxiBase> airTaxiBases = await _airTaxiBaseService.Pagination(filter);
-            return HttpResponse(airTaxiBases);
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                
+                PaginationResult<AirTaxiBase> airTaxiBases = await _airTaxiBaseService.Pagination(filter);
+                return HttpResponse(airTaxiBases);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

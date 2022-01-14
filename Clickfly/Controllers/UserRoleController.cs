@@ -35,29 +35,54 @@ namespace clickfly.Controllers
         [Authorize(Roles = "general_administrator")]
         public async Task<ActionResult> Save([FromBody]UserRole userRole)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-            using var transaction = _dataContext.Database.BeginTransaction();
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                using var transaction = _dataContext.Database.BeginTransaction();
 
-            userRole = await _userRoleService.Save(userRole);
-            await transaction.CommitAsync();
+                userRole = await _userRoleService.Save(userRole);
+                await transaction.CommitAsync();
 
-            return HttpResponse(userRole);
+                return HttpResponse(userRole);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet]
         [Authorize(Roles = "general_administrator")]
         public async Task<ActionResult> Pagination([FromQuery]PaginationFilter filter)
         { 
-            PaginationResult<UserRole> userRoles = await _userRoleService.Pagination(filter);
-            return HttpResponse(userRoles);
+            try
+            {
+                PaginationResult<UserRole> userRoles = await _userRoleService.Pagination(filter);
+                return HttpResponse(userRoles);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
 
         [HttpGet("autocomplete")]
         [Authorize(Roles = "general_administrator,administrator")]
         public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
-        { 
-            IEnumerable<UserRole> user_roles = await _userRoleService.Autocomplete(autocompleteParams);
-            return HttpResponse(user_roles);
+        {
+            try
+            {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                IEnumerable<UserRole> user_roles = await _userRoleService.Autocomplete(autocompleteParams);
+                return HttpResponse(user_roles);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
         }
     }
 }

@@ -108,7 +108,6 @@ namespace Slapper
             /// <returns>Identifier</returns>
             public static IEnumerable<string> GetIdentifiers(Type type)
             {
-                Console.WriteLine($"O NOME É {type.Name}");
                 var typeMap = Cache.TypeMapCache.GetOrAdd(type, (t) =>
                 {
                     // ReSharper disable once ConvertClosureToMethodGroup
@@ -527,11 +526,6 @@ namespace Slapper
                                 }
                                 else
                                 {
-                                    if(memberType == null)
-                                    {
-                                        Console.WriteLine("MENBER NULL");
-                                    }
-
                                     nestedInstance = EnumerableType.IsAssignableFrom(memberType)
                                                          ? CreateInstance(memberType)
                                                          : GetInstance(memberType, newDictionary, parentInstance?.GetHashCode() ?? 0).Item2;
@@ -593,10 +587,6 @@ namespace Slapper
                     return instance;
                 }
 
-                if(type == null)
-                {
-                    Console.WriteLine("COLLECTION NULL");
-                }
                 var getInstanceResult = GetInstance(type, dictionary, parentInstance);
 
                 // Is this a newly created instance? If false, then this item was retrieved from the instance cache.
