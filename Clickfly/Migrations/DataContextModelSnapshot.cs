@@ -22,13 +22,13 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.AccessToken", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -37,16 +37,16 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("resource_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("token")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -56,16 +56,16 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.AccountVerification", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("customer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -75,13 +75,13 @@ namespace clickfly.Migrations
 
                     b.Property<string>("token")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -93,31 +93,31 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Aerodrome", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("access")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<float>("altitude")
                         .HasColumnType("real");
 
                     b.Property<string>("category")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("ciad")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("city_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("designation")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -132,28 +132,28 @@ namespace clickfly.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("oaci_code")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("operation")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("resistance")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("surface")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<float>("width")
                         .HasColumnType("real");
@@ -168,34 +168,34 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.AirTaxi", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("cnpj")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("email")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("phone_number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -205,19 +205,19 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.AirTaxiBase", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("aerodrome_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("air_taxi_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -229,13 +229,13 @@ namespace clickfly.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -249,13 +249,13 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Aircraft", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("air_taxi_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("aircraft_model_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<float>("autonomy")
                         .HasColumnType("real");
@@ -264,7 +264,7 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("crew")
                         .HasColumnType("integer");
@@ -273,7 +273,7 @@ namespace clickfly.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("description")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<float>("empty_weight")
                         .HasColumnType("real");
@@ -297,7 +297,7 @@ namespace clickfly.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("prefix")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("pressurized")
                         .HasColumnType("boolean");
@@ -312,7 +312,7 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("year")
                         .HasColumnType("integer");
@@ -329,16 +329,16 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.AircraftImage", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("aircraft_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -347,10 +347,10 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("view")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -362,43 +362,43 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.AircraftModel", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("carrier_dimensions")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("carrier_size")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("engine_type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("manufacturer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("number_of_engines")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -407,31 +407,62 @@ namespace clickfly.Migrations
                     b.ToTable("aircraft_models");
                 });
 
-            modelBuilder.Entity("clickfly.Models.Booking", b =>
+            modelBuilder.Entity("clickfly.Models.Boarding", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
-
-                    b.Property<string>("customer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("flight_segment_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("passenger_id")
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("boardings");
+                });
+
+            modelBuilder.Entity("clickfly.Models.Booking", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("customer_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("flight_segment_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -445,31 +476,31 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.BookingPayment", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("booking_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("order_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("payment_method")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -481,28 +512,28 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.BookingStatus", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("booking_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -511,41 +542,146 @@ namespace clickfly.Migrations
                     b.ToTable("booking_status");
                 });
 
-            modelBuilder.Entity("clickfly.Models.City", b =>
+            modelBuilder.Entity("clickfly.Models.Campaign", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("description")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<decimal>("discount_on_the_next_flight")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("expires_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("points_to_complete")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("campaigns");
+                });
+
+            modelBuilder.Entity("clickfly.Models.CampaignScore", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("campaign_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("customer_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("campaign_id");
+
+                    b.HasIndex("customer_id");
+
+                    b.ToTable("campaign_scores");
+                });
+
+            modelBuilder.Entity("clickfly.Models.CampaignStatus", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("campaign_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("type")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("campaign_id");
+
+                    b.ToTable("campaign_status");
+                });
+
+            modelBuilder.Entity("clickfly.Models.City", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("description")
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("prefix")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("state_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("timezone_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -556,10 +692,53 @@ namespace clickfly.Migrations
                     b.ToTable("cities");
                 });
 
+            modelBuilder.Entity("clickfly.Models.ContactRequest", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("email")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("message")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("name")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("phone_number")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("read")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("subject")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("contact_requests");
+                });
+
             modelBuilder.Entity("clickfly.Models.Customer", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("birthdate")
                         .HasColumnType("timestamp without time zone");
@@ -568,53 +747,53 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("customer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("document")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("document_type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("email")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("emergency_phone_number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("password_hash")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("password_reset_expires")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("password_reset_token")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("phone_number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("role")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("verified")
                         .HasColumnType("boolean");
@@ -627,52 +806,52 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.CustomerAddress", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("address_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("city")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("complement")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("customer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("neighborhood")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("state")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("street")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("zipcode")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -684,19 +863,19 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.CustomerAerodrome", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("aerodrome_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("customer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -705,7 +884,7 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -716,22 +895,59 @@ namespace clickfly.Migrations
                     b.ToTable("customer_aerodromes");
                 });
 
-            modelBuilder.Entity("clickfly.Models.CustomerCard", b =>
+            modelBuilder.Entity("clickfly.Models.CustomerAtShoppingCart", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("card_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("customer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("flight_segment_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("payment_method")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("selected_seats")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("customer_at_shopping_carts");
+                });
+
+            modelBuilder.Entity("clickfly.Models.CustomerCard", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("card_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("customer_id")
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -740,7 +956,7 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -749,10 +965,46 @@ namespace clickfly.Migrations
                     b.ToTable("customer_cards");
                 });
 
+            modelBuilder.Entity("clickfly.Models.CustomerContact", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("customer_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("name")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("phone_numer")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("customer_id");
+
+                    b.ToTable("customer_contacts");
+                });
+
             modelBuilder.Entity("clickfly.Models.CustomerFriend", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("birthdate")
                         .HasColumnType("timestamp without time zone");
@@ -761,37 +1013,37 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("customer_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("document")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("document_type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("email")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("emergency_phone_number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("phone_number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -800,37 +1052,132 @@ namespace clickfly.Migrations
                     b.ToTable("customer_friends");
                 });
 
-            modelBuilder.Entity("clickfly.Models.File", b =>
+            modelBuilder.Entity("clickfly.Models.CustomerSearch", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("arrival_datetime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("customer_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("departure_datetime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("destination_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("destination_type")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("origin_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("origin_type")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("seats")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("customer_searches");
+                });
+
+            modelBuilder.Entity("clickfly.Models.DoubleCheck", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("approved")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("approver_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("message")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("read")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("resource")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("resource_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("user_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("double_checks");
+                });
+
+            modelBuilder.Entity("clickfly.Models.File", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("field_name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("key")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("mimetype")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("resource")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("resource_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<long>("size")
                         .HasColumnType("bigint");
@@ -839,10 +1186,10 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("url")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -852,31 +1199,31 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Flight", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("air_taxi_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("aircraft_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -890,10 +1237,10 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.FlightSegment", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("aircraft_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("arrival_datetime")
                         .HasColumnType("timestamp without time zone");
@@ -902,19 +1249,19 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("departure_datetime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("destination_aerodrome_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("flight_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<double>("flight_time")
                         .HasColumnType("double precision");
@@ -923,7 +1270,7 @@ namespace clickfly.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("origin_aerodrome_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<float>("price_per_seat")
                         .HasColumnType("real");
@@ -932,13 +1279,13 @@ namespace clickfly.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -956,31 +1303,31 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.FlightSegmentStatus", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("annotation")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("flight_segment_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -992,53 +1339,80 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Manufacturer", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<string>("country")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("description")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
                     b.ToTable("manufacturers");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "8fd21687-5beb-4f91-a13f-8dde04b6e24d",
+                            country = "BR",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 594, DateTimeKind.Local).AddTicks(1270),
+                            excluded = false,
+                            name = "Embraer"
+                        },
+                        new
+                        {
+                            id = "81bb3ca4-2a3f-40b0-b62a-6df2f0681e4b",
+                            country = "US",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 621, DateTimeKind.Local).AddTicks(7660),
+                            excluded = false,
+                            name = "Piper Aircraft"
+                        },
+                        new
+                        {
+                            id = "fdda563c-7109-45c3-bb26-f4f30c6975ad",
+                            country = "US",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 621, DateTimeKind.Local).AddTicks(7880),
+                            excluded = false,
+                            name = "Cessna"
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.Newsletter", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("code")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("details")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -1047,7 +1421,7 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -1057,28 +1431,28 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.NewsletterSubscriber", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("newsletter_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("subscriber_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -1092,49 +1466,49 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Passenger", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("birthdate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("booking_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("document")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("document_type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("email")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("emergency_phone_number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("flight_segment_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("phone_number")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -1148,7 +1522,7 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Permission", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<bool>("_create")
                         .HasColumnType("boolean");
@@ -1166,22 +1540,22 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("permission_group_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("permission_resource_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -1190,12 +1564,110 @@ namespace clickfly.Migrations
                     b.HasIndex("permission_resource_id");
 
                     b.ToTable("permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "29ce5517-9673-4595-94ec-3e17d13c8222",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(4890),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "1002da1c-241c-42af-be77-e90791c5bbab"
+                        },
+                        new
+                        {
+                            id = "b2a8ff46-9795-4e17-aeb0-29633bb3ffcf",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5190),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "230565e6-571c-4620-b067-90205353528b"
+                        },
+                        new
+                        {
+                            id = "e28bca5d-01d2-448a-98ca-c7aaf066b880",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5200),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "002ac8e8-90de-4c17-9684-5f9a8cb5fa83"
+                        },
+                        new
+                        {
+                            id = "fb2f56aa-f2ff-4558-b9d9-571e3f64de89",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5210),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "c572d66e-f212-4882-93f3-b9d1e932dc40"
+                        },
+                        new
+                        {
+                            id = "4f408ec3-0e0e-43a9-adce-8866225994c5",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5220),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "359bcfde-a8a0-4f63-89d8-3e3070887a0b"
+                        },
+                        new
+                        {
+                            id = "8637dad4-c8ec-44b1-b671-43c10fa43b0b",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5230),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "c030a948-2771-4064-898d-00fb675844e5"
+                        },
+                        new
+                        {
+                            id = "7013fd17-6bd9-4532-b33a-7a0800b2d182",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5230),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "10332667-bf51-4da3-ade4-0a61451bca0f"
+                        },
+                        new
+                        {
+                            id = "8cdeb1ec-a823-40ff-a383-55366dabd9c7",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5240),
+                            excluded = false,
+                            permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            permission_resource_id = "30791f17-c95c-4dad-9efc-80053fe167a9"
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.PermissionGroup", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<bool>("allowed")
                         .HasColumnType("boolean");
@@ -1204,7 +1676,7 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -1213,13 +1685,15 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("user_id")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(40)");
 
                     b.Property<string>("user_role_id")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(40)");
 
                     b.HasKey("id");
 
@@ -1228,88 +1702,603 @@ namespace clickfly.Migrations
                     b.HasIndex("user_role_id");
 
                     b.ToTable("permission_groups");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
+                            allowed = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 627, DateTimeKind.Local).AddTicks(4650),
+                            excluded = false,
+                            user_id = "fa5533ef-249a-4a83-86f8-0a3d903adb5c",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.PermissionResource", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<string>("_table")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
                     b.ToTable("permission_resources");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "230565e6-571c-4620-b067-90205353528b",
+                            _table = "users",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2390),
+                            excluded = false,
+                            name = "Usuários"
+                        },
+                        new
+                        {
+                            id = "10048a9f-7da0-4213-af5f-6e1446a62b2a",
+                            _table = "customers",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2800),
+                            excluded = false,
+                            name = "Clientes"
+                        },
+                        new
+                        {
+                            id = "c7582447-6dff-46a0-ad56-c204b248a77c",
+                            _table = "aircrafts",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2820),
+                            excluded = false,
+                            name = "Aeronaves"
+                        },
+                        new
+                        {
+                            id = "002ac8e8-90de-4c17-9684-5f9a8cb5fa83",
+                            _table = "aerodromes",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2820),
+                            excluded = false,
+                            name = "Aeródromos"
+                        },
+                        new
+                        {
+                            id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
+                            _table = "flights",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2830),
+                            excluded = false,
+                            name = "Voos"
+                        },
+                        new
+                        {
+                            id = "f0eba241-dba4-42de-b9ca-379db1937d62",
+                            _table = "flight_segments",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2840),
+                            excluded = false,
+                            name = "Etapas do voo"
+                        },
+                        new
+                        {
+                            id = "30791f17-c95c-4dad-9efc-80053fe167a9",
+                            _table = "manufacturers",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2850),
+                            excluded = false,
+                            name = "Fabricantes"
+                        },
+                        new
+                        {
+                            id = "10332667-bf51-4da3-ade4-0a61451bca0f",
+                            _table = "states",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2850),
+                            excluded = false,
+                            name = "Estados"
+                        },
+                        new
+                        {
+                            id = "c030a948-2771-4064-898d-00fb675844e5",
+                            _table = "cities",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2850),
+                            excluded = false,
+                            name = "Cidades"
+                        },
+                        new
+                        {
+                            id = "1002da1c-241c-42af-be77-e90791c5bbab",
+                            _table = "air_taxis",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2860),
+                            excluded = false,
+                            name = "Táxis Aéreos"
+                        },
+                        new
+                        {
+                            id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
+                            _table = "air_taxi_bases",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2870),
+                            excluded = false,
+                            name = "Bases"
+                        },
+                        new
+                        {
+                            id = "5f3beb7b-30b7-4b13-a6f9-2575e8ac80c3",
+                            _table = "newsletters",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2870),
+                            excluded = false,
+                            name = "Newsletters"
+                        },
+                        new
+                        {
+                            id = "f6c9d174-1a2c-49c3-be51-c9f24cbdd55a",
+                            _table = "subscribers",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3020),
+                            excluded = false,
+                            name = "Assinantes"
+                        },
+                        new
+                        {
+                            id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
+                            _table = "aircraft_images",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3020),
+                            excluded = false,
+                            name = "Imagens da Aeronave"
+                        },
+                        new
+                        {
+                            id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
+                            _table = "bookings",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3030),
+                            excluded = false,
+                            name = "Reservas"
+                        },
+                        new
+                        {
+                            id = "c572d66e-f212-4882-93f3-b9d1e932dc40",
+                            _table = "aircraft_models",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3030),
+                            excluded = false,
+                            name = "Modelo de aeronaves"
+                        },
+                        new
+                        {
+                            id = "faa82a99-ead4-454c-a9d3-7c62f4da7430",
+                            _table = "customer_addresses",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3040),
+                            excluded = false,
+                            name = "Endereços do cliente"
+                        },
+                        new
+                        {
+                            id = "b155a133-120c-4ded-9dfa-88316f4f790c",
+                            _table = "customer_aerodromes",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3050),
+                            excluded = false,
+                            name = "Aeródromos do cliente"
+                        },
+                        new
+                        {
+                            id = "b51a4bd6-5a70-44a7-85e7-2da9466c5d8c",
+                            _table = "passengers",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3050),
+                            excluded = false,
+                            name = "Passageiros"
+                        },
+                        new
+                        {
+                            id = "d1d313ca-d2a3-48ff-ac32-cfa842a633c2",
+                            _table = "system_configs",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3060),
+                            excluded = false,
+                            name = "Configurações do Sistema"
+                        },
+                        new
+                        {
+                            id = "359bcfde-a8a0-4f63-89d8-3e3070887a0b",
+                            _table = "system_logs",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3060),
+                            excluded = false,
+                            name = "Logs do Sistema"
+                        },
+                        new
+                        {
+                            id = "2237baef-2a10-471e-abe1-ee2994eafb77",
+                            _table = "customer_contacts",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3060),
+                            excluded = false,
+                            name = "Contatos do cliente"
+                        },
+                        new
+                        {
+                            id = "2c4c1d8b-07bc-4e7b-bcc2-31704876f744",
+                            _table = "double_checks",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3070),
+                            excluded = false,
+                            name = "Duplas Checagens"
+                        },
+                        new
+                        {
+                            id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
+                            _table = "push_notifications",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3070),
+                            excluded = false,
+                            name = "Notificações Push"
+                        },
+                        new
+                        {
+                            id = "f934de0c-424b-4726-afcc-9a0564372ab8",
+                            _table = "boardings",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3080),
+                            excluded = false,
+                            name = "Embarques"
+                        },
+                        new
+                        {
+                            id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
+                            _table = "campaigns",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3090),
+                            excluded = false,
+                            name = "Campanhas"
+                        },
+                        new
+                        {
+                            id = "99e84be3-bbcb-4b35-adce-42e2e037322a",
+                            _table = "contact_requests",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3090),
+                            excluded = false,
+                            name = "Solicitações de Contato (Site)"
+                        });
+                });
+
+            modelBuilder.Entity("clickfly.Models.PushNotification", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("flight_segment_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("notification_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("push_notifications");
+                });
+
+            modelBuilder.Entity("clickfly.Models.Score", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("campaign_score_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("flight_segment_id")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("points")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("campaign_score_id");
+
+                    b.ToTable("score");
                 });
 
             modelBuilder.Entity("clickfly.Models.State", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("prefix")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
                     b.ToTable("states");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "5bc5d3c3-75e4-4a07-8424-b873cdaf97eb",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 640, DateTimeKind.Local).AddTicks(9900),
+                            excluded = false,
+                            name = "Acre",
+                            prefix = "AC"
+                        },
+                        new
+                        {
+                            id = "5bf811ff-f3cb-4d36-96f0-da7151fb843c",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(290),
+                            excluded = false,
+                            name = "Alagoas",
+                            prefix = "AL"
+                        },
+                        new
+                        {
+                            id = "70c5e30a-9e3b-4219-9cb6-b74bc699d3a3",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(300),
+                            excluded = false,
+                            name = "Amapá",
+                            prefix = "AP"
+                        },
+                        new
+                        {
+                            id = "aa27b7ef-a373-4788-b5cb-84c4294b0ebb",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(310),
+                            excluded = false,
+                            name = "Amazonas",
+                            prefix = "AM"
+                        },
+                        new
+                        {
+                            id = "aa705c29-4d43-4aed-ae41-44fc1855aa7e",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(320),
+                            excluded = false,
+                            name = "Bahia",
+                            prefix = "BA"
+                        },
+                        new
+                        {
+                            id = "2cc0e771-ff94-4e6c-9197-9faa6978e751",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(330),
+                            excluded = false,
+                            name = "Ceará",
+                            prefix = "CE"
+                        },
+                        new
+                        {
+                            id = "10289889-ff3f-4a02-ac90-597d436c6435",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(330),
+                            excluded = false,
+                            name = "Distrito Federal",
+                            prefix = "DF"
+                        },
+                        new
+                        {
+                            id = "1cc1e4c1-96c0-4bdc-aeee-0541e283a231",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(340),
+                            excluded = false,
+                            name = "Espírito Santo",
+                            prefix = "ES"
+                        },
+                        new
+                        {
+                            id = "0dfb4d34-9394-4b62-8ceb-d9bd485cf539",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(340),
+                            excluded = false,
+                            name = "Goiás",
+                            prefix = "GO"
+                        },
+                        new
+                        {
+                            id = "5a38a9bd-c329-49e0-9516-6761f4a7d606",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(350),
+                            excluded = false,
+                            name = "Maranhão",
+                            prefix = "MA"
+                        },
+                        new
+                        {
+                            id = "ceb3a4c4-b747-412b-a144-5ef8a3ced03e",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(360),
+                            excluded = false,
+                            name = "Mato Grosso",
+                            prefix = "MT"
+                        },
+                        new
+                        {
+                            id = "9cfc017e-4cee-4e48-8208-a5e3779d70c9",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(360),
+                            excluded = false,
+                            name = "Mato Grosso do Sul",
+                            prefix = "MS"
+                        },
+                        new
+                        {
+                            id = "95d20824-33f9-476d-b6d8-c42c463a360e",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(370),
+                            excluded = false,
+                            name = "Minas Gerais",
+                            prefix = "MG"
+                        },
+                        new
+                        {
+                            id = "989a917f-ca06-4c0c-a44b-ce852d6eb8db",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(370),
+                            excluded = false,
+                            name = "Pará",
+                            prefix = "PA"
+                        },
+                        new
+                        {
+                            id = "f1f817e7-742c-492f-8cfd-e65b6aa51527",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(380),
+                            excluded = false,
+                            name = "Paraíba",
+                            prefix = "PB"
+                        },
+                        new
+                        {
+                            id = "46478f1d-66cb-4cc4-a2ba-ef183deb4388",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(380),
+                            excluded = false,
+                            name = "Paraná",
+                            prefix = "PR"
+                        },
+                        new
+                        {
+                            id = "b73847c2-ac29-4787-8a14-5673bc048dae",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(390),
+                            excluded = false,
+                            name = "Pernambuco",
+                            prefix = "PE"
+                        },
+                        new
+                        {
+                            id = "9f68091d-2dae-458d-8a1b-dbdb7d3b36c2",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(390),
+                            excluded = false,
+                            name = "Piauí",
+                            prefix = "PI"
+                        },
+                        new
+                        {
+                            id = "7c12da9f-3002-4735-8824-f6c68126cf6f",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(400),
+                            excluded = false,
+                            name = "Rio de Janeiro",
+                            prefix = "RJ"
+                        },
+                        new
+                        {
+                            id = "d04e4f39-d4f8-4cac-9fa7-682aad5e8bbc",
+                            excluded = false,
+                            name = "Rio Grande do Norte",
+                            prefix = "RN"
+                        },
+                        new
+                        {
+                            id = "2bc661cf-71ed-481b-87a4-ef0e530658ad",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(400),
+                            excluded = false,
+                            name = "Rio Grande do Sul",
+                            prefix = "RS"
+                        },
+                        new
+                        {
+                            id = "a027f62e-f662-450e-8688-bc89628492f5",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(410),
+                            excluded = false,
+                            name = "Rondônia",
+                            prefix = "RO"
+                        },
+                        new
+                        {
+                            id = "18ee0c3e-7e1d-481d-8135-591afa8bfea0",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(410),
+                            excluded = false,
+                            name = "Roraima",
+                            prefix = "RR"
+                        },
+                        new
+                        {
+                            id = "b21165a6-0a4a-496d-8371-bb050bce09d9",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(420),
+                            excluded = false,
+                            name = "Santa Catarina",
+                            prefix = "SC"
+                        },
+                        new
+                        {
+                            id = "d2cd4e43-d325-4d21-88a0-3542b38d0438",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(420),
+                            excluded = false,
+                            name = "São Paulo",
+                            prefix = "SP"
+                        },
+                        new
+                        {
+                            id = "ad03e50f-235b-48d3-901a-e8167ce71924",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(430),
+                            excluded = false,
+                            name = "Sergipe",
+                            prefix = "SE"
+                        },
+                        new
+                        {
+                            id = "94d630ce-66d4-49b2-a133-684de51be69c",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(430),
+                            excluded = false,
+                            name = "Tocantins",
+                            prefix = "TO"
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.Subscriber", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("details")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("email")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -1321,53 +2310,88 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
                     b.ToTable("subscribers");
                 });
 
-            modelBuilder.Entity("clickfly.Models.SystemLog", b =>
+            modelBuilder.Entity("clickfly.Models.SystemConfig", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("_object")
-                        .HasColumnType("text");
-
-                    b.Property<string>("action")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("ip")
-                        .HasColumnType("text");
-
-                    b.Property<string>("resource")
-                        .HasColumnType("text");
-
-                    b.Property<string>("resource_id")
-                        .HasColumnType("text");
+                    b.Property<string>("name")
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("value")
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("system_configs");
+                });
+
+            modelBuilder.Entity("clickfly.Models.SystemLog", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<string>("_object")
+                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("action")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("excluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ip")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("resource")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("resource_id")
+                        .IsRequired()
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("user_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("user_type")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -1377,31 +2401,31 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Ticket", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("flight_segment_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("passenger_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("qr_code")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -1416,13 +2440,13 @@ namespace clickfly.Migrations
             modelBuilder.Entity("clickfly.Models.Timezone", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
@@ -1434,93 +2458,178 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
                     b.ToTable("timezones");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "627fd947-1062-4b1a-8c2c-7ef36cad279e",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4350),
+                            excluded = false,
+                            gmt = -2
+                        },
+                        new
+                        {
+                            id = "1235eb4b-9dd5-464f-9487-3c35a6e73a24",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4680),
+                            excluded = false,
+                            gmt = -3
+                        },
+                        new
+                        {
+                            id = "01bdd6a6-ef30-46ac-908f-74fd42bc9531",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4690),
+                            excluded = false,
+                            gmt = -4
+                        },
+                        new
+                        {
+                            id = "b2deaa96-4df2-404c-9ac1-3b58ac9d655b",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4690),
+                            excluded = false,
+                            gmt = -5
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.User", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<string>("air_taxi_id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("email")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<string>("emergency_phone_number")
+                        .HasColumnType("varchar(30)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("password_hash")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("phone_number")
+                        .HasColumnType("varchar(30)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("username")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("id");
 
                     b.HasIndex("air_taxi_id");
 
                     b.ToTable("users");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "fa5533ef-249a-4a83-86f8-0a3d903adb5c",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 7, DateTimeKind.Local).AddTicks(5410),
+                            email = "josue.acaz@outlook.com",
+                            excluded = false,
+                            name = "JOSUE ACAZ DOS SANTOS DE OLIVEIRA",
+                            password_hash = "$2a$11$RvZwilumbM5DII92Q8el1.GA.kCZRC.1mjgFth9kL/0jr7ncxNiOW",
+                            username = "jsoliveira"
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.UserRole", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("allowed_systems")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("label")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(120)");
 
                     b.Property<string>("name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
                     b.ToTable("user_roles");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8330),
+                            excluded = false,
+                            label = "Funcionário",
+                            name = "employee"
+                        },
+                        new
+                        {
+                            id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8660),
+                            excluded = false,
+                            label = "Gerente",
+                            name = "manager"
+                        },
+                        new
+                        {
+                            id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8670),
+                            excluded = false,
+                            label = "Administrador",
+                            name = "administrator"
+                        },
+                        new
+                        {
+                            id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a",
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8680),
+                            excluded = false,
+                            label = "Administrador Geral",
+                            name = "general_administrator"
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.UserRolePermission", b =>
                 {
                     b.Property<string>("id")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(40)");
 
                     b.Property<bool>("_create")
                         .HasColumnType("boolean");
@@ -1538,22 +2647,24 @@ namespace clickfly.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("permission_resource_id")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(40)");
 
                     b.Property<DateTime?>("updated_at")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("user_role_id")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("varchar(40)");
 
                     b.HasKey("id");
 
@@ -1562,6 +2673,488 @@ namespace clickfly.Migrations
                     b.HasIndex("user_role_id");
 
                     b.ToTable("user_role_permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "b804ad51-d04d-4296-b6f8-240797665070",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(3830),
+                            excluded = false,
+                            permission_resource_id = "c7582447-6dff-46a0-ad56-c204b248a77c",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "0717d397-f174-44f4-b66b-936528adf0f7",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4460),
+                            excluded = false,
+                            permission_resource_id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "f3ddfa39-4e8f-4908-a8c9-5eae17317d1b",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4490),
+                            excluded = false,
+                            permission_resource_id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "385c24b4-71c8-4513-96ec-46e27780d3e1",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4500),
+                            excluded = false,
+                            permission_resource_id = "f0eba241-dba4-42de-b9ca-379db1937d62",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "7d1e2c64-ca73-4e41-8af9-5249a61f7639",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4520),
+                            excluded = false,
+                            permission_resource_id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "a27a2166-c4bc-45d6-8a5e-edbcc5dab3b7",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4550),
+                            excluded = false,
+                            permission_resource_id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "2a29c965-b382-4c30-89bc-422ea16438da",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4680),
+                            excluded = false,
+                            permission_resource_id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "6717cab4-e831-491f-adde-3fc1b3659735",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4700),
+                            excluded = false,
+                            permission_resource_id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "246a3669-3f20-4478-96e1-11b06bf35a30",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4710),
+                            excluded = false,
+                            permission_resource_id = "f934de0c-424b-4726-afcc-9a0564372ab8",
+                            user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
+                        },
+                        new
+                        {
+                            id = "507dd704-e872-4738-8e29-4b347b4870d4",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4720),
+                            excluded = false,
+                            permission_resource_id = "c7582447-6dff-46a0-ad56-c204b248a77c",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "1615d96c-a85b-4f43-b353-ce7ebc9417e1",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4750),
+                            excluded = false,
+                            permission_resource_id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "8b74e0ff-c96e-462a-a99b-abcb7130bf94",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4760),
+                            excluded = false,
+                            permission_resource_id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "25a93f16-5161-4501-9fb3-075987d43213",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4790),
+                            excluded = false,
+                            permission_resource_id = "f0eba241-dba4-42de-b9ca-379db1937d62",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "f8c4c8b4-777b-4f7b-8342-1f7f371d89d1",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4820),
+                            excluded = false,
+                            permission_resource_id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "0761daaa-1399-464b-9a22-b5fa3cfdd78e",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4830),
+                            excluded = false,
+                            permission_resource_id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "97f4c388-acac-4bfa-b05f-a05feb468f26",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4840),
+                            excluded = false,
+                            permission_resource_id = "2c4c1d8b-07bc-4e7b-bcc2-31704876f744",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "8535b7aa-5ec4-4ed5-a339-2f4172d0e688",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4850),
+                            excluded = false,
+                            permission_resource_id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "db6293b7-d006-49fb-8263-1167ff010f9e",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4860),
+                            excluded = false,
+                            permission_resource_id = "99e84be3-bbcb-4b35-adce-42e2e037322a",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "d15eff4b-53f3-4f21-8c8e-e741e2f246f8",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4870),
+                            excluded = false,
+                            permission_resource_id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "c6b269b4-c7a3-4822-9bf7-d7c7e84acbd3",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4890),
+                            excluded = false,
+                            permission_resource_id = "f934de0c-424b-4726-afcc-9a0564372ab8",
+                            user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
+                        },
+                        new
+                        {
+                            id = "0bf0b18d-6bda-4341-baae-d04e369b13a8",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4900),
+                            excluded = false,
+                            permission_resource_id = "c7582447-6dff-46a0-ad56-c204b248a77c",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "1c152490-96e8-4c21-b3bc-997891a4f2b3",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4910),
+                            excluded = false,
+                            permission_resource_id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "89a7806d-b44c-4822-8beb-e12d5f801dcb",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4910),
+                            excluded = false,
+                            permission_resource_id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "26cfe973-1ea1-4f09-a4ac-6f3aced6e615",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4920),
+                            excluded = false,
+                            permission_resource_id = "f0eba241-dba4-42de-b9ca-379db1937d62",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "66e7670d-78d6-4433-917e-80f0d9e4b7b6",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4940),
+                            excluded = false,
+                            permission_resource_id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "aa681e33-1d7f-4efe-8ba0-25c84b5bb179",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5040),
+                            excluded = false,
+                            permission_resource_id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "7d7781ab-9bfb-453a-afce-9dcbb5982d4e",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5050),
+                            excluded = false,
+                            permission_resource_id = "2c4c1d8b-07bc-4e7b-bcc2-31704876f744",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "f2733245-0908-4c87-990a-b4aac25b1350",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5060),
+                            excluded = false,
+                            permission_resource_id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "6eee0965-4bd3-4fdb-90fb-8f46ed3890db",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5070),
+                            excluded = false,
+                            permission_resource_id = "99e84be3-bbcb-4b35-adce-42e2e037322a",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "4596917c-be95-46b5-8886-d95058d7d60b",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5190),
+                            excluded = false,
+                            permission_resource_id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "8be56ca8-3515-4b0c-ac7e-bea39c5e479c",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5200),
+                            excluded = false,
+                            permission_resource_id = "f934de0c-424b-4726-afcc-9a0564372ab8",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "04700c24-d35c-4819-b2a1-133567dd8157",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5210),
+                            excluded = false,
+                            permission_resource_id = "230565e6-571c-4620-b067-90205353528b",
+                            user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
+                        },
+                        new
+                        {
+                            id = "85691dc6-ec69-4275-bf2b-0a5c9d3a9b9b",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5220),
+                            excluded = false,
+                            permission_resource_id = "1002da1c-241c-42af-be77-e90791c5bbab",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        },
+                        new
+                        {
+                            id = "d0341dc2-97c5-4a4e-9313-b6e089becb03",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5230),
+                            excluded = false,
+                            permission_resource_id = "230565e6-571c-4620-b067-90205353528b",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        },
+                        new
+                        {
+                            id = "fbc97d92-d07c-4085-9211-c397b3ad31e1",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5240),
+                            excluded = false,
+                            permission_resource_id = "002ac8e8-90de-4c17-9684-5f9a8cb5fa83",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        },
+                        new
+                        {
+                            id = "ceeef35b-42ab-40b7-8a9d-75de8bda1f16",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5250),
+                            excluded = false,
+                            permission_resource_id = "c572d66e-f212-4882-93f3-b9d1e932dc40",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        },
+                        new
+                        {
+                            id = "6f2bc57e-6e0a-4c57-96fe-5c8e805d8a43",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5260),
+                            excluded = false,
+                            permission_resource_id = "359bcfde-a8a0-4f63-89d8-3e3070887a0b",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        },
+                        new
+                        {
+                            id = "780988d9-f070-4189-9e76-d03ec3c6b6b6",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5270),
+                            excluded = false,
+                            permission_resource_id = "c030a948-2771-4064-898d-00fb675844e5",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        },
+                        new
+                        {
+                            id = "276cf77a-3ae9-4828-9e08-78abced24798",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5280),
+                            excluded = false,
+                            permission_resource_id = "10332667-bf51-4da3-ade4-0a61451bca0f",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        },
+                        new
+                        {
+                            id = "422a86ec-16c9-4157-b968-275c15856c26",
+                            _create = true,
+                            _delete = true,
+                            _read = true,
+                            _update = true,
+                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5290),
+                            excluded = false,
+                            permission_resource_id = "30791f17-c95c-4dad-9efc-80053fe167a9",
+                            user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
+                        });
                 });
 
             modelBuilder.Entity("clickfly.Models.AccountVerification", b =>
@@ -1663,6 +3256,30 @@ namespace clickfly.Migrations
                     b.Navigation("booking");
                 });
 
+            modelBuilder.Entity("clickfly.Models.CampaignScore", b =>
+                {
+                    b.HasOne("clickfly.Models.Campaign", "campaign")
+                        .WithMany()
+                        .HasForeignKey("campaign_id");
+
+                    b.HasOne("clickfly.Models.Customer", "customer")
+                        .WithMany()
+                        .HasForeignKey("customer_id");
+
+                    b.Navigation("campaign");
+
+                    b.Navigation("customer");
+                });
+
+            modelBuilder.Entity("clickfly.Models.CampaignStatus", b =>
+                {
+                    b.HasOne("clickfly.Models.Campaign", "campaign")
+                        .WithMany()
+                        .HasForeignKey("campaign_id");
+
+                    b.Navigation("campaign");
+                });
+
             modelBuilder.Entity("clickfly.Models.City", b =>
                 {
                     b.HasOne("clickfly.Models.State", "state")
@@ -1706,6 +3323,15 @@ namespace clickfly.Migrations
                 {
                     b.HasOne("clickfly.Models.Customer", "customer")
                         .WithMany("cards")
+                        .HasForeignKey("customer_id");
+
+                    b.Navigation("customer");
+                });
+
+            modelBuilder.Entity("clickfly.Models.CustomerContact", b =>
+                {
+                    b.HasOne("clickfly.Models.Customer", "customer")
+                        .WithMany()
                         .HasForeignKey("customer_id");
 
                     b.Navigation("customer");
@@ -1820,15 +3446,28 @@ namespace clickfly.Migrations
                 {
                     b.HasOne("clickfly.Models.User", "user")
                         .WithMany()
-                        .HasForeignKey("user_id");
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("clickfly.Models.UserRole", "role")
                         .WithMany()
-                        .HasForeignKey("user_role_id");
+                        .HasForeignKey("user_role_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("role");
 
                     b.Navigation("user");
+                });
+
+            modelBuilder.Entity("clickfly.Models.Score", b =>
+                {
+                    b.HasOne("clickfly.Models.CampaignScore", "campaign_score")
+                        .WithMany()
+                        .HasForeignKey("campaign_score_id");
+
+                    b.Navigation("campaign_score");
                 });
 
             modelBuilder.Entity("clickfly.Models.Ticket", b =>
@@ -1859,11 +3498,15 @@ namespace clickfly.Migrations
                 {
                     b.HasOne("clickfly.Models.PermissionResource", "permissionResource")
                         .WithMany()
-                        .HasForeignKey("permission_resource_id");
+                        .HasForeignKey("permission_resource_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("clickfly.Models.UserRole", "userRole")
                         .WithMany("permissions")
-                        .HasForeignKey("user_role_id");
+                        .HasForeignKey("user_role_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("permissionResource");
 

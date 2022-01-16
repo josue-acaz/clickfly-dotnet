@@ -1,26 +1,21 @@
 using System;
 using Amazon.S3;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Text.Json;
 using Amazon.DynamoDBv2;
-using Microsoft.OpenApi.Models;
 using clickfly.Configs;
 using clickfly.Data;
 using clickfly.Services;
 using System.Data;
 using Npgsql;
+using Microsoft.OpenApi.Models;
 
 namespace clickfly
 {
@@ -89,12 +84,10 @@ namespace clickfly
                 };
             });
             
-            /*
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "clickfly", Version = "v1" });
             });
-            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,8 +96,8 @@ namespace clickfly
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "clickfly v1"));
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "clickfly v1"));
             }
 
             app.UseCors();

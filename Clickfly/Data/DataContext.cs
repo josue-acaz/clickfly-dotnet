@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Reflection;
+using clickfly.Mappings;
 
 namespace clickfly.Data 
 {
@@ -51,6 +54,18 @@ namespace clickfly.Data
         public DbSet<Newsletter> Newsletters { get; set; }
         public DbSet<Subscriber> Subscribers { get; set; }
         public DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
+        public DbSet<Boarding> Boardings { get; set; }
+        public DbSet<Campaign> Campaigns { get; set; }
+        public DbSet<CampaignScore> CampaignScores { get; set; }
+        public DbSet<CampaignStatus> CampaignStatus { get; set; }
+        public DbSet<ContactRequest> ContactRequests { get; set; }
+        public DbSet<CustomerAtShoppingCart> CustomerAtShoppingCarts { get; set; }
+        public DbSet<CustomerContact> CustomerContacts { get; set; }
+        public DbSet<CustomerSearch> CustomerSearches { get; set; }
+        public DbSet<DoubleCheck> DoubleChecks { get; set; }
+        public DbSet<PushNotification> PushNotifications { get; set; }
+        public DbSet<Score> Scores { get; set; }
+        public DbSet<SystemConfig> SystemConfigs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -61,55 +76,13 @@ namespace clickfly.Data
         }
 
         protected override void OnModelCreating(ModelBuilder builder) {
-            builder.Entity<Aircraft>()
-            .HasOne(aircraft => aircraft.model)
-            .WithMany(aircraft_models => aircraft_models.aircrafts)
-            .HasForeignKey(aircraft => aircraft.aircraft_model_id);
-
-            builder.Entity<Flight>()
-            .HasOne(flight => flight.aircraft)
-            .WithMany(aircraft => aircraft.flights)
-            .HasForeignKey(flight => flight.aircraft_id);
-
-            builder.Entity<FlightSegment>()
-            .HasOne(flightSegment => flightSegment.flight)
-            .WithMany(flight => flight.segments)
-            .HasForeignKey(flightSegment => flightSegment.flight_id);
+            foreach (var property in builder.Model.GetEntityTypes()
+                           .SelectMany(e => e.GetProperties()
+                                .Where(p => p.ClrType == typeof(string))))
+                property.SetColumnType("varchar(100)");
+            builder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
 
             base.OnModelCreating(builder);
-        }
-
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            OnBeforeSaving();
-            return base.SaveChanges(acceptAllChangesOnSuccess);
-        }
-
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            OnBeforeSaving();
-            return (await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
-        }
-
-        private void OnBeforeSaving()
-        {
-            DateTime now = DateTime.Now;
-
-            var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                    e.State == EntityState.Added
-                    || e.State == EntityState.Modified));
-
-            foreach (var entityEntry in entries)
-            {
-                ((BaseEntity)entityEntry.Entity).updated_at = now;
-
-                if (entityEntry.State == EntityState.Added)
-                {
-                    ((BaseEntity)entityEntry.Entity).created_at = now;
-                }
-            }
         }
     }
 }

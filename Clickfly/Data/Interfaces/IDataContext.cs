@@ -44,7 +44,19 @@ namespace clickfly.Data
         DbSet<SystemLog> SystemLogs { get; set; }
         DbSet<Newsletter> Newsletters { get; set; }
         DbSet<Subscriber> Subscribers { get; set; }
-        DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
+        DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }        
+        DbSet<Boarding> Boardings { get; set; }
+        DbSet<Campaign> Campaigns { get; set; }
+        DbSet<CampaignScore> CampaignScores { get; set; }
+        DbSet<CampaignStatus> CampaignStatus { get; set; }
+        DbSet<ContactRequest> ContactRequests { get; set; }
+        DbSet<CustomerAtShoppingCart> CustomerAtShoppingCarts { get; set; }
+        DbSet<CustomerContact> CustomerContacts { get; set; }
+        DbSet<CustomerSearch> CustomerSearches { get; set; }
+        DbSet<DoubleCheck> DoubleChecks { get; set; }
+        DbSet<PushNotification> PushNotifications { get; set; }
+        DbSet<Score> Scores { get; set; }
+        DbSet<SystemConfig> SystemConfigs { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
