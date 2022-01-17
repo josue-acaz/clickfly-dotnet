@@ -12,7 +12,6 @@ using clickfly.ViewModels;
 
 namespace clickfly.Controllers
 {
-    [Authorize]
     [Route("/home")]
     public class HomeController : BaseController
     {
@@ -32,9 +31,7 @@ namespace clickfly.Controllers
         [HttpGet]
         public ActionResult Pagination([FromQuery]PaginationFilter filter)
         {
-            GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
-
-            return HttpResponse(new { Message = "Ok" });
+            return HttpResponse(new { Message = "Clickfly API v1.0" });
         }
     }
 }
