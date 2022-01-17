@@ -152,7 +152,7 @@ namespace clickfly.Services
         public async Task<User> Save(User user)
         {
             bool update = user.id != "";
-            //User authUser = _informer.GetValue<User>(UserTypes.User);
+            User authUser = _informer.GetValue<User>(UserTypes.User);
 
             if(update)
             {
@@ -173,7 +173,7 @@ namespace clickfly.Services
                 }
 
                 user.password = password;
-                //user.created_by = authUser.id;
+                user.created_by = authUser.id;
                 user = await _userRepository.Create(user);
 
                 // Criar grupo de permissões
@@ -199,7 +199,7 @@ namespace clickfly.Services
                     permission._read = userRolePermission._read;
                     permission._update = userRolePermission._update;
                     permission._delete = userRolePermission._delete;
-                    //permission.created_by = authUser.id;
+                    permission.created_by = authUser.id;
 
                     permission = await _permissionRepository.Create(permission);
                 }
@@ -223,11 +223,12 @@ namespace clickfly.Services
 
                 SystemLog systemLog = new SystemLog();
                 systemLog.resource_id = user.id;
-                //systemLog.user_id = authUser.id;
-                //systemLog.created_by = authUser.id;
+                systemLog.user_id = authUser.id;
+                systemLog.created_by = authUser.id;
                 systemLog.resource = Resources.Users;
                 systemLog.user_type = UserTypes.User;
                 systemLog.action = Actions.Create;
+                systemLog._object = JsonConvert.SerializeObject(user);
 
                 systemLog = await _systemLogRepository.Create(systemLog);
             }
