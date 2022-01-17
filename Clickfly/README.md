@@ -1,7 +1,7 @@
 # MIGRATIONS
 Create Migration: `dotnet ef migrations add InitialCreate`
 Migrate: `dotnet ef database update`
-Remove Last Migration: `dotnet ef database update 0` ou `dotnet ef database update Nome da migracao anterior a última` && `dotnet ef migrations remove`
+Remove Last Migration: `dotnet ef database update 0` ou `dotnet ef database update Nome da migracao antes da última` && `dotnet ef migrations remove`
 
 # REACT NATIVE NETWORK ERROR
 Adicionar endpoint em applicationUrl propriedade => Properties/lauchSettings.json

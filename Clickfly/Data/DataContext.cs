@@ -67,6 +67,7 @@ namespace clickfly.Data
         public DbSet<Score> Scores { get; set; }
         public DbSet<SystemConfig> SystemConfigs { get; set; }
 
+        /*
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             if (!options.IsConfigured)
@@ -74,6 +75,7 @@ namespace clickfly.Data
                 options.UseNpgsql("Server=127.0.0.1;Port=5432;User Id=postgres;Password=97531482;Database=clickfly_dotnet;");
             }
         }
+        */
 
         protected override void OnModelCreating(ModelBuilder builder) {
             foreach (var property in builder.Model.GetEntityTypes()
