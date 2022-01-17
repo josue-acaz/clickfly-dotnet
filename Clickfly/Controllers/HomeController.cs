@@ -29,6 +29,7 @@ namespace clickfly.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Pagination([FromQuery]PaginationFilter filter)
         {
             return HttpResponse(new { Message = "Clickfly API v1.0" });
