@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using clickfly.ViewModels;
 using System.Collections.Generic;
+using Dapper;
 
 namespace clickfly.Repositories
 {
@@ -14,6 +15,7 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "permission_groups as permission_group";
         private static string whereSql = "permission_group.excluded = false";
+        private static string deleteSql = "UPDATE permission_groups SET excluded = true WHERE id = @id";
 
         public PermissionGroupRepository(
             IDBContext dBContext, 
@@ -34,16 +36,26 @@ namespace clickfly.Repositories
         public async Task<PermissionGroup> Create(PermissionGroup permissionGroup)
         {
             permissionGroup.id = Guid.NewGuid().ToString();
+            permissionGroup.created_at = DateTime.Now;
+            permissionGroup.excluded = false;
 
-            await _dataContext.PermissionGroups.AddAsync(permissionGroup);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = permissionGroup;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<PermissionGroup>(options);
             return permissionGroup;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public Task<PermissionGroup> GetById(string id)

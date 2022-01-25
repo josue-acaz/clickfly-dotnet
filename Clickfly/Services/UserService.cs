@@ -68,6 +68,7 @@ namespace clickfly.Services
             }
 
             bool passwordIsValid = BCryptNet.Verify(password, user.password_hash);
+            
             if(!passwordIsValid)
             {
                 throw new NotFoundException("Usuário ou senha inválidos.");
@@ -110,9 +111,9 @@ namespace clickfly.Services
             await _userRepository.UpdatePassword(authUser.id, changePassword.password);
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _userRepository.Delete(id);
         }
 
         public async Task<User> GetById(string id)

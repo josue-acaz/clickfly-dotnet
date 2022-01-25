@@ -33,9 +33,9 @@ namespace clickfly.Services
             _permissionResourceRepository = permissionResourceRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _permissionResourceRepository.Delete(id);
         }
 
         public Task<PermissionResource> GetByName(string id)

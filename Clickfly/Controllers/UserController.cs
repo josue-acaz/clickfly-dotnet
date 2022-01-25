@@ -158,5 +158,20 @@ namespace clickfly.Controllers
         [Route("manager")]
         [Authorize(Roles = "manager")]
         public string Manager() => "Gerente";
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
+        {
+            try
+            {
+                await _userService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
     }
 }

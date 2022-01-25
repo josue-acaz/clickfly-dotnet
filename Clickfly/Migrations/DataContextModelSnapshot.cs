@@ -665,7 +665,6 @@ namespace clickfly.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("name")
-                        .IsRequired()
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("prefix")
@@ -1106,7 +1105,7 @@ namespace clickfly.Migrations
                     b.Property<string>("id")
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("approved")
+                    b.Property<bool?>("approved")
                         .HasColumnType("boolean");
 
                     b.Property<string>("approver_id")
@@ -1123,9 +1122,6 @@ namespace clickfly.Migrations
 
                     b.Property<string>("message")
                         .HasColumnType("varchar(100)");
-
-                    b.Property<bool>("read")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("resource")
                         .HasColumnType("varchar(100)");
@@ -1257,14 +1253,17 @@ namespace clickfly.Migrations
                     b.Property<string>("destination_aerodrome_id")
                         .HasColumnType("varchar(100)");
 
+                    b.Property<decimal>("distance")
+                        .HasColumnType("numeric");
+
                     b.Property<bool>("excluded")
                         .HasColumnType("boolean");
 
                     b.Property<string>("flight_id")
                         .HasColumnType("varchar(100)");
 
-                    b.Property<double>("flight_time")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("flight_time")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("number")
                         .HasColumnType("integer");
@@ -1272,8 +1271,8 @@ namespace clickfly.Migrations
                     b.Property<string>("origin_aerodrome_id")
                         .HasColumnType("varchar(100)");
 
-                    b.Property<float>("price_per_seat")
-                        .HasColumnType("real");
+                    b.Property<decimal>("price_per_seat")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("total_seats")
                         .HasColumnType("integer");
@@ -1375,7 +1374,7 @@ namespace clickfly.Migrations
                         {
                             id = "8fd21687-5beb-4f91-a13f-8dde04b6e24d",
                             country = "BR",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 594, DateTimeKind.Local).AddTicks(1270),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 291, DateTimeKind.Local).AddTicks(3910),
                             excluded = false,
                             name = "Embraer"
                         },
@@ -1383,7 +1382,7 @@ namespace clickfly.Migrations
                         {
                             id = "81bb3ca4-2a3f-40b0-b62a-6df2f0681e4b",
                             country = "US",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 621, DateTimeKind.Local).AddTicks(7660),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 314, DateTimeKind.Local).AddTicks(1860),
                             excluded = false,
                             name = "Piper Aircraft"
                         },
@@ -1391,7 +1390,7 @@ namespace clickfly.Migrations
                         {
                             id = "fdda563c-7109-45c3-bb26-f4f30c6975ad",
                             country = "US",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 621, DateTimeKind.Local).AddTicks(7880),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 314, DateTimeKind.Local).AddTicks(2030),
                             excluded = false,
                             name = "Cessna"
                         });
@@ -1573,7 +1572,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(4890),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(3970),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "1002da1c-241c-42af-be77-e90791c5bbab"
@@ -1585,7 +1584,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5190),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(4220),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "230565e6-571c-4620-b067-90205353528b"
@@ -1597,7 +1596,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5200),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(4230),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "002ac8e8-90de-4c17-9684-5f9a8cb5fa83"
@@ -1609,7 +1608,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5210),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(4230),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "c572d66e-f212-4882-93f3-b9d1e932dc40"
@@ -1621,7 +1620,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5220),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(4240),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "359bcfde-a8a0-4f63-89d8-3e3070887a0b"
@@ -1633,7 +1632,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5230),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(4250),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "c030a948-2771-4064-898d-00fb675844e5"
@@ -1645,7 +1644,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5230),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(4250),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "10332667-bf51-4da3-ade4-0a61451bca0f"
@@ -1657,7 +1656,7 @@ namespace clickfly.Migrations
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 631, DateTimeKind.Local).AddTicks(5240),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 322, DateTimeKind.Local).AddTicks(4260),
                             excluded = false,
                             permission_group_id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             permission_resource_id = "30791f17-c95c-4dad-9efc-80053fe167a9"
@@ -1708,7 +1707,7 @@ namespace clickfly.Migrations
                         {
                             id = "dfa0022b-39ff-4b47-91be-6574a67b9ee0",
                             allowed = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 627, DateTimeKind.Local).AddTicks(4650),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 318, DateTimeKind.Local).AddTicks(9020),
                             excluded = false,
                             user_id = "fa5533ef-249a-4a83-86f8-0a3d903adb5c",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
@@ -1752,7 +1751,7 @@ namespace clickfly.Migrations
                         {
                             id = "230565e6-571c-4620-b067-90205353528b",
                             _table = "users",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2390),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(1880),
                             excluded = false,
                             name = "Usuários"
                         },
@@ -1760,7 +1759,7 @@ namespace clickfly.Migrations
                         {
                             id = "10048a9f-7da0-4213-af5f-6e1446a62b2a",
                             _table = "customers",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2800),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2120),
                             excluded = false,
                             name = "Clientes"
                         },
@@ -1768,7 +1767,7 @@ namespace clickfly.Migrations
                         {
                             id = "c7582447-6dff-46a0-ad56-c204b248a77c",
                             _table = "aircrafts",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2820),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2130),
                             excluded = false,
                             name = "Aeronaves"
                         },
@@ -1776,7 +1775,7 @@ namespace clickfly.Migrations
                         {
                             id = "002ac8e8-90de-4c17-9684-5f9a8cb5fa83",
                             _table = "aerodromes",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2820),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2130),
                             excluded = false,
                             name = "Aeródromos"
                         },
@@ -1784,7 +1783,7 @@ namespace clickfly.Migrations
                         {
                             id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
                             _table = "flights",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2830),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2140),
                             excluded = false,
                             name = "Voos"
                         },
@@ -1792,7 +1791,7 @@ namespace clickfly.Migrations
                         {
                             id = "f0eba241-dba4-42de-b9ca-379db1937d62",
                             _table = "flight_segments",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2840),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2150),
                             excluded = false,
                             name = "Etapas do voo"
                         },
@@ -1800,7 +1799,7 @@ namespace clickfly.Migrations
                         {
                             id = "30791f17-c95c-4dad-9efc-80053fe167a9",
                             _table = "manufacturers",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2850),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2150),
                             excluded = false,
                             name = "Fabricantes"
                         },
@@ -1808,7 +1807,7 @@ namespace clickfly.Migrations
                         {
                             id = "10332667-bf51-4da3-ade4-0a61451bca0f",
                             _table = "states",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2850),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2160),
                             excluded = false,
                             name = "Estados"
                         },
@@ -1816,7 +1815,7 @@ namespace clickfly.Migrations
                         {
                             id = "c030a948-2771-4064-898d-00fb675844e5",
                             _table = "cities",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2850),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2160),
                             excluded = false,
                             name = "Cidades"
                         },
@@ -1824,7 +1823,7 @@ namespace clickfly.Migrations
                         {
                             id = "1002da1c-241c-42af-be77-e90791c5bbab",
                             _table = "air_taxis",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2860),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2170),
                             excluded = false,
                             name = "Táxis Aéreos"
                         },
@@ -1832,7 +1831,7 @@ namespace clickfly.Migrations
                         {
                             id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
                             _table = "air_taxi_bases",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2870),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2170),
                             excluded = false,
                             name = "Bases"
                         },
@@ -1840,7 +1839,7 @@ namespace clickfly.Migrations
                         {
                             id = "5f3beb7b-30b7-4b13-a6f9-2575e8ac80c3",
                             _table = "newsletters",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(2870),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2180),
                             excluded = false,
                             name = "Newsletters"
                         },
@@ -1848,7 +1847,7 @@ namespace clickfly.Migrations
                         {
                             id = "f6c9d174-1a2c-49c3-be51-c9f24cbdd55a",
                             _table = "subscribers",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3020),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2180),
                             excluded = false,
                             name = "Assinantes"
                         },
@@ -1856,7 +1855,7 @@ namespace clickfly.Migrations
                         {
                             id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
                             _table = "aircraft_images",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3020),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2190),
                             excluded = false,
                             name = "Imagens da Aeronave"
                         },
@@ -1864,7 +1863,7 @@ namespace clickfly.Migrations
                         {
                             id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
                             _table = "bookings",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3030),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2190),
                             excluded = false,
                             name = "Reservas"
                         },
@@ -1872,7 +1871,7 @@ namespace clickfly.Migrations
                         {
                             id = "c572d66e-f212-4882-93f3-b9d1e932dc40",
                             _table = "aircraft_models",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3030),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2570),
                             excluded = false,
                             name = "Modelo de aeronaves"
                         },
@@ -1880,7 +1879,7 @@ namespace clickfly.Migrations
                         {
                             id = "faa82a99-ead4-454c-a9d3-7c62f4da7430",
                             _table = "customer_addresses",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3040),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2580),
                             excluded = false,
                             name = "Endereços do cliente"
                         },
@@ -1888,7 +1887,7 @@ namespace clickfly.Migrations
                         {
                             id = "b155a133-120c-4ded-9dfa-88316f4f790c",
                             _table = "customer_aerodromes",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3050),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2590),
                             excluded = false,
                             name = "Aeródromos do cliente"
                         },
@@ -1896,7 +1895,7 @@ namespace clickfly.Migrations
                         {
                             id = "b51a4bd6-5a70-44a7-85e7-2da9466c5d8c",
                             _table = "passengers",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3050),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2600),
                             excluded = false,
                             name = "Passageiros"
                         },
@@ -1904,7 +1903,7 @@ namespace clickfly.Migrations
                         {
                             id = "d1d313ca-d2a3-48ff-ac32-cfa842a633c2",
                             _table = "system_configs",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3060),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2600),
                             excluded = false,
                             name = "Configurações do Sistema"
                         },
@@ -1912,7 +1911,7 @@ namespace clickfly.Migrations
                         {
                             id = "359bcfde-a8a0-4f63-89d8-3e3070887a0b",
                             _table = "system_logs",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3060),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2610),
                             excluded = false,
                             name = "Logs do Sistema"
                         },
@@ -1920,7 +1919,7 @@ namespace clickfly.Migrations
                         {
                             id = "2237baef-2a10-471e-abe1-ee2994eafb77",
                             _table = "customer_contacts",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3060),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2610),
                             excluded = false,
                             name = "Contatos do cliente"
                         },
@@ -1928,7 +1927,7 @@ namespace clickfly.Migrations
                         {
                             id = "2c4c1d8b-07bc-4e7b-bcc2-31704876f744",
                             _table = "double_checks",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3070),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2610),
                             excluded = false,
                             name = "Duplas Checagens"
                         },
@@ -1936,7 +1935,7 @@ namespace clickfly.Migrations
                         {
                             id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
                             _table = "push_notifications",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3070),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2620),
                             excluded = false,
                             name = "Notificações Push"
                         },
@@ -1944,7 +1943,7 @@ namespace clickfly.Migrations
                         {
                             id = "f934de0c-424b-4726-afcc-9a0564372ab8",
                             _table = "boardings",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3080),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2620),
                             excluded = false,
                             name = "Embarques"
                         },
@@ -1952,7 +1951,7 @@ namespace clickfly.Migrations
                         {
                             id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
                             _table = "campaigns",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3090),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2630),
                             excluded = false,
                             name = "Campanhas"
                         },
@@ -1960,7 +1959,7 @@ namespace clickfly.Migrations
                         {
                             id = "99e84be3-bbcb-4b35-adce-42e2e037322a",
                             _table = "contact_requests",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 636, DateTimeKind.Local).AddTicks(3090),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 326, DateTimeKind.Local).AddTicks(2730),
                             excluded = false,
                             name = "Solicitações de Contato (Site)"
                         });
@@ -2069,7 +2068,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "5bc5d3c3-75e4-4a07-8424-b873cdaf97eb",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 640, DateTimeKind.Local).AddTicks(9900),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 329, DateTimeKind.Local).AddTicks(9840),
                             excluded = false,
                             name = "Acre",
                             prefix = "AC"
@@ -2077,7 +2076,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "5bf811ff-f3cb-4d36-96f0-da7151fb843c",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(290),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(70),
                             excluded = false,
                             name = "Alagoas",
                             prefix = "AL"
@@ -2085,7 +2084,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "70c5e30a-9e3b-4219-9cb6-b74bc699d3a3",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(300),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(80),
                             excluded = false,
                             name = "Amapá",
                             prefix = "AP"
@@ -2093,7 +2092,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "aa27b7ef-a373-4788-b5cb-84c4294b0ebb",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(310),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(80),
                             excluded = false,
                             name = "Amazonas",
                             prefix = "AM"
@@ -2101,7 +2100,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "aa705c29-4d43-4aed-ae41-44fc1855aa7e",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(320),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(90),
                             excluded = false,
                             name = "Bahia",
                             prefix = "BA"
@@ -2109,7 +2108,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "2cc0e771-ff94-4e6c-9197-9faa6978e751",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(330),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(100),
                             excluded = false,
                             name = "Ceará",
                             prefix = "CE"
@@ -2117,7 +2116,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "10289889-ff3f-4a02-ac90-597d436c6435",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(330),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(100),
                             excluded = false,
                             name = "Distrito Federal",
                             prefix = "DF"
@@ -2125,7 +2124,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "1cc1e4c1-96c0-4bdc-aeee-0541e283a231",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(340),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(110),
                             excluded = false,
                             name = "Espírito Santo",
                             prefix = "ES"
@@ -2133,7 +2132,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "0dfb4d34-9394-4b62-8ceb-d9bd485cf539",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(340),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(110),
                             excluded = false,
                             name = "Goiás",
                             prefix = "GO"
@@ -2141,7 +2140,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "5a38a9bd-c329-49e0-9516-6761f4a7d606",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(350),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(120),
                             excluded = false,
                             name = "Maranhão",
                             prefix = "MA"
@@ -2149,7 +2148,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "ceb3a4c4-b747-412b-a144-5ef8a3ced03e",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(360),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(120),
                             excluded = false,
                             name = "Mato Grosso",
                             prefix = "MT"
@@ -2157,7 +2156,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "9cfc017e-4cee-4e48-8208-a5e3779d70c9",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(360),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(130),
                             excluded = false,
                             name = "Mato Grosso do Sul",
                             prefix = "MS"
@@ -2165,7 +2164,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "95d20824-33f9-476d-b6d8-c42c463a360e",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(370),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(130),
                             excluded = false,
                             name = "Minas Gerais",
                             prefix = "MG"
@@ -2173,7 +2172,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "989a917f-ca06-4c0c-a44b-ce852d6eb8db",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(370),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(140),
                             excluded = false,
                             name = "Pará",
                             prefix = "PA"
@@ -2181,7 +2180,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "f1f817e7-742c-492f-8cfd-e65b6aa51527",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(380),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(140),
                             excluded = false,
                             name = "Paraíba",
                             prefix = "PB"
@@ -2189,7 +2188,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "46478f1d-66cb-4cc4-a2ba-ef183deb4388",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(380),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(150),
                             excluded = false,
                             name = "Paraná",
                             prefix = "PR"
@@ -2197,7 +2196,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "b73847c2-ac29-4787-8a14-5673bc048dae",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(390),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(150),
                             excluded = false,
                             name = "Pernambuco",
                             prefix = "PE"
@@ -2205,7 +2204,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "9f68091d-2dae-458d-8a1b-dbdb7d3b36c2",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(390),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(160),
                             excluded = false,
                             name = "Piauí",
                             prefix = "PI"
@@ -2213,7 +2212,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "7c12da9f-3002-4735-8824-f6c68126cf6f",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(400),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(160),
                             excluded = false,
                             name = "Rio de Janeiro",
                             prefix = "RJ"
@@ -2221,6 +2220,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "d04e4f39-d4f8-4cac-9fa7-682aad5e8bbc",
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(160),
                             excluded = false,
                             name = "Rio Grande do Norte",
                             prefix = "RN"
@@ -2228,7 +2228,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "2bc661cf-71ed-481b-87a4-ef0e530658ad",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(400),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(170),
                             excluded = false,
                             name = "Rio Grande do Sul",
                             prefix = "RS"
@@ -2236,7 +2236,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "a027f62e-f662-450e-8688-bc89628492f5",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(410),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(170),
                             excluded = false,
                             name = "Rondônia",
                             prefix = "RO"
@@ -2244,7 +2244,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "18ee0c3e-7e1d-481d-8135-591afa8bfea0",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(410),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(180),
                             excluded = false,
                             name = "Roraima",
                             prefix = "RR"
@@ -2252,7 +2252,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "b21165a6-0a4a-496d-8371-bb050bce09d9",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(420),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(180),
                             excluded = false,
                             name = "Santa Catarina",
                             prefix = "SC"
@@ -2260,7 +2260,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "d2cd4e43-d325-4d21-88a0-3542b38d0438",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(420),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(190),
                             excluded = false,
                             name = "São Paulo",
                             prefix = "SP"
@@ -2268,7 +2268,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "ad03e50f-235b-48d3-901a-e8167ce71924",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(430),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(190),
                             excluded = false,
                             name = "Sergipe",
                             prefix = "SE"
@@ -2276,7 +2276,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "94d630ce-66d4-49b2-a133-684de51be69c",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 641, DateTimeKind.Local).AddTicks(430),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 330, DateTimeKind.Local).AddTicks(200),
                             excluded = false,
                             name = "Tocantins",
                             prefix = "TO"
@@ -2468,28 +2468,28 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "627fd947-1062-4b1a-8c2c-7ef36cad279e",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4350),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 333, DateTimeKind.Local).AddTicks(7180),
                             excluded = false,
                             gmt = -2
                         },
                         new
                         {
                             id = "1235eb4b-9dd5-464f-9487-3c35a6e73a24",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4680),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 333, DateTimeKind.Local).AddTicks(7420),
                             excluded = false,
                             gmt = -3
                         },
                         new
                         {
                             id = "01bdd6a6-ef30-46ac-908f-74fd42bc9531",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4690),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 333, DateTimeKind.Local).AddTicks(7430),
                             excluded = false,
                             gmt = -4
                         },
                         new
                         {
                             id = "b2deaa96-4df2-404c-9ac1-3b58ac9d655b",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 57, 645, DateTimeKind.Local).AddTicks(4690),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 333, DateTimeKind.Local).AddTicks(7430),
                             excluded = false,
                             gmt = -5
                         });
@@ -2550,11 +2550,11 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "fa5533ef-249a-4a83-86f8-0a3d903adb5c",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 7, DateTimeKind.Local).AddTicks(5410),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 599, DateTimeKind.Local).AddTicks(4760),
                             email = "josue.acaz@outlook.com",
                             excluded = false,
                             name = "JOSUE ACAZ DOS SANTOS DE OLIVEIRA",
-                            password_hash = "$2a$11$RvZwilumbM5DII92Q8el1.GA.kCZRC.1mjgFth9kL/0jr7ncxNiOW",
+                            password_hash = "$2a$11$woDB7FEBJlgTYSpDTmx6..ODHyZxVDpe/HEFOZmOfmEn0S/SYYiAS",
                             username = "jsoliveira"
                         });
                 });
@@ -2595,7 +2595,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8330),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 601, DateTimeKind.Local).AddTicks(5790),
                             excluded = false,
                             label = "Funcionário",
                             name = "employee"
@@ -2603,7 +2603,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8660),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 601, DateTimeKind.Local).AddTicks(6090),
                             excluded = false,
                             label = "Gerente",
                             name = "manager"
@@ -2611,7 +2611,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8670),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 601, DateTimeKind.Local).AddTicks(6110),
                             excluded = false,
                             label = "Administrador",
                             name = "administrator"
@@ -2619,7 +2619,7 @@ namespace clickfly.Migrations
                         new
                         {
                             id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a",
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 9, DateTimeKind.Local).AddTicks(8680),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 601, DateTimeKind.Local).AddTicks(6110),
                             excluded = false,
                             label = "Administrador Geral",
                             name = "general_administrator"
@@ -2677,480 +2677,480 @@ namespace clickfly.Migrations
                     b.HasData(
                         new
                         {
-                            id = "b804ad51-d04d-4296-b6f8-240797665070",
+                            id = "ecc02a99-034f-43ac-95a1-44d3c20d4032",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(3830),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5180),
                             excluded = false,
                             permission_resource_id = "c7582447-6dff-46a0-ad56-c204b248a77c",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "0717d397-f174-44f4-b66b-936528adf0f7",
+                            id = "1a18d506-9676-4371-ab9e-583d9467dde0",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4460),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5760),
                             excluded = false,
                             permission_resource_id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "f3ddfa39-4e8f-4908-a8c9-5eae17317d1b",
+                            id = "6d8892af-8b8e-48c8-8cf0-83f673e27013",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4490),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5790),
                             excluded = false,
                             permission_resource_id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "385c24b4-71c8-4513-96ec-46e27780d3e1",
+                            id = "3c6c953a-4c73-420f-9c4a-0354e267a0dd",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4500),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5800),
                             excluded = false,
                             permission_resource_id = "f0eba241-dba4-42de-b9ca-379db1937d62",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "7d1e2c64-ca73-4e41-8af9-5249a61f7639",
+                            id = "7d47eba9-5145-4c12-ad6f-96cb29500104",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4520),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5810),
                             excluded = false,
                             permission_resource_id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "a27a2166-c4bc-45d6-8a5e-edbcc5dab3b7",
+                            id = "995de902-4fbc-439c-8e7f-a2bde2e00fc4",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4550),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5840),
                             excluded = false,
                             permission_resource_id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "2a29c965-b382-4c30-89bc-422ea16438da",
+                            id = "349abb81-1c13-4558-a9ae-fc9a23c689e1",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4680),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5850),
                             excluded = false,
                             permission_resource_id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "6717cab4-e831-491f-adde-3fc1b3659735",
+                            id = "744c7c9a-9f23-4998-afb7-5b42cc499359",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4700),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5860),
                             excluded = false,
                             permission_resource_id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "246a3669-3f20-4478-96e1-11b06bf35a30",
+                            id = "67bc1c71-18a4-451f-a722-a91bc7fd0396",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4710),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5870),
                             excluded = false,
                             permission_resource_id = "f934de0c-424b-4726-afcc-9a0564372ab8",
                             user_role_id = "0b3214f8-0f71-469b-8203-d8ba7fc158f2"
                         },
                         new
                         {
-                            id = "507dd704-e872-4738-8e29-4b347b4870d4",
+                            id = "1b2c9320-f9ac-4326-a042-7cc9356699a9",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4720),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5880),
                             excluded = false,
                             permission_resource_id = "c7582447-6dff-46a0-ad56-c204b248a77c",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "1615d96c-a85b-4f43-b353-ce7ebc9417e1",
+                            id = "048f7aa3-32ba-4e77-aad3-ef9ce5e12fe8",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4750),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5930),
                             excluded = false,
                             permission_resource_id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "8b74e0ff-c96e-462a-a99b-abcb7130bf94",
+                            id = "63e552b9-5b8c-4427-a6b7-b75cdfd4ef20",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4760),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5940),
                             excluded = false,
                             permission_resource_id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "25a93f16-5161-4501-9fb3-075987d43213",
+                            id = "d70de9a8-007c-4db0-b3f7-49404de473e4",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4790),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(5960),
                             excluded = false,
                             permission_resource_id = "f0eba241-dba4-42de-b9ca-379db1937d62",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "f8c4c8b4-777b-4f7b-8342-1f7f371d89d1",
+                            id = "cb0e7da9-d315-41a3-95e0-b2ece4d07a62",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4820),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6150),
                             excluded = false,
                             permission_resource_id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "0761daaa-1399-464b-9a22-b5fa3cfdd78e",
+                            id = "c98fcd9a-48fd-42c8-affa-60f9d060f148",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4830),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6160),
                             excluded = false,
                             permission_resource_id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "97f4c388-acac-4bfa-b05f-a05feb468f26",
+                            id = "669f49a6-4d04-432d-90ab-aa8aecc86c4e",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4840),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6170),
                             excluded = false,
                             permission_resource_id = "2c4c1d8b-07bc-4e7b-bcc2-31704876f744",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "8535b7aa-5ec4-4ed5-a339-2f4172d0e688",
+                            id = "c50c8907-dc77-45c5-86a5-e80c36053ed7",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4850),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6180),
                             excluded = false,
                             permission_resource_id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "db6293b7-d006-49fb-8263-1167ff010f9e",
+                            id = "e2f97cca-7eb1-4566-8d66-4b70fcecf953",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4860),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6190),
                             excluded = false,
                             permission_resource_id = "99e84be3-bbcb-4b35-adce-42e2e037322a",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "d15eff4b-53f3-4f21-8c8e-e741e2f246f8",
+                            id = "d5b4f9a2-affe-4ffb-b1c2-37fc7415d2f6",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4870),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6200),
                             excluded = false,
                             permission_resource_id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "c6b269b4-c7a3-4822-9bf7-d7c7e84acbd3",
+                            id = "8a11f6bf-85de-416b-937f-4b0b61d015b5",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4890),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6220),
                             excluded = false,
                             permission_resource_id = "f934de0c-424b-4726-afcc-9a0564372ab8",
                             user_role_id = "a3bd4997-cb6a-4a1c-aa59-2b27035f7b49"
                         },
                         new
                         {
-                            id = "0bf0b18d-6bda-4341-baae-d04e369b13a8",
+                            id = "aaad4863-2164-450f-8974-5ed9da77a95b",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4900),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6230),
                             excluded = false,
                             permission_resource_id = "c7582447-6dff-46a0-ad56-c204b248a77c",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "1c152490-96e8-4c21-b3bc-997891a4f2b3",
+                            id = "740894c9-085c-4f47-a3ab-0960fd95c062",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4910),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6240),
                             excluded = false,
                             permission_resource_id = "3a20e0e8-d235-4cb1-bcec-251e9fcbb405",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "89a7806d-b44c-4822-8beb-e12d5f801dcb",
+                            id = "ef04ead4-8b89-4eb8-97b6-2a798463491f",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4910),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6250),
                             excluded = false,
                             permission_resource_id = "33b2af87-b10a-4bc9-8ef8-b7a82f308f25",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "26cfe973-1ea1-4f09-a4ac-6f3aced6e615",
+                            id = "a3a3a8ac-1472-47ac-a3d0-1559478e6aad",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4920),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6260),
                             excluded = false,
                             permission_resource_id = "f0eba241-dba4-42de-b9ca-379db1937d62",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "66e7670d-78d6-4433-917e-80f0d9e4b7b6",
+                            id = "974bed36-0999-4212-830f-de25d01e6c17",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(4940),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6270),
                             excluded = false,
                             permission_resource_id = "7c6a5ebc-c741-4942-beb3-1446d1c9e464",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "aa681e33-1d7f-4efe-8ba0-25c84b5bb179",
+                            id = "cd81bb56-90f2-42a6-8b87-3825ccfc0136",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5040),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6350),
                             excluded = false,
                             permission_resource_id = "9a4181d4-01e0-40be-856a-eb940cbe7a17",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "7d7781ab-9bfb-453a-afce-9dcbb5982d4e",
+                            id = "acd6607f-68cf-4e6b-8728-f318293a9eee",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5050),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6360),
                             excluded = false,
                             permission_resource_id = "2c4c1d8b-07bc-4e7b-bcc2-31704876f744",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "f2733245-0908-4c87-990a-b4aac25b1350",
+                            id = "560a758b-48c0-4f2a-9e45-0863df1e14b2",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5060),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6370),
                             excluded = false,
                             permission_resource_id = "30191b2f-2ab9-4fff-b369-ed8a114e001e",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "6eee0965-4bd3-4fdb-90fb-8f46ed3890db",
+                            id = "2857124a-0a52-4696-a6b2-82d8e291ef61",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5070),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6380),
                             excluded = false,
                             permission_resource_id = "99e84be3-bbcb-4b35-adce-42e2e037322a",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "4596917c-be95-46b5-8886-d95058d7d60b",
+                            id = "f20b8fb0-80e5-4185-9356-c19929706e2e",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5190),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6420),
                             excluded = false,
                             permission_resource_id = "ba2029c0-b1ed-4811-b18a-e2d81c4d3378",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "8be56ca8-3515-4b0c-ac7e-bea39c5e479c",
+                            id = "6513d60f-af83-4bf7-af1f-8c9a687201ac",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5200),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6430),
                             excluded = false,
                             permission_resource_id = "f934de0c-424b-4726-afcc-9a0564372ab8",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "04700c24-d35c-4819-b2a1-133567dd8157",
+                            id = "6cf895cd-e8c5-4186-aef0-7a60a665e4a1",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5210),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6440),
                             excluded = false,
                             permission_resource_id = "230565e6-571c-4620-b067-90205353528b",
                             user_role_id = "1e8b789e-c5a7-41e2-a7c2-2776f0b8b616"
                         },
                         new
                         {
-                            id = "85691dc6-ec69-4275-bf2b-0a5c9d3a9b9b",
+                            id = "33d38048-bd2d-4eb0-9d6f-4b70e050b5e9",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5220),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6440),
                             excluded = false,
                             permission_resource_id = "1002da1c-241c-42af-be77-e90791c5bbab",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
                         },
                         new
                         {
-                            id = "d0341dc2-97c5-4a4e-9313-b6e089becb03",
+                            id = "7dcba521-497f-4309-bf39-418707c7e91d",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5230),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6450),
                             excluded = false,
                             permission_resource_id = "230565e6-571c-4620-b067-90205353528b",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
                         },
                         new
                         {
-                            id = "fbc97d92-d07c-4085-9211-c397b3ad31e1",
+                            id = "253d4428-728d-48df-868f-3a664c2e72c8",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5240),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6460),
                             excluded = false,
                             permission_resource_id = "002ac8e8-90de-4c17-9684-5f9a8cb5fa83",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
                         },
                         new
                         {
-                            id = "ceeef35b-42ab-40b7-8a9d-75de8bda1f16",
+                            id = "09b1c92a-5ec3-43e0-bcf7-a0a2a6ab8745",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5250),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6520),
                             excluded = false,
                             permission_resource_id = "c572d66e-f212-4882-93f3-b9d1e932dc40",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
                         },
                         new
                         {
-                            id = "6f2bc57e-6e0a-4c57-96fe-5c8e805d8a43",
+                            id = "b3fd2b98-5f9a-4ca1-a998-280bb2fdc81a",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5260),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6530),
                             excluded = false,
                             permission_resource_id = "359bcfde-a8a0-4f63-89d8-3e3070887a0b",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
                         },
                         new
                         {
-                            id = "780988d9-f070-4189-9e76-d03ec3c6b6b6",
+                            id = "1c8256b1-3511-4d36-87e1-f8374e703035",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5270),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6540),
                             excluded = false,
                             permission_resource_id = "c030a948-2771-4064-898d-00fb675844e5",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
                         },
                         new
                         {
-                            id = "276cf77a-3ae9-4828-9e08-78abced24798",
+                            id = "8605e661-36b4-4d86-9166-92aa4ebb9c07",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5280),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6550),
                             excluded = false,
                             permission_resource_id = "10332667-bf51-4da3-ade4-0a61451bca0f",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"
                         },
                         new
                         {
-                            id = "422a86ec-16c9-4157-b968-275c15856c26",
+                            id = "3f00c9cb-c22c-4a9b-a8bf-d60b9b812ebe",
                             _create = true,
                             _delete = true,
                             _read = true,
                             _update = true,
-                            created_at = new DateTime(2022, 1, 16, 19, 50, 58, 18, DateTimeKind.Local).AddTicks(5290),
+                            created_at = new DateTime(2022, 1, 24, 23, 22, 33, 610, DateTimeKind.Local).AddTicks(6560),
                             excluded = false,
                             permission_resource_id = "30791f17-c95c-4dad-9efc-80053fe167a9",
                             user_role_id = "6b3b800c-f438-4ffd-8ec4-a34c1c63e87a"

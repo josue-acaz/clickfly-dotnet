@@ -8,7 +8,6 @@ namespace clickfly.Models
     [Table("cities")]
     public class City : BaseEntity
     {
-        [Required(ErrorMessage = "Este campo é obrigatório")]
         public string name { get; set; }
         public string prefix { get; set; }
         public string description { get; set; }

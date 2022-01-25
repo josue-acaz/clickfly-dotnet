@@ -26,12 +26,20 @@ namespace clickfly.Repositories
         
         public async Task<AirTaxi> Create(AirTaxi airTaxi)
         {
-            string id = Guid.NewGuid().ToString();
-            airTaxi.id = id;
+            airTaxi.id = Guid.NewGuid().ToString();
+            airTaxi.created_at = DateTime.Now;
+            airTaxi.excluded = false;
 
-            await _dataContext.AirTaxis.AddAsync(airTaxi);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = airTaxi;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<AirTaxi>(options);
             return airTaxi;
         }
 
@@ -70,7 +78,7 @@ namespace clickfly.Repositories
             options.Params = queryParams;
             options.Include<AccessToken>(includeAccessToken);
             
-            options.AddRawAttribute("dashboard_url", $"CONCAT('{_appSettings.DashboardUrl}', '/login?ref=', air_taxi.name, '&token=', access_token.token)");
+            options.AddRawAttribute("dashboard_url", $"CONCAT('{_appSettings.DashboardUrl}', '/login?token=', access_token.token)");
 
             int total_records = _dapperWrapper.Count<AirTaxi>(new CountOptions {
                 As = "air_taxi",

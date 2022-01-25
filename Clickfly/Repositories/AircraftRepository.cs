@@ -27,10 +27,19 @@ namespace clickfly.Repositories
         public async Task<Aircraft> Create(Aircraft aircraft)
         {
             aircraft.id = Guid.NewGuid().ToString();
+            aircraft.created_at = DateTime.Now;
+            aircraft.excluded = false;
 
-            await _dataContext.Aircrafts.AddAsync(aircraft);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = aircraft;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<Aircraft>(options);
             return aircraft;
         }
 

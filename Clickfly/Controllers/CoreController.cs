@@ -56,11 +56,11 @@ namespace clickfly.Controllers
 
         [HttpGet("flight-price")]
         [AllowAnonymous]
-        public async Task<ActionResult<double>> GetFlightPrice([FromQuery]FlightPriceRequest flightPriceRequest)
+        public async Task<ActionResult<decimal>> GetFlightPrice([FromQuery]FlightPriceRequest flightPriceRequest)
         {
             try
             {
-                double flightPrice = await _coreService.GetFlightPrice(flightPriceRequest);
+                decimal flightPrice = await _coreService.GetFlightPrice(flightPriceRequest);
                 return flightPrice;
             }
             catch (Exception ex)
@@ -72,11 +72,11 @@ namespace clickfly.Controllers
 
         [HttpGet("flight-subtotal")]
         [AllowAnonymous]
-        public async Task<ActionResult<double>> GetFlightSubtotal([FromQuery]FlightSubtotalRequest flightSubtotalRequest)
+        public async Task<ActionResult<decimal>> GetFlightSubtotal([FromQuery]FlightSubtotalRequest flightSubtotalRequest)
         {
             try
             {
-                double flightPrice = await _coreService.GetFlightSubtotal(flightSubtotalRequest);
+                decimal flightPrice = await _coreService.GetFlightSubtotal(flightSubtotalRequest);
                 return flightPrice;
             }
             catch (Exception ex)

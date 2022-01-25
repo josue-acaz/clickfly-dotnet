@@ -31,6 +31,21 @@ namespace clickfly.Controllers
             _aerodromeService = aerodromeService;
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Aerodrome>> GetById(string id)
+        {
+            try
+            {
+                Aerodrome aerodrome = await _aerodromeService.GetById(id);
+                return HttpResponse(aerodrome);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Aerodrome aerodrome)
         {
@@ -44,6 +59,26 @@ namespace clickfly.Controllers
                 return HttpResponse(aerodrome);
             }
             catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
+        [HttpPost("external")]
+        [AllowAnonymous]
+        public async Task<ActionResult> SaveExternal([FromBody]Aerodrome aerodrome)
+        {
+            try
+            {
+                using var transaction = _dataContext.Database.BeginTransaction();
+
+                aerodrome = await _aerodromeService.SaveExternal(aerodrome);
+                await transaction.CommitAsync();
+
+                return HttpResponse(aerodrome);
+            }
+            catch (Exception ex)
             {
                 Notify(ex.ToString());
                 return HttpResponse();
@@ -74,6 +109,21 @@ namespace clickfly.Controllers
                 return HttpResponse(aerodromes);
             }
             catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
+        {
+            try
+            {
+                await _aerodromeService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
             {
                 Notify(ex.ToString());
                 return HttpResponse();

@@ -1,13 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
 using clickfly.ViewModels;
+using Dapper;
 
 namespace clickfly.Repositories
 {
     public class BookingPaymentRepository : BaseRepository<BookingPayment>, IBookingPaymentRepository
     {
+        private static string deleteSql = "UPDATE booking_payments SET excluded = true WHERE id = @id";
+        
         public BookingPaymentRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
             
@@ -15,18 +19,27 @@ namespace clickfly.Repositories
 
         public async Task<BookingPayment> Create(BookingPayment bookingPayment)
         {
-            string id = Guid.NewGuid().ToString();
-            bookingPayment.id = id;
+            bookingPayment.id = Guid.NewGuid().ToString();
+            bookingPayment.created_at = DateTime.Now;
+            bookingPayment.excluded = false;
 
-            await _dataContext.BookingPayments.AddAsync(bookingPayment);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = bookingPayment;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<BookingPayment>(options);
             return bookingPayment;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public Task<BookingPayment> GetById(string id)
@@ -39,9 +52,20 @@ namespace clickfly.Repositories
             throw new NotImplementedException();
         }
 
-        public Task Update(BookingPayment booking)
+        public async Task<BookingPayment> Update(BookingPayment bookingPayment)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = bookingPayment;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<BookingPayment>(options);
+            return bookingPayment;
         }
     }
 }

@@ -94,5 +94,20 @@ namespace clickfly.Controllers
                 return HttpResponse();
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
+        {
+            try
+            {
+                await _airTaxiService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
     }
 }

@@ -5,6 +5,9 @@ using clickfly.Data;
 using clickfly.Models;
 using Npgsql;
 using clickfly.ViewModels;
+using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 
 namespace clickfly.Repositories
 {
@@ -13,6 +16,7 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "states as state";
         private static string whereSql = "state.excluded = false";
+        private static string deleteSql = "UPDATE states SET excluded = true WHERE id = @id";
 
         public StateRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
@@ -21,18 +25,27 @@ namespace clickfly.Repositories
 
         public async Task<State> Create(State state)
         {
-            string id = Guid.NewGuid().ToString();
-            state.id = id;
+            state.id = Guid.NewGuid().ToString();
+            state.created_at = DateTime.Now;
+            state.excluded = false;
 
-            await _dataContext.States.AddAsync(state);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = state;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<State>(options);
             return state;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<State> GetById(string id)
@@ -46,21 +59,56 @@ namespace clickfly.Repositories
 
         public async Task<State> GetByPrefix(string prefix)
         {
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND state.prefix = @prefix";
-            NpgsqlParameter param = new NpgsqlParameter("prefix", prefix);
+            SelectOptions options = new SelectOptions();
+            options.As = "state";
+            options.Where = $"{whereSql} AND state.prefix = @prefix LIMIT 1";
+            options.Params = new { prefix = prefix };
             
-            State state = await _dataContext.States.FromSqlRaw(querySql, param).FirstOrDefaultAsync();
+            State state = await _dapperWrapper.QuerySingleAsync<State>(options);
             return state;
         }
 
-        public Task<PaginationResult<State>> Pagination(PaginationFilter filter)
+        public async Task<PaginationResult<State>> Pagination(PaginationFilter filter)
         {
-            throw new NotImplementedException();
+            int limit = filter.page_size;
+            int offset = (filter.page_number - 1) * filter.page_size;
+            string text = filter.text;
+
+            string where = $"{whereSql} AND state.name ILIKE @text OR state.prefix ILIKE @text LIMIT @limit OFFSET @offset";
+
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+            queryParams.Add("text", $"%{text}%");
+
+            SelectOptions options = new SelectOptions();
+            options.As = "state";
+            options.Where = where;
+            options.Params = queryParams;
+
+            IEnumerable<State> cities = await _dapperWrapper.QueryAsync<State>(options);
+            int total_records = cities.Count();
+
+            PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
+            PaginationResult<State> paginationResult = _utils.CreatePaginationResult<State>(cities.ToList(), paginationFilter, total_records);
+
+            return paginationResult;
         }
 
-        public Task Update(State state)
+        public async Task<State> Update(State state)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = state;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<State>(options);
+            return state;
         }
     }
 }

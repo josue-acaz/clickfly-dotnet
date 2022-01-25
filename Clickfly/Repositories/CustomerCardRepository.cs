@@ -16,21 +16,28 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "customer_cards as customer_card";
         private static string whereSql = "customer_card.excluded = false";
-        protected string[] defaultFields = new string[2];
 
         public CustomerCardRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "card_id";
-            defaultFields[1] = "customer_id";
+
         }
 
         public async Task<CustomerCard> Create(CustomerCard customerCard)
         {
             customerCard.id = Guid.NewGuid().ToString();
+            customerCard.created_at = DateTime.Now;
+            customerCard.excluded = false;
 
-            await _dataContext.CustomerCards.AddAsync(customerCard);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = customerCard;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<CustomerCard>(options);
             return customerCard;
         }
 

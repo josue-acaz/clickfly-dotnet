@@ -34,9 +34,9 @@ namespace clickfly.Services
             _permissionGroupRepository = permissionGroupRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _permissionRepository.Delete(id);
         }
 
         public async Task<PaginationResult<Permission>> Pagination(PaginationFilter filter)

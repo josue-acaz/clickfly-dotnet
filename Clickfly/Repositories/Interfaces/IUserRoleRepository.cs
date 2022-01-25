@@ -10,6 +10,7 @@ namespace clickfly.Repositories
         Task<UserRole> Create(UserRole userRole);
         Task<UserRole> GetByName(string name);
         Task<UserRole> GetByUserId(string userId);
+        Task Delete(string id);
         Task<PaginationResult<UserRole>> Pagination(PaginationFilter filter);
     }
 }

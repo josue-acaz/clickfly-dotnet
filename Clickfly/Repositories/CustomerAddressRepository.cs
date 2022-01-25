@@ -25,10 +25,19 @@ namespace clickfly.Repositories
         public async Task<CustomerAddress> Create(CustomerAddress customerAddress)
         {
             customerAddress.id = Guid.NewGuid().ToString();
+            customerAddress.created_at = DateTime.Now;
+            customerAddress.excluded = false;
 
-            await _dataContext.CustomerAddresses.AddAsync(customerAddress);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = customerAddress;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<CustomerAddress>(options);
             return customerAddress;
         }
 

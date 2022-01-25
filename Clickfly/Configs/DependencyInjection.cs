@@ -84,6 +84,9 @@ namespace clickfly.Configs
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IBookingRepository, BookingRepository>();
 
+            services.AddScoped<IManufacturerService, ManufacturerService>();
+            services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
+
             services.AddScoped<IAircraftModelService, AircraftModelService>();
             services.AddScoped<IAircraftModelRepository, AircraftModelRepository>();
 
@@ -102,6 +105,10 @@ namespace clickfly.Configs
             services.AddScoped<IFileRepository, FileRepository>();
 
             services.AddScoped<IAccessTokenRepository, AccessTokenRepository>();
+
+            services.AddScoped<IDoubleCheckRepository, DoubleCheckRepository>();
+
+            services.AddScoped<IFlightSegmentStatusRepository, FlightSegmentStatusRepository>();
 
             services.AddScoped<ICoreService, CoreService>();
 

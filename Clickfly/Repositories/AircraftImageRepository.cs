@@ -17,6 +17,7 @@ namespace clickfly.Repositories
         private static string fromSql = "aircraft_images as aircraft_image";
         private static string whereSql = "aircraft_image.excluded = false";
         private static string innerJoinFiles = "files as file on aircraft_image.id = file.resource_id";
+        private static string deleteSql = "UPDATE aircraft_images SET excluded = true WHERE id = @id";
 
         public AircraftImageRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
@@ -26,16 +27,26 @@ namespace clickfly.Repositories
         public async Task<AircraftImage> Create(AircraftImage aircraftImage)
         {
             aircraftImage.id = Guid.NewGuid().ToString();
+            aircraftImage.created_at = DateTime.Now;
+            aircraftImage.excluded = false;
 
-            await _dataContext.AircraftImages.AddAsync(aircraftImage);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = aircraftImage;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<AircraftImage>(options);
             return aircraftImage;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public Task<AircraftImage> GetById(string id)
@@ -71,9 +82,20 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public Task<AircraftImage> Update(AircraftImage aircraftImage)
+        public async Task<AircraftImage> Update(AircraftImage aircraftImage)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = aircraftImage;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<AircraftImage>(options);
+            return aircraftImage;
         }
     }
 }

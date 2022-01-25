@@ -48,19 +48,20 @@ namespace clickfly.Services
             return aircraftModels;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _aircraftModelRepository.Delete(id);
         }
 
-        public Task<AircraftModel> GetById(string id)
+        public async Task<AircraftModel> GetById(string id)
         {
-            throw new NotImplementedException();
+            return(await _aircraftModelRepository.GetById(id));
         }
 
-        public Task<PaginationResult<AircraftModel>> Pagination(PaginationFilter filter)
+        public async Task<PaginationResult<AircraftModel>> Pagination(PaginationFilter filter)
         {
-            throw new NotImplementedException();
+            PaginationResult<AircraftModel> paginationResult = await _aircraftModelRepository.Pagination(filter);
+            return paginationResult;
         }
 
         public async Task<AircraftModel> Save(AircraftModel aircraftModel)
@@ -69,7 +70,7 @@ namespace clickfly.Services
 
             if(update)
             {
-                
+                aircraftModel = await _aircraftModelRepository.Update(aircraftModel);
             }
             else
             {

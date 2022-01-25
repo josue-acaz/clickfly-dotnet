@@ -10,7 +10,7 @@ namespace clickfly.Repositories
         Task<Flight> Create(Flight flight);
         Task<Flight> GetById(string id);
         Task<FlightSegment> GetLastSegment(string flightId);
-        Task Update(Flight flight);
+        Task<Flight> Update(Flight flight);
         Task Delete(string id);
         Task<PaginationResult<Flight>> Pagination(PaginationFilter filter);
     }

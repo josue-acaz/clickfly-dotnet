@@ -24,12 +24,20 @@ namespace clickfly.Repositories
 
         public async Task<Flight> Create(Flight flight)
         {
-            string id = Guid.NewGuid().ToString();
-            flight.id = id;
+            flight.id = Guid.NewGuid().ToString();
+            flight.created_at = DateTime.Now;
+            flight.excluded = false;
 
-            await _dataContext.Flights.AddAsync(flight);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = flight;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<Flight>(options);
             return flight;
         }
 
@@ -58,6 +66,7 @@ namespace clickfly.Repositories
             IncludeModel includeSegments = new IncludeModel();
             includeSegments.As = "segments";
             includeSegments.ForeignKey = "flight_id";
+            includeSegments.AddRawAttribute("status", "SELECT type FROM flight_segment_status WHERE flight_segment_id = segments.id ORDER BY created_at DESC LIMIT 1");
 
             includeSegments.ThenInclude<Aerodrome>(new IncludeModel{
                 As = "origin_aerodrome",
@@ -75,45 +84,97 @@ namespace clickfly.Repositories
             return flight;
         }
 
-        public async Task<FlightSegment> GetLastSegment(string flightId)
+        public async Task<FlightSegment> GetLastSegment(string flight_id)
         {
-            string querySql = $"SELECT * FROM flight_segments AS flight_segment WHERE flight_segment.excluded = false AND flight_segment.flight_id = @flight_id ORDER BY flight_segment.number DESC LIMIT 1 OFFSET 0";
-            NpgsqlParameter param = new NpgsqlParameter("flight_id", flightId);
-            
-            FlightSegment flightSegment = await _dataContext.FlightSegments.FromSqlRaw(querySql, param).FirstOrDefaultAsync();
+            SelectOptions options = new SelectOptions();
+            options.As = "flight_segment";
+            options.Where = $"flight_segment.excluded = false AND flight_segment.flight_id = @flight_id ORDER BY flight_segment.number DESC LIMIT 1 OFFSET 0";
+            options.Params = new { flight_id = flight_id };
+
+            FlightSegment flightSegment = await _dapperWrapper.QuerySingleAsync<FlightSegment>(options);
             return flightSegment;
         }
 
         public async Task<PaginationResult<Flight>> Pagination(PaginationFilter filter)
         {
-            string airTaxiId = filter.air_taxi_id;
-            PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
+            int limit = filter.page_size;
+            int offset = (filter.page_number - 1) * filter.page_size;
+            string air_taxi_id = filter.air_taxi_id;
+            string text = filter.text;
 
-            List<Flight> flights = await _dataContext.Flights
-                .Include(flight => flight.aircraft)
-                .ThenInclude(aircraft => aircraft.model)
-                .Include(flight => flight.segments)
-                .ThenInclude(segment => segment.origin_aerodrome)
-                .ThenInclude(origin_aerodrome => origin_aerodrome.city)
-                .ThenInclude(city => city.state)
-                .Include(flight => flight.segments)
-                .ThenInclude(segment => segment.destination_aerodrome)
-                .ThenInclude(destination_aerodrome => destination_aerodrome.city)
-                .ThenInclude(city => city.state)
-                .Skip((paginationFilter.page_number - 1) * paginationFilter.page_size)
-                .Take(paginationFilter.page_size)
-                .Where(flight => flight.air_taxi_id == airTaxiId && flight.excluded == false)
-                .ToListAsync();
+            // Ver o que fazer com a busca ILIKE
+            string where = $"{whereSql} AND flight.air_taxi_id = @air_taxi_id LIMIT @limit OFFSET @offset";
+
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+            queryParams.Add("text", $"%{text}%");
+            queryParams.Add("air_taxi_id", air_taxi_id);
+
+            SelectOptions options = new SelectOptions();
+            options.As = "flight";
+            options.Where = where;
+            options.Params = queryParams;
+
+            IncludeModel includeAircraft = new IncludeModel();
+            includeAircraft.As = "aircraft";
+            includeAircraft.ForeignKey = "aircraft_id";
+            includeAircraft.ThenInclude<AircraftModel>(new IncludeModel{
+                As = "model",
+                ForeignKey = "aircraft_model_id"
+            });
+
+            IncludeModel includeCity = new IncludeModel();
+            includeCity.As = "city";
+            includeCity.ForeignKey = "city_id";
+            includeCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeDestinationAerodrome = new IncludeModel();
+            includeDestinationAerodrome.As = "destination_aerodrome";
+            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinationAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeSegments = new IncludeModel();
+            includeSegments.As = "segments";
+            includeSegments.ForeignKey = "flight_id";
+            includeSegments.ThenInclude<Aerodrome>(includeOriginAerodrome);
+            includeSegments.ThenInclude<Aerodrome>(includeDestinationAerodrome);
+            includeSegments.AddRawAttribute("status", "SELECT type FROM flight_segment_status WHERE flight_segment_id = segments.id ORDER BY created_at DESC LIMIT 1");
+
+            options.Include<Aircraft>(includeAircraft);
+            options.Include<FlightSegment>(includeSegments);
             
-            int total_records = await _dataContext.Flights.CountAsync();
-            PaginationResult<Flight> paginationResult = _utils.CreatePaginationResult<Flight>(flights, paginationFilter, total_records);
+            IEnumerable<Flight> flights = await _dapperWrapper.QueryAsync<Flight>(options);
+            int total_records = flights.Count();
+
+            PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
+            PaginationResult<Flight> paginationResult = _utils.CreatePaginationResult<Flight>(flights.ToList(), paginationFilter, total_records);
 
             return paginationResult;
         }
 
-        public async Task Update(Flight flight)
+        public async Task<Flight> Update(Flight flight)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = flight;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<Flight>(options);
+            return flight;
         }
     }
 }

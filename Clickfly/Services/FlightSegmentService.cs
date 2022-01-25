@@ -15,11 +15,15 @@ namespace clickfly.Services
     {
         private readonly IFlightRepository _flightRepository;
         private readonly IFlightSegmentRepository _flightSegmentRepository;
+        private readonly IFlightSegmentStatusRepository _flightSegmentStatusRepository;
+        private readonly IDoubleCheckRepository _doubleCheckRepository;
 
         public FlightSegmentService(
             IOptions<AppSettings> appSettings, 
             ISystemLogRepository systemLogRepository,
             IPermissionRepository permissionRepository,
+            IDoubleCheckRepository doubleCheckRepository,
+            IFlightSegmentStatusRepository flightSegmentStatusRepository,
             INotificator notificator,
             IInformer informer,
             IUtils utils, 
@@ -28,7 +32,9 @@ namespace clickfly.Services
         ) : base(appSettings, systemLogRepository, permissionRepository, notificator, informer, utils)
         {
             _flightRepository = flightRepository;
+            _doubleCheckRepository = doubleCheckRepository;
             _flightSegmentRepository = flightSegmentRepository;
+            _flightSegmentStatusRepository = flightSegmentStatusRepository;
         }
 
         public async Task Delete(string id)
@@ -72,6 +78,21 @@ namespace clickfly.Services
                 flightSegment.number = number;
                 flightSegment.created_by = user.id;
                 flightSegment = await _flightSegmentRepository.Create(flightSegment);
+
+                // Criar status inicial
+                FlightSegmentStatus status = new FlightSegmentStatus();
+                status.type = FlightSegmentStatusTypes.Pending;
+                status.flight_segment_id = flightSegment.id;
+
+                await _flightSegmentStatusRepository.Create(status);
+
+                // Criar dupla checagem
+                DoubleCheck doubleCheck = new DoubleCheck();
+                doubleCheck.resource = Resources.FlightSegments;
+                doubleCheck.resource_id = flightSegment.id;
+                doubleCheck.created_by = user.id;
+
+                await _doubleCheckRepository.Create(doubleCheck);
             }
 
             return flightSegment;

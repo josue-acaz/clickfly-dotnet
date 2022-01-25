@@ -5,6 +5,7 @@ using clickfly.Repositories;
 using clickfly.Helpers;
 using Microsoft.Extensions.Options;
 using clickfly.ViewModels;
+using System.Collections.Generic;
 
 namespace clickfly.Services
 {
@@ -39,9 +40,9 @@ namespace clickfly.Services
             _stateRepository = stateRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _cityRepository.Delete(id);
         }
 
         public Task<City> GetById(string id)
@@ -49,9 +50,25 @@ namespace clickfly.Services
             throw new NotImplementedException();
         }
 
-        public Task<PaginationResult<City>> Pagination(PaginationFilter filter)
+        public async Task<PaginationResult<City>> Pagination(PaginationFilter filter)
         {
-            throw new NotImplementedException();
+            PaginationResult<City> paginationResult = await _cityRepository.Pagination(filter);
+            return paginationResult;
+        }
+
+        public async Task<IEnumerable<City>> Autocomplete(AutocompleteParams autocompleteParams)
+        {
+            PaginationFilter filter = new PaginationFilter();
+            filter.page_size = 10;
+            filter.page_number = 1;
+            filter.order = "DESC";
+            filter.order_by = "created_at";
+            filter.text = autocompleteParams.text;
+
+            PaginationResult<City> paginationResult = await _cityRepository.Pagination(filter);
+            List<City> cities = paginationResult.data;
+
+            return cities;
         }
 
         public async Task<City> Save(City city)
@@ -60,20 +77,28 @@ namespace clickfly.Services
 
             if(update)
             {
-                
+                city = await _cityRepository.Update(city);
             }
             else
             {
-                int gmt = city.gmt;
-                Timezone timezone = await _timezoneRepository.GetByGmt(gmt);
-
-                string state_prefix = city.state_prefix;
-                State state = await _stateRepository.GetByPrefix(state_prefix);
-
-                city.state_id = state.id;
-                city.timezone_id = timezone.id;
                 city = await _cityRepository.Create(city);
             }
+
+            return city;
+        }
+
+        public async Task<City> SaveExternal(City city)
+        {
+            int gmt = city.gmt;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(city));
+            Timezone timezone = await _timezoneRepository.GetByGmt(gmt);
+
+            string state_prefix = city.state_prefix;
+            State state = await _stateRepository.GetByPrefix(state_prefix);
+
+            city.state_id = state.id;
+            city.timezone_id = timezone.id;
+            city = await _cityRepository.Create(city);
 
             return city;
         }

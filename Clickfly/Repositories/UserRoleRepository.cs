@@ -35,13 +35,26 @@ namespace clickfly.Repositories
 
         public async Task<UserRole> Create(UserRole userRole)
         {
-            string id = Guid.NewGuid().ToString();
-            userRole.id = id;
+            userRole.id = Guid.NewGuid().ToString();
+            userRole.created_at = DateTime.Now;
+            userRole.excluded = false;
 
-            await _dataContext.UserRoles.AddAsync(userRole);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = userRole;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<UserRole>(options);
             return userRole;
+        }
+
+        public Task Delete(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<UserRole> GetByName(string name)

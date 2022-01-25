@@ -13,53 +13,39 @@ using clickfly.ViewModels;
 namespace clickfly.Controllers
 {
     [Authorize]
-    [Route("/aircraft-models")]
-    public class AircraftModelController : BaseController
+    [Route("/manufacturers")]
+    public class ManufacturerController : BaseController
     {
-        private readonly IAircraftModelService _aircraftModelService;
+        private readonly IManufacturerService _manufacturerService;
 
-        public AircraftModelController(
+        public ManufacturerController(
             IDataContext dataContext, 
-            INotificator notificator,
+            INotificator notificator, 
             IInformer informer, 
-            IAircraftModelService aircraftModelService
+            IManufacturerService manufacturerService
         ) : base(
             dataContext, 
-            notificator,
+            notificator, 
             informer
         )
         {
-            _aircraftModelService = aircraftModelService;
+            _manufacturerService = manufacturerService;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Save([FromBody]AircraftModel aircraftModel)
+        public async Task<ActionResult> Save([FromBody]Manufacturer manufacturer)
         {
             try
             {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
                 using var transaction = _dataContext.Database.BeginTransaction();
 
-                AircraftModel _aircraftModel = await _aircraftModelService.Save(aircraftModel);
+                manufacturer = await _manufacturerService.Save(manufacturer);
                 await transaction.CommitAsync();
 
-                return HttpResponse(_aircraftModel);
+                return HttpResponse(manufacturer);
             }
             catch (Exception ex)
-            {
-                Notify(ex.ToString());
-                return HttpResponse();
-            }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AircraftModel>> GetById(string id)
-        {
-            try
-            {
-                AircraftModel aircraftModel = await _aircraftModelService.GetById(id);
-                return HttpResponse(aircraftModel);
-            }
-            catch(Exception ex)
             {
                 Notify(ex.ToString());
                 return HttpResponse();
@@ -71,8 +57,10 @@ namespace clickfly.Controllers
         {
             try
             {
-                PaginationResult<AircraftModel> aircraftModels = await _aircraftModelService.Pagination(filter);
-                return HttpResponse(aircraftModels);
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
+                PaginationResult<Manufacturer> manufacturers = await _manufacturerService.Pagination(filter);
+                
+                return HttpResponse(manufacturers);
             }
             catch (Exception ex)
             {
@@ -86,8 +74,9 @@ namespace clickfly.Controllers
         {
             try
             {
-                IEnumerable<AircraftModel> aircraftModels = await _aircraftModelService.Autocomplete(autocompleteParams);
-                return HttpResponse(aircraftModels);
+                IEnumerable<Manufacturer> manufacturers = await _manufacturerService.Autocomplete(autocompleteParams);
+            
+                return HttpResponse(manufacturers);
             }
             catch (Exception ex)
             {
@@ -101,7 +90,7 @@ namespace clickfly.Controllers
         {
             try
             {
-                await _aircraftModelService.Delete(id);
+                await _manufacturerService.Delete(id);
                 return HttpResponse();
             }
             catch (Exception ex)

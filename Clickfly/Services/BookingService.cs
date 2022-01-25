@@ -61,9 +61,9 @@ namespace clickfly.Services
             _ordersController = ordersController;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _bookingRepository.Delete(id);
         }
 
         public Task<Booking> GetById(string id)
@@ -109,7 +109,7 @@ namespace clickfly.Services
 
             int availableSeats = flightSegment.available_seats;
             int selectedSeats = selected_passengers.Length + (customerIsPassenger ? 1 : 0);
-            float pricePerSeat = flightSegment.price_per_seat;
+            decimal pricePerSeat = flightSegment.price_per_seat;
             string addressId = customerAddress.address_id;
             string customerId = customer.customer_id;
             
@@ -118,7 +118,7 @@ namespace clickfly.Services
                 throw new BadRequestException("Requisição inválida.");
             }
 
-            float amount = selectedSeats * pricePerSeat;
+            decimal amount = selectedSeats * pricePerSeat;
             CreateOrderRequest orderRequest = new CreateOrderRequest();
 
             List<CreateOrderItemRequest> createOrderItems = new List<CreateOrderItemRequest>();

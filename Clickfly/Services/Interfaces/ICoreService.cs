@@ -10,7 +10,7 @@ namespace clickfly.Services
         double GetDistanceBetweenCoordinates(Coordinate p1, Coordinate p2);
         Task<double> GetFlightTime(FlightTimeRequest flightTimeRequest);
         Task<Installment []> GetInstallments(InstallmentsRequest installmentsRequest);
-        Task<float> GetFlightPrice(FlightPriceRequest flightPriceRequest);
-        Task<double> GetFlightSubtotal(FlightSubtotalRequest flightSubtotalRequest);
+        Task<decimal> GetFlightPrice(FlightPriceRequest flightPriceRequest);
+        Task<decimal> GetFlightSubtotal(FlightSubtotalRequest flightSubtotalRequest);
     }
 }

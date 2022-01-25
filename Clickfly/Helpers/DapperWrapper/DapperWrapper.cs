@@ -3,8 +3,6 @@ using Dapper;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Slapper;
-using clickfly.Data;
 
 namespace clickfly.Data
 {
@@ -21,6 +19,7 @@ namespace clickfly.Data
         {
             string pk = GetPK<T>();
             string querySql = GetSelectQuery<T>(options);
+            Console.WriteLine(querySql);
             IEnumerable<dynamic> queryResult = await _dBContext.GetConnection().QueryAsync<dynamic>(querySql, options.Params, _dBContext.GetTransaction());
             
             Slapper.AutoMapper.Configuration.AddIdentifier(typeof(T), pk);

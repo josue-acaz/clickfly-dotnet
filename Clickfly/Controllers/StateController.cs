@@ -64,5 +64,35 @@ namespace clickfly.Controllers
                 return HttpResponse();
             }
         }
+
+        [HttpGet("autocomplete")]
+        public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
+        {
+            try
+            {
+                IEnumerable<State> states = await _stateService.Autocomplete(autocompleteParams);
+                return HttpResponse(states);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
+        {
+            try
+            {
+                await _stateService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
     }
 }

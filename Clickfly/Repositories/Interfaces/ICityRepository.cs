@@ -10,7 +10,7 @@ namespace clickfly.Repositories
         Task<City> Create(City city);
         Task<City> GetById(string id);
         Task<City> GetByName(string name, string statePrefix);
-        Task Update(City city);
+        Task<City> Update(City city);
         Task Delete(string id);
         Task<PaginationResult<City>> Pagination(PaginationFilter filter);
     }

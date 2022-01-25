@@ -16,7 +16,6 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "files as file";
         private static string whereSql = "file.excluded = false";
-        protected string[] defaultFields = new string[8];
 
         public FileRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
@@ -25,12 +24,20 @@ namespace clickfly.Repositories
 
         public async Task<File> Create(File file)
         {
-            string id = Guid.NewGuid().ToString();
-            file.id = id;
+            file.id = Guid.NewGuid().ToString();
+            file.created_at = DateTime.Now;
+            file.excluded = false;
 
-            await _dataContext.Files.AddAsync(file);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = file;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<File>(options);
             return file;
         }
 

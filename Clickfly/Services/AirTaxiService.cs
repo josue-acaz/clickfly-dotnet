@@ -37,6 +37,11 @@ namespace clickfly.Services
             _accessTokenRepository = accessTokenRepository;
         }
 
+        public async Task Delete(string id)
+        {
+            await _airTaxiRepository.Delete(id);
+        }
+
         public async Task<AirTaxi> GetByAccessToken(string token)
         {
             AccessToken accessToken = await _accessTokenRepository.GetByToken(token);
@@ -83,9 +88,7 @@ namespace clickfly.Services
                 accessToken.resource_id = airTaxi.id;
 
                 accessToken = await _accessTokenRepository.Create(accessToken);
-                
-                string airTaxiName = _utils.RemoveWhiteSpaces(airTaxi.name);
-                airTaxi.dashboard_url = $"{_appSettings.DashboardUrl}/login?ref={airTaxiName}&token={accessToken.token}";
+                airTaxi.dashboard_url = $"{_appSettings.DashboardUrl}/login?token={accessToken.token}";
             }
 
             return airTaxi;

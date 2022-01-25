@@ -17,6 +17,7 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "customers as customer";
         private static string whereSql = "customer.excluded = false";
+        private static string deleteSql = "UPDATE customers SET excluded = true WHERE id = @id";
         private static string customerThumbnailSql = $@"SELECT url FROM files WHERE resource_id = customer.id AND resource = 'customers' AND field_name = 'thumbnail' LIMIT 1";
 
         public CustomerRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
@@ -26,23 +27,27 @@ namespace clickfly.Repositories
 
         public async Task<Customer> Create(Customer customer)
         {
-            string id = Guid.NewGuid().ToString();
-            string password = customer.password;
+            customer.id = Guid.NewGuid().ToString();
+            customer.created_at = DateTime.Now;
+            customer.excluded = false;
 
-            customer.id = id;
-            customer.password_hash = BCryptNet.HashPassword(password);
-            customer.role = "customer";
-            customer.verified = false;
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
-            await _dataContext.Customers.AddAsync(customer);
-            await _dataContext.SaveChangesAsync();
+            InsertOptions options = new InsertOptions();
+            options.Data = customer;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
 
+            await _dapperWrapper.InsertAsync<Customer>(options);
             return customer;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<Customer> GetByEmail(string email)

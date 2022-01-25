@@ -78,9 +78,9 @@ namespace clickfly.Services
             return authenticated;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _customerRepository.Delete(id);
         }
 
         public Task ForgotPassword(string email)

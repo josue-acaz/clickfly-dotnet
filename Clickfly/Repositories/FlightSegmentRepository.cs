@@ -16,39 +16,39 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "flight_segments as flight_segment";
         private static string whereSql = "flight_segment.excluded = false";
+        private static string deleteSql = "UPDATE flight_segments SET excluded = true WHERE id = @id";
         private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
         private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))) / 60";
         private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
-        protected string[] defaultFields = new string[10];
 
         public FlightSegmentRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "number";
-            defaultFields[1] = "departure_datetime";
-            defaultFields[2] = "arrival_datetime";
-            defaultFields[3] = "price_per_seat";
-            defaultFields[4] = "total_seats";
-            defaultFields[5] = "type";
-            defaultFields[6] = "flight_id";
-            defaultFields[7] = "aircraft_id";
-            defaultFields[8] = "origin_aerodrome_id";
-            defaultFields[9] = "destination_aerodrome_id";
+            
         }
 
         public async Task<FlightSegment> Create(FlightSegment flightSegment)
         {
-            string id = Guid.NewGuid().ToString();
-            flightSegment.id = id;
+            flightSegment.id = Guid.NewGuid().ToString();
+            flightSegment.created_at = DateTime.Now;
+            flightSegment.excluded = false;
 
-            await _dataContext.FlightSegments.AddAsync(flightSegment);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = flightSegment;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<FlightSegment>(options);
             return flightSegment;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<FlightSegment> GetById(string id)
@@ -90,7 +90,6 @@ namespace clickfly.Repositories
             options.As = "flight_segment";
             options.Where = $"{whereSql} AND flight_segment.id = @id";
             options.Params = new { id = id };
-            options.AddRawAttribute("flight_time", flightTimeSql);
             options.AddRawAttribute("available_seats", availableSeatsSql);
             
             options.Include<Flight>(includeFlight);

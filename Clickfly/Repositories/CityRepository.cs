@@ -7,15 +7,17 @@ using Npgsql;
 using System.Collections.Generic;
 using Dapper;
 using clickfly.ViewModels;
+using System.Linq;
 
 namespace clickfly.Repositories
 {
-    public class CityRepository : BaseRepository<Timezone>, ICityRepository
+    public class CityRepository : BaseRepository<City>, ICityRepository
     {
         private static string fieldsSql = "*";
         private static string fromSql = "cities as city";
         private static string whereSql = "city.excluded = false";
         private static string innerJoinStates = "states as state on state.id = city.state_id";
+        private static string deleteSql = "UPDATE cities SET excluded = true WHERE id = @id";
 
         public CityRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
@@ -24,18 +26,28 @@ namespace clickfly.Repositories
 
         public async Task<City> Create(City city)
         {
-            string id = Guid.NewGuid().ToString();
-            city.id = id;
+            city.id = Guid.NewGuid().ToString();
+            city.created_at = DateTime.Now;
+            city.excluded = false;
 
-            await _dataContext.Cities.AddAsync(city);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
+
+            InsertOptions options = new InsertOptions();
+            options.Data = city;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<City>(options);
 
             return city;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public Task<City> GetById(string id)
@@ -64,14 +76,57 @@ namespace clickfly.Repositories
             return city;
         }
 
-        public Task<PaginationResult<City>> Pagination(PaginationFilter filter)
+        public async Task<PaginationResult<City>> Pagination(PaginationFilter filter)
         {
-            throw new NotImplementedException();
+            int limit = filter.page_size;
+            int offset = (filter.page_number - 1) * filter.page_size;
+            string text = filter.text;
+
+            string where = $"{whereSql} AND city.name ILIKE @text LIMIT @limit OFFSET @offset";
+
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+            queryParams.Add("text", $"%{text}%");
+
+            SelectOptions options = new SelectOptions();
+            options.As = "city";
+            options.Where = where;
+            options.Params = queryParams;
+
+            options.Include<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            options.Include<Timezone>(new IncludeModel{
+                As = "timezone",
+                ForeignKey = "timezone_id"
+            });
+
+            IEnumerable<City> cities = await _dapperWrapper.QueryAsync<City>(options);
+            int total_records = cities.Count();
+
+            PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
+            PaginationResult<City> paginationResult = _utils.CreatePaginationResult<City>(cities.ToList(), paginationFilter, total_records);
+
+            return paginationResult;
         }
 
-        public Task Update(City city)
+        public async Task<City> Update(City city)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = city;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<City>(options);
+            return city;
         }
     }
 }

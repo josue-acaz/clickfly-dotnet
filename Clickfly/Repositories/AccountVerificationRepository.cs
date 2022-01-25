@@ -24,12 +24,20 @@ namespace clickfly.Repositories
 
         public async Task<AccountVerification> Create(AccountVerification accountVerification)
         {
-            string id = Guid.NewGuid().ToString();
-            accountVerification.id = id;
+            accountVerification.id = Guid.NewGuid().ToString();
+            accountVerification.created_at = DateTime.Now;
+            accountVerification.excluded = false;
 
-            await _dataContext.AccountVerifications.AddAsync(accountVerification);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = accountVerification;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<AccountVerification>(options);
             return accountVerification;
         }
 
@@ -64,8 +72,6 @@ namespace clickfly.Repositories
         {
             object param = new { id = id };
             await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
-
-            return;
         }
     }
 }

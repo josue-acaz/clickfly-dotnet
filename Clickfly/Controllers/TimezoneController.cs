@@ -49,5 +49,35 @@ namespace clickfly.Controllers
                 return HttpResponse();
             }
         }
+
+        [HttpGet("autocomplete")]
+        public async Task<ActionResult> Autocomplete([FromQuery]AutocompleteParams autocompleteParams)
+        {
+            try
+            {
+                IEnumerable<Timezone> timezones = await _timezoneService.Autocomplete(autocompleteParams);
+                return HttpResponse(timezones);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
+        {
+            try
+            {
+                await _timezoneService.Delete(id);
+                return HttpResponse();
+            }
+            catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
     }
 }

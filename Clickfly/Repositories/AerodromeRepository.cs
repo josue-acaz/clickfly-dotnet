@@ -8,6 +8,7 @@ using clickfly.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using clickfly.ViewModels;
+using Dapper;
 
 namespace clickfly.Repositories
 {
@@ -16,6 +17,7 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "aerodromes as aerodrome";
         private static string whereSql = "aerodrome.excluded = false";
+        private static string deleteSql = "UPDATE aerodromes SET excluded = true WHERE id = @id";
 
         public AerodromeRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
@@ -24,48 +26,98 @@ namespace clickfly.Repositories
 
         public async Task<Aerodrome> Create(Aerodrome aerodrome)
         {
-            string id = Guid.NewGuid().ToString();
-            aerodrome.id = id;
+            aerodrome.id = Guid.NewGuid().ToString();
+            aerodrome.created_at = DateTime.Now;
+            aerodrome.excluded = false;
 
-            await _dataContext.Aerodromes.AddAsync(aerodrome);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = aerodrome;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<Aerodrome>(options);
             return aerodrome;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<Aerodrome> GetById(string id)
         {
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND aerodrome.id = @id";
-            NpgsqlParameter param = new NpgsqlParameter("id", id);
-            
-            Aerodrome aerodrome = await _dataContext.Aerodromes.FromSqlRaw(querySql, param).FirstOrDefaultAsync();
+            SelectOptions options = new SelectOptions();
+            options.As = "aerodrome";
+            options.Where = $"{whereSql} AND aerodrome.id = @id";
+            options.Params = new { id = id };
+
+            IncludeModel includeCity = new IncludeModel();
+            includeCity.As = "city";
+            includeCity.ForeignKey = "city_id";
+            includeCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id",
+            });
+
+            options.Include<City>(includeCity);
+
+            Aerodrome aerodrome = await _dapperWrapper.QuerySingleAsync<Aerodrome>(options);
             
             return aerodrome;
         }
 
         public async Task<PaginationResult<Aerodrome>> Pagination(PaginationFilter filter)
         {
-            PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
+            int limit = filter.page_size;
+            int offset = (filter.page_number - 1) * filter.page_size;
 
-            List<Aerodrome> aerodromes = await _dataContext.Aerodromes
-               .Skip((paginationFilter.page_number - 1) * paginationFilter.page_size)
-               .Take(paginationFilter.page_size)
-               .ToListAsync();
-            
-            int total_records = await _dataContext.Aerodromes.CountAsync();
-            PaginationResult<Aerodrome> paginationResult = _utils.CreatePaginationResult<Aerodrome>(aerodromes, paginationFilter, total_records);
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+
+            SelectOptions options = new SelectOptions();
+            options.As = "aerodrome";
+            options.Where = $"{whereSql} LIMIT @limit OFFSET @offset";
+            options.Params = queryParams;
+
+            IncludeModel includeCity = new IncludeModel();
+            includeCity.As = "city";
+            includeCity.ForeignKey = "city_id";
+
+            includeCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id",
+            });
+
+            options.Include<City>(includeCity);
+
+            IEnumerable<Aerodrome> aerodromes = await _dapperWrapper.QueryAsync<Aerodrome>(options);
+            int total_records = aerodromes.Count();
+
+            PaginationResult<Aerodrome> paginationResult = _utils.CreatePaginationResult<Aerodrome>(aerodromes.ToList(), filter, total_records);
 
             return paginationResult;
         }
 
-        public Task Update(Aerodrome aerodrome)
+        public async Task<Aerodrome> Update(Aerodrome aerodrome)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = aerodrome;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<Aerodrome>(options);
+            return aerodrome;
         }
     }
 }

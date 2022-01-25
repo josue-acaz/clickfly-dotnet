@@ -4,6 +4,6 @@ namespace clickfly.ViewModels
 {
     public class Installment {
         public int number { get; set; }
-        public float value { get; set; }
+        public decimal value { get; set; }
     }
 }

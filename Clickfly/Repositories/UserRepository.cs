@@ -28,15 +28,24 @@ namespace clickfly.Repositories
 
         public async Task<User> Create(User user)
         {
-            string id = Guid.NewGuid().ToString();
             string password = user.password;
             string passwordHash = BCryptNet.HashPassword(password);
 
-            user.id = id;
+            user.id = Guid.NewGuid().ToString();
             user.password_hash = passwordHash;
+            user.created_at = DateTime.Now;
+            user.excluded = false;
 
-            await _dataContext.Users.AddAsync(user);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
+
+            InsertOptions options = new InsertOptions();
+            options.Data = user;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<User>(options);
             user.password = "";
             
             return user;

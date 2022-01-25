@@ -98,7 +98,7 @@ namespace clickfly
             return bulkSql;
         }
 
-        public Installment[] GetInstallments(float subtotal, int max = 8)
+        public Installment[] GetInstallments(decimal subtotal, int max = 8)
         {
             List<Installment> installments = new List<Installment>();
 
@@ -115,7 +115,7 @@ namespace clickfly
 
             for (int i = 1; i <= maxLength; i++)
             {
-                float value = subtotal / i;
+                decimal value = subtotal / i;
                 Installment installment = new Installment();
                 installment.number = i;
                 installment.value = value;

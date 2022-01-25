@@ -10,6 +10,7 @@ namespace clickfly.Services
     {
         Task<UserRole> Save(UserRole userRole);
         Task<UserRole> GetByName(string name);
+        Task Delete(string id);
         Task<IEnumerable<UserRole>> Autocomplete(AutocompleteParams autocompleteParams);
         Task<PaginationResult<UserRole>> Pagination(PaginationFilter filter);
     }

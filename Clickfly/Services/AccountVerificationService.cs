@@ -32,9 +32,9 @@ namespace clickfly.Services
             _accountVerificationRepository = accountVerificationRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _accountVerificationRepository.Delete(id);
         }
 
         public Task<AccountVerification> GetById(string id)

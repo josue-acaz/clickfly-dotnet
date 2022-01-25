@@ -39,10 +39,19 @@ namespace clickfly.Repositories
         public async Task<Permission> Create(Permission permission)
         {
             permission.id = Guid.NewGuid().ToString();
+            permission.created_at = DateTime.Now;
+            permission.excluded = false;
 
-            await _dataContext.Permissions.AddAsync(permission);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = permission;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<Permission>(options);
             return permission;
         }
 
@@ -50,8 +59,6 @@ namespace clickfly.Repositories
         {
             object param = new { id = id };
             await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
-
-            return;
         }
 
         public Task<Permission> GetById(string id)

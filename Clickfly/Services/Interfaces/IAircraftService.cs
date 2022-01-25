@@ -10,6 +10,7 @@ namespace clickfly.Services
     {
         Task<Aircraft> Save(Aircraft aircraft);
         Task<Aircraft> GetById(string id);
+        Task Delete(string id);
         Task<string> GetThumbnail(GetThumbnailRequest thumbnailRequest);
         Task<PaginationResult<Aircraft>> Pagination(PaginationFilter filter);
         Task<IEnumerable<Aircraft>> Autocomplete(AutocompleteParams autocompleteParams);

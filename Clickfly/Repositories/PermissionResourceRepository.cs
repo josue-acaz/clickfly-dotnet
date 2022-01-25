@@ -16,6 +16,7 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "permission_resources as permission_resource";
         private static string whereSql = "permission_resource.excluded = false";
+        private static string deleteSql = "UPDATE permission_resources SET excluded = true WHERE id = @id";
 
         public PermissionResourceRepository(
             IDBContext dBContext, 
@@ -35,18 +36,27 @@ namespace clickfly.Repositories
 
         public async Task<PermissionResource> Create(PermissionResource permissionResource)
         {
-            string id = Guid.NewGuid().ToString();
-            permissionResource.id = id;
+            permissionResource.id = Guid.NewGuid().ToString();
+            permissionResource.created_at = DateTime.Now;
+            permissionResource.excluded = false;
 
-            await _dataContext.PermissionResources.AddAsync(permissionResource);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = permissionResource;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<PermissionResource>(options);
             return permissionResource;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<PermissionResource> GetById(string id)
@@ -99,9 +109,20 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public Task Update(PermissionResource permissionResource)
+        public async Task<PermissionResource> Update(PermissionResource permissionResource)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = permissionResource;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<PermissionResource>(options);
+            return permissionResource;
         }
     }
 }

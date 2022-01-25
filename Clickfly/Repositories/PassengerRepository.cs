@@ -16,34 +16,36 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "passengers as passenger";
         private static string whereSql = "passenger.excluded = false";
-        protected string[] defaultFields = new string[9];
+        private static string deleteSql = "UPDATE passengers SET excluded = true WHERE id = @id";
 
         public PassengerRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "name";
-            defaultFields[1] = "email";
-            defaultFields[2] = "phone_number";
-            defaultFields[3] = "emergency_phone_number";
-            defaultFields[4] = "document";
-            defaultFields[5] = "document_type";
-            defaultFields[6] = "type";
-            defaultFields[7] = "birthdate";
-            defaultFields[8] = "customer_id";
+
         }
 
         public async Task<Passenger> Create(Passenger passenger)
         {
             passenger.id = Guid.NewGuid().ToString();
+            passenger.created_at = DateTime.Now;
+            passenger.excluded = false;
 
-            await _dataContext.Passengers.AddAsync(passenger);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = passenger;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<Passenger>(options);
             return passenger;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public Task<Passenger> GetById(string id)
@@ -61,9 +63,20 @@ namespace clickfly.Repositories
             await _dataContext.Passengers.AddRangeAsync(passengers);
         }
 
-        public Task<Passenger> Update(Passenger passenger)
+        public async Task<Passenger> Update(Passenger passenger)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = passenger;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<Passenger>(options);
+            return passenger;
         }
     }
 }

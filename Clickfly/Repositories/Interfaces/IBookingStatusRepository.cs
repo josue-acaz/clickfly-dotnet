@@ -9,7 +9,7 @@ namespace clickfly.Repositories
     {
         Task<BookingStatus> Create(BookingStatus bookingStatus);
         Task<BookingStatus> GetById(string id);
-        Task Update(BookingStatus bookingStatus);
+        Task<BookingStatus> Update(BookingStatus bookingStatus);
         Task Delete(string id);
         Task<PaginationResult<BookingStatus>> Pagination(PaginationFilter filter);
     }

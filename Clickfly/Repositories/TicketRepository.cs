@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 using clickfly.ViewModels;
+using Dapper;
 
 namespace clickfly.Repositories
 {
@@ -17,6 +18,7 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "tickets as ticket";
         private static string whereSql = "ticket.excluded = false";
+        private static string deleteSql = "UPDATE tickets SET excluded = true WHERE id = @id";
         private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
 
         public TicketRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
@@ -26,18 +28,27 @@ namespace clickfly.Repositories
 
         public async Task<Ticket> Create(Ticket ticket)
         {
-            string id = Guid.NewGuid().ToString();
-            ticket.id = id;
+            ticket.id = Guid.NewGuid().ToString();
+            ticket.created_at = DateTime.Now;
+            ticket.excluded = false;
 
-            await _dataContext.Tickets.AddAsync(ticket);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = ticket;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<Ticket>(options);
             return ticket;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<Ticket> GetById(string id)
@@ -168,9 +179,20 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public Task Update(Ticket ticket)
+        public async Task<Ticket> Update(Ticket ticket)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = ticket;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<Ticket>(options);
+            return ticket;
         }
     }
 }

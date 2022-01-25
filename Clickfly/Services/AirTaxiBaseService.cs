@@ -33,9 +33,9 @@ namespace clickfly.Services
             _airTaxiBaseRepository = airTaxiBaseRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _airTaxiBaseRepository.Delete(id);
         }
 
         public async Task<AirTaxiBase> GetById(string id)

@@ -29,18 +29,27 @@ namespace clickfly.Repositories
 
         public async Task<AccessToken> Create(AccessToken accessToken)
         {
-            string id = Guid.NewGuid().ToString();
-            accessToken.id = id;
+            accessToken.id = Guid.NewGuid().ToString();
+            accessToken.created_at = DateTime.Now;
+            accessToken.excluded = false;
 
-            await _dataContext.AccessTokens.AddAsync(accessToken);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = accessToken;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<AccessToken>(options);
             return accessToken;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<AccessToken> GetByToken(string token)

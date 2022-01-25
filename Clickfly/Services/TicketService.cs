@@ -32,9 +32,9 @@ namespace clickfly.Services
             _ticketRepository = ticketRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _ticketRepository.Delete(id);
         }
 
         public async Task<Ticket> GetById(string id)

@@ -5,6 +5,7 @@ using clickfly.Repositories;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
 using clickfly.ViewModels;
+using System.Collections.Generic;
 
 namespace clickfly.Services
 {
@@ -32,9 +33,9 @@ namespace clickfly.Services
             _timezoneRepository = timezoneRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _timezoneRepository.Delete(id);
         }
 
         public async Task<Timezone> GetByGmt(int gmt)
@@ -57,6 +58,21 @@ namespace clickfly.Services
             }
 
             return timezone;
+        }
+
+        public async Task<IEnumerable<Timezone>> Autocomplete(AutocompleteParams autocompleteParams)
+        {
+            PaginationFilter filter = new PaginationFilter();
+            filter.page_size = 10;
+            filter.page_number = 1;
+            filter.order = "DESC";
+            filter.order_by = "created_at";
+            filter.text = autocompleteParams.text;
+
+            PaginationResult<Timezone> paginationResult = await _timezoneRepository.Pagination(filter);
+            List<Timezone> timezones = paginationResult.data;
+
+            return timezones;
         }
     }
 }

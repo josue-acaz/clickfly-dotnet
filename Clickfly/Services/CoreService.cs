@@ -38,15 +38,15 @@ namespace clickfly.Services
             return kmDistance;
         }
 
-        public async Task<float> GetFlightPrice(FlightPriceRequest flightPriceRequest)
+        public async Task<decimal> GetFlightPrice(FlightPriceRequest flightPriceRequest)
         {
             int quantity = flightPriceRequest.quantity;
             string flight_segment_id = flightPriceRequest.flight_segment_id;
 
             FlightSegment flightSegment = await _flightSegmentRepository.GetById(flight_segment_id);
-            float price_per_seat = flightSegment.price_per_seat;
+            decimal price_per_seat = flightSegment.price_per_seat;
 
-            float flight_price = quantity * price_per_seat;
+            decimal flight_price = quantity * price_per_seat;
 
             return flight_price;
         }
@@ -69,22 +69,22 @@ namespace clickfly.Services
 
             FlightSegment flightSegment = await _flightSegmentRepository.GetById(flight_segment_id);
             int available_seats = flightSegment.available_seats;
-            float price_per_seat = flightSegment.price_per_seat;
+            decimal price_per_seat = flightSegment.price_per_seat;
 
             if(selected_seats > available_seats)
             {
                 throw new BadRequestException("O número de assentos selecionados é maior que o disponível.");
             }
 
-            float subtotal = selected_seats * price_per_seat;
+            decimal subtotal = selected_seats * price_per_seat;
             Installment[] installments = _utils.GetInstallments(subtotal);
 
             return installments;
         }
     
-        public async Task<double> GetFlightSubtotal(FlightSubtotalRequest flightSubtotalRequest)
+        public async Task<decimal> GetFlightSubtotal(FlightSubtotalRequest flightSubtotalRequest)
         {
-            double selected_seats = flightSubtotalRequest.selected_seats;
+            decimal selected_seats = flightSubtotalRequest.selected_seats;
             string flight_segment_id = flightSubtotalRequest.flight_segment_id;
 
             FlightSegment flightSegment = await _flightSegmentRepository.GetById(flight_segment_id);
@@ -94,7 +94,7 @@ namespace clickfly.Services
                 throw new NotFoundException("Voo não encontrado.");
             }
 
-            double subtotal = selected_seats * flightSegment.price_per_seat;
+            decimal subtotal = selected_seats * flightSegment.price_per_seat;
             return subtotal;
         }
     }

@@ -126,6 +126,7 @@ namespace clickfly
 
     static class FlightSegmentStatusTypes {
         public const string Active = "active";
+        public const string Pending = "pending";
         public const string Inactive = "inactive";
         public const string Running = "running";
         public const string Finished = "finished";

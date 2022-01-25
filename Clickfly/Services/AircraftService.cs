@@ -129,5 +129,10 @@ namespace clickfly.Services
 
             return url;
         }
+
+        public async Task Delete(string id)
+        {
+            await _aircraftRepository.Delete(id);
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace clickfly.Repositories
     {
         Task<Aerodrome> Create(Aerodrome aerodrome);
         Task<Aerodrome> GetById(string id);
-        Task Update(Aerodrome aerodrome);
+        Task<Aerodrome> Update(Aerodrome aerodrome);
         Task Delete(string id);
         Task<PaginationResult<Aerodrome>> Pagination(PaginationFilter filter);
     }

@@ -6,11 +6,14 @@ using clickfly.Data;
 using clickfly.Models;
 using Microsoft.EntityFrameworkCore;
 using clickfly.ViewModels;
+using Dapper;
 
 namespace clickfly.Repositories
 {
     public class BookingRepository : BaseRepository<Booking>, IBookingRepository
     {
+        private static string deleteSql = "UPDATE bookings SET excluded = true WHERE id = @id";
+
         public BookingRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
             
@@ -18,18 +21,27 @@ namespace clickfly.Repositories
 
         public async Task<Booking> Create(Booking booking)
         {
-            string id = Guid.NewGuid().ToString();
-            booking.id = id;
+            booking.id = Guid.NewGuid().ToString();
+            booking.created_at = DateTime.Now;
+            booking.excluded = false;
 
-            await _dataContext.Bookings.AddAsync(booking);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = booking;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<Booking>(options);
             return booking;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public Task<Booking> GetById(string id)
@@ -63,9 +75,20 @@ namespace clickfly.Repositories
             return paginationResult;
         }
 
-        public Task Update(Booking booking)
+        public async Task<Booking> Update(Booking booking)
         {
-            throw new NotImplementedException();
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
+
+            UpdateOptions options = new UpdateOptions();
+            options.Data = booking;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
+
+            await _dapperWrapper.UpdateAsync<Booking>(options);
+            return booking;
         }
     }
 }

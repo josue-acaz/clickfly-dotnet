@@ -100,5 +100,10 @@ namespace clickfly.Services
 
             return userRole;
         }
+
+        public async Task Delete(string id)
+        {
+            await _userRoleRepository.Delete(id);
+        }
     }
 }

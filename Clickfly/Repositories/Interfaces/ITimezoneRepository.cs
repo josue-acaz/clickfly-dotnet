@@ -10,7 +10,7 @@ namespace clickfly.Repositories
         Task<Timezone> Create(Timezone timezone);
         Task<Timezone> GetById(string id);
         Task<Timezone> GetByGmt(int gmt);
-        Task Update(Timezone timezone);
+        Task<Timezone> Update(Timezone timezone);
         Task Delete(string id);
         Task<PaginationResult<Timezone>> Pagination(PaginationFilter filter);
     }

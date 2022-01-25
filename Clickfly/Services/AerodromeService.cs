@@ -37,9 +37,9 @@ namespace clickfly.Services
             _cityRepository = cityRepository;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            await _aerodromeRepository.Delete(id);
         }
 
         public async Task<Aerodrome> GetById(string id)
@@ -74,22 +74,29 @@ namespace clickfly.Services
 
             if(update)
             {
-                
+                aerodrome = await _aerodromeRepository.Update(aerodrome);
             }
             else
             {
-                string cityName = aerodrome.city_name;
-                string statePrefix = aerodrome.state_prefix;
-
-                City city = await _cityRepository.GetByName(cityName, statePrefix);
-                if(city == null)
-                {
-                    throw new NotFoundException("Cidade não encontrada.");
-                }
-
-                aerodrome.city_id = city.id;
                 aerodrome = await _aerodromeRepository.Create(aerodrome);
             }
+
+            return aerodrome;
+        }
+
+        public async Task<Aerodrome> SaveExternal(Aerodrome aerodrome)
+        {
+            string cityName = aerodrome.city_name;
+            string statePrefix = aerodrome.state_prefix;
+
+            City city = await _cityRepository.GetByName(cityName, statePrefix);
+            if(city == null)
+            {
+                throw new NotFoundException("Cidade não encontrada.");
+            }
+
+            aerodrome.city_id = city.id;
+            aerodrome = await _aerodromeRepository.Create(aerodrome);
 
             return aerodrome;
         }

@@ -16,18 +16,10 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "customer_friends as customer_friend";
         private static string whereSql = "customer_friend.excluded = false";
-        protected string[] defaultFields = new string[8];
 
         public CustomerFriendRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "name";
-            defaultFields[1] = "email";
-            defaultFields[2] = "phone_number";
-            defaultFields[3] = "emergency_phone_number";
-            defaultFields[4] = "document";
-            defaultFields[5] = "document_type";
-            defaultFields[6] = "birthdate";
-            defaultFields[7] = "customer_id";
+
         }
 
         public async Task<IEnumerable<CustomerFriend>> BulkGetById(string[] ids)
@@ -44,10 +36,19 @@ namespace clickfly.Repositories
         public async Task<CustomerFriend> Create(CustomerFriend customerFriend)
         {
             customerFriend.id = Guid.NewGuid().ToString();
+            customerFriend.created_at = DateTime.Now;
+            customerFriend.excluded = false;
 
-            await _dataContext.CustomerFriends.AddAsync(customerFriend);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = customerFriend;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<CustomerFriend>(options);
             return customerFriend;
         }
 

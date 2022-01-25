@@ -16,29 +16,36 @@ namespace clickfly.Repositories
         private static string fieldsSql = "*";
         private static string fromSql = "air_taxi_bases as air_taxi_base";
         private static string whereSql = "air_taxi_base.excluded = false";
-        protected string[] defaultFields = new string[4];
+        private static string deleteSql = "UPDATE air_taxi_bases SET excluded = true WHERE id = @id";
 
         public AirTaxiBaseRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            defaultFields[0] = "name";
-            defaultFields[1] = "latitude";
-            defaultFields[2] = "longitude";
-            defaultFields[3] = "aerodrome_id";
+
         }
 
         public async Task<AirTaxiBase> Create(AirTaxiBase airTaxiBase)
         {
             airTaxiBase.id = Guid.NewGuid().ToString();
+            airTaxiBase.created_at = DateTime.Now;
+            airTaxiBase.excluded = false;
 
-            await _dataContext.AirTaxiBases.AddAsync(airTaxiBase);
-            await _dataContext.SaveChangesAsync();
+            List<string> exclude = new List<string>();
+            exclude.Add("updated_at");
+            exclude.Add("updated_by");
 
+            InsertOptions options = new InsertOptions();
+            options.Data = airTaxiBase;
+            options.Exclude = exclude;
+            options.Transaction = _dBContext.GetTransaction();
+
+            await _dapperWrapper.InsertAsync<AirTaxiBase>(options);
             return airTaxiBase;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            object param = new { id = id };
+            await _dBContext.GetConnection().ExecuteAsync(deleteSql, param, _dBContext.GetTransaction());
         }
 
         public async Task<AirTaxiBase> GetById(string id)
