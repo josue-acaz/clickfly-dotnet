@@ -75,14 +75,16 @@ namespace clickfly.Repositories
         {
             int limit = filter.page_size;
             int offset = (filter.page_number - 1) * filter.page_size;
+            string text = filter.text;
 
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);
             queryParams.Add("offset", offset);
+            queryParams.Add("text", $"%{text}%");
 
             SelectOptions options = new SelectOptions();
             options.As = "aerodrome";
-            options.Where = $"{whereSql} LIMIT @limit OFFSET @offset";
+            options.Where = $"{whereSql} AND aerodrome.name ILIKE @text OR aerodrome.oaci_code ILIKE @text LIMIT @limit OFFSET @offset";
             options.Params = queryParams;
 
             IncludeModel includeCity = new IncludeModel();
