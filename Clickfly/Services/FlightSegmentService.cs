@@ -39,7 +39,7 @@ namespace clickfly.Services
 
         public async Task Delete(string id)
         {
-            await _flightRepository.Delete(id);
+            await _flightSegmentRepository.Delete(id);
         }
 
         public async Task<FlightSegment> GetById(string id)
@@ -90,6 +90,7 @@ namespace clickfly.Services
                 DoubleCheck doubleCheck = new DoubleCheck();
                 doubleCheck.resource = Resources.FlightSegments;
                 doubleCheck.resource_id = flightSegment.id;
+                doubleCheck.user_id = user.id;
                 doubleCheck.created_by = user.id;
 
                 await _doubleCheckRepository.Create(doubleCheck);

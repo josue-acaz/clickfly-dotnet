@@ -43,7 +43,7 @@ namespace clickfly.Repositories
 
         public async Task Delete(string id)
         {
-            string querySql = $"UPDATE flights as flight set flight.excluded = true WHERE flight.id = @id";
+            string querySql = $"UPDATE flights set excluded = true WHERE id = @id";
             object param = new { id = id };
             
             await _dBContext.GetConnection().ExecuteAsync(querySql, param, _dBContext.GetTransaction());

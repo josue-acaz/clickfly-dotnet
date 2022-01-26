@@ -108,7 +108,7 @@ namespace clickfly.Repositories
             int offset = (filter.page_number - 1) * filter.page_size;
             string flight_id = filter.flight_id;
             string text = filter.text;
-            string where = whereSql;
+            string where = $"{whereSql} AND flight.excluded = false";
 
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);
@@ -148,6 +148,10 @@ namespace clickfly.Repositories
             options.Include<Aircraft>(includeAircraft);
             options.Include<Aerodrome>(includeOriginAerodrome);
             options.Include<Aerodrome>(includeDestinationAerodrome);
+            options.Include<Flight>(new IncludeModel{
+                As = "flight",
+                ForeignKey = "flight_id"
+            });
 
             if(flight_id != null)
             {
@@ -167,12 +171,12 @@ namespace clickfly.Repositories
                     ForeignKey = "user_id"
                 });
 
+                options.AddRawAttribute("user_name", "_user.name");
                 options.Include<DoubleCheck>(includeDoubleCheck);
             }
 
             where += " LIMIT @limit OFFSET @offset ";
             options.Where = where;
-            options.AddRawAttribute("user_name", "_user.name");
 
             IEnumerable<FlightSegment> flightSegments = await _dapperWrapper.QueryAsync<FlightSegment>(options);
             int total_records = flightSegments.Count();

@@ -41,6 +41,7 @@ namespace clickfly.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult> Save([FromBody]Customer customer)
         {
             try

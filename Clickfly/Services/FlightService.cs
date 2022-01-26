@@ -37,11 +37,13 @@ namespace clickfly.Services
         {
             User user = _informer.GetValue<User>(UserTypes.User);
 
+            /*
             bool hasPermission = await _permissionRepository.HasPermission(user.id, Resources.Flights, Actions.Delete);
             if(!hasPermission)
             {
                 throw new UnauthorizedException("Você não tem permissão para excluir.");
             }
+            */
 
             await _flightRepository.Delete(id);
         }
