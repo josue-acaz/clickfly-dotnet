@@ -106,6 +106,7 @@ namespace clickfly.Configs
 
             services.AddScoped<IAccessTokenRepository, AccessTokenRepository>();
 
+            services.AddScoped<IDoubleCheckService, DoubleCheckService>();
             services.AddScoped<IDoubleCheckRepository, DoubleCheckRepository>();
 
             services.AddScoped<IFlightSegmentStatusRepository, FlightSegmentStatusRepository>();

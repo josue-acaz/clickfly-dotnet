@@ -32,6 +32,7 @@ namespace clickfly.Models
 
         [ForeignKey("destination_aerodrome_id")]
         public Aerodrome destination_aerodrome { get; set; }
+        public DoubleCheck double_check { get; set; }
 
         [NotMapped]
         public double subtotal { get; set; }

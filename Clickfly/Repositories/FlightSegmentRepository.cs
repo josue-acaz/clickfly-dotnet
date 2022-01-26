@@ -104,22 +104,80 @@ namespace clickfly.Repositories
 
         public async Task<PaginationResult<FlightSegment>> Pagination(PaginationFilter filter)
         {
-            PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
+            int limit = filter.page_size;
+            int offset = (filter.page_number - 1) * filter.page_size;
+            string flight_id = filter.flight_id;
+            string text = filter.text;
+            string where = whereSql;
 
-            string flightId = filter.flight_id;
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+            queryParams.Add("text", $"%{text}%");
 
-            List<FlightSegment> flightSegments = await _dataContext.FlightSegments
-                .Include(flightSegment => flightSegment.aircraft)
-                .ThenInclude(aircraft => aircraft.model)
-                .Include(flightSegment => flightSegment.origin_aerodrome)
-                .Include(flightSegment => flightSegment.destination_aerodrome)
-                .Skip((paginationFilter.page_number - 1) * paginationFilter.page_size)
-                .Take(paginationFilter.page_size)
-                .Where(flightSegment => flightSegment.excluded == false && flightSegment.flight_id == flightId)
-                .ToListAsync();
-            
-            int total_records = await _dataContext.Flights.CountAsync();
-            PaginationResult<FlightSegment> paginationResult = _utils.CreatePaginationResult<FlightSegment>(flightSegments, paginationFilter, total_records);
+            SelectOptions options = new SelectOptions();
+            options.As = "flight_segment";
+            options.Params = queryParams;
+
+            IncludeModel includeAircraft = new IncludeModel();
+            includeAircraft.As = "aircraft";
+            includeAircraft.ForeignKey = "aircraft_id";
+            includeAircraft.ThenInclude<AircraftModel>(new IncludeModel{
+                As = "model",
+                ForeignKey = "aircraft_model_id"
+            });
+
+            IncludeModel includeCity = new IncludeModel();
+            includeCity.As = "city";
+            includeCity.ForeignKey = "city_id";
+            includeCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeDestinationAerodrome = new IncludeModel();
+            includeDestinationAerodrome.As = "destination_aerodrome";
+            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinationAerodrome.ThenInclude<City>(includeCity);
+
+            options.Include<Aircraft>(includeAircraft);
+            options.Include<Aerodrome>(includeOriginAerodrome);
+            options.Include<Aerodrome>(includeDestinationAerodrome);
+
+            if(flight_id != null)
+            {
+                where += " AND flight_segment.flight_id = @flight_id ";
+                queryParams.Add("flight_id", flight_id);
+            }
+            else
+            {
+                where += " AND double_check.resource = 'flight_segments' AND double_check.approved IS NULL ";
+                
+                IncludeModel includeDoubleCheck = new IncludeModel();
+                includeDoubleCheck.As = "double_check";
+                includeDoubleCheck.ForeignKey = "resource_id";
+
+                includeDoubleCheck.ThenInclude<User>(new IncludeModel{
+                    As = "_user",
+                    ForeignKey = "user_id"
+                });
+
+                options.Include<DoubleCheck>(includeDoubleCheck);
+            }
+
+            where += " LIMIT @limit OFFSET @offset ";
+            options.Where = where;
+            options.AddRawAttribute("user_name", "_user.name");
+
+            IEnumerable<FlightSegment> flightSegments = await _dapperWrapper.QueryAsync<FlightSegment>(options);
+            int total_records = flightSegments.Count();
+
+            PaginationResult<FlightSegment> paginationResult = _utils.CreatePaginationResult<FlightSegment>(flightSegments.ToList(), filter, total_records);
 
             return paginationResult;
         }

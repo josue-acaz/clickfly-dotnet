@@ -14,5 +14,11 @@ namespace clickfly.Models
         public string approver_id { get; set; }
         public string resource_id { get; set; }
         public string resource { get; set; }
+
+        [ForeignKey("user_id")]
+        public User _user { get; set; }
+
+        [NotMapped]
+        public string user_name { get; set; }
     }
 }
