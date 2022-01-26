@@ -30,6 +30,7 @@ namespace clickfly.Repositories
             customer.id = Guid.NewGuid().ToString();
             customer.created_at = DateTime.Now;
             customer.excluded = false;
+            customer.verified = true;
 
             List<string> exclude = new List<string>();
             exclude.Add("updated_at");
