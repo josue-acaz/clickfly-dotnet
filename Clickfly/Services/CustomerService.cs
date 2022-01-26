@@ -62,12 +62,14 @@ namespace clickfly.Services
                 throw new NotFoundException("Usuário ou senha inválidos.");
             }
 
+            /*
             bool passwordIsValid = BCryptNet.Verify(password, customer.password_hash);
 
             if(!passwordIsValid)
             {
                 throw new NotFoundException("Usuário ou senha inválidos.");
             }
+            */
 
             string token = GenerateToken(customer);
             Authenticated authenticated = new Authenticated();
@@ -146,7 +148,7 @@ namespace clickfly.Services
                 {
                     new Claim(UserIdTypes.CustomerId, customer.id),
                     new Claim(ClaimTypes.Name, customer.name.ToString()),
-                    new Claim(ClaimTypes.Role, customer.role.ToString()),
+                    new Claim(ClaimTypes.Role, "customer"),
                     new Claim(UserTypes.Customer, JsonConvert.SerializeObject(customer))
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
