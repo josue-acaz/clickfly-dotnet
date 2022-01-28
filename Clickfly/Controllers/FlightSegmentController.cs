@@ -59,7 +59,7 @@ namespace clickfly.Controllers
                 await transaction.CommitAsync();
 
                 // Enviar notificação de novo voo
-                await _flightSegmentService.SendNotification(_flightSegment.id);
+                //await _flightSegmentService.SendNotification(_flightSegment.id);
 
                 return HttpResponse(_flightSegment);
             }

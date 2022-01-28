@@ -205,7 +205,7 @@ namespace clickfly.Repositories
 
             IEnumerable<FlightSegment> flightSegments = await _dapperWrapper.QueryAsync<FlightSegment>(options);
             
-            int total_records = await _dataContext.FlightSegments.CountAsync();
+            int total_records = flightSegments.Count();
             PaginationResult<FlightSegment> paginationResult = _utils.CreatePaginationResult<FlightSegment>(flightSegments.ToList(), filter, total_records);
 
             return paginationResult;

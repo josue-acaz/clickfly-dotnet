@@ -113,11 +113,15 @@ namespace clickfly.Services
             List<string> includedSegments = new List<string>();
             includedSegments.Add("All");
 
+            Dictionary<string, string> additionalData = new Dictionary<string, string>();
+            additionalData.Add("route_name", "TripSummary");
+
             notificationCreateOptions.AppId = _appSettings.OneSignalAppId;
             notificationCreateOptions.Headings.Add(LanguageCodes.English, $"{originCityName} ✈️ {destinationCityName}");
             notificationCreateOptions.Contents.Add(LanguageCodes.English, $"{flightSegment.departure_datetime}, {flightSegment.price_per_seat} por pessoa no {aircraftName}, {flightSegment.total_seats} pass.");
             notificationCreateOptions.BigPictureForAndroid = aircraftThumbnail;
             notificationCreateOptions.IncludedSegments = includedSegments;
+            //notificationCreateOptions.Data = new { route_name = "" }
         
             await _oneSignalClient.Notifications.CreateAsync(notificationCreateOptions);
         }
