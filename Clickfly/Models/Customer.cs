@@ -8,10 +8,7 @@ namespace clickfly.Models
     [Table("customers")]
     public class Customer : BaseEntity
     {
-        [Required(ErrorMessage = "Este campo é obrigatório")]
         public string name { get; set; }
-
-        [EmailAddress(ErrorMessage = "Endereço de e-mail inválido")]
         public string email { get; set; }
         public string phone_number { get; set; }
         public string emergency_phone_number { get; set; }

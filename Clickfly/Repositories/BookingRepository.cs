@@ -12,6 +12,7 @@ namespace clickfly.Repositories
 {
     public class BookingRepository : BaseRepository<Booking>, IBookingRepository
     {
+        private static string whereSql = "booking.excluded = false";
         private static string deleteSql = "UPDATE bookings SET excluded = true WHERE id = @id";
 
         public BookingRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
@@ -51,26 +52,69 @@ namespace clickfly.Repositories
 
         public async Task<PaginationResult<Booking>> Pagination(PaginationFilter filter)
         {
-            string customerId = filter.customer_id;
-            List<Booking> bookings = await _dataContext.Bookings
-                .Include(booking => booking.status)
-                .Include(booking => booking.payments)
-                .Include(booking => booking.passengers)
-                .Include(booking => booking.flight_segment)
-                .ThenInclude(booking => booking.origin_aerodrome)
-                .ThenInclude(origin_aerodrome => origin_aerodrome.city)
-                .ThenInclude(city => city.state)
-                .Include(booking => booking.flight_segment)
-                .ThenInclude(booking => booking.destination_aerodrome)
-                .ThenInclude(destination_aerodrome => destination_aerodrome.city)
-                .ThenInclude(city => city.state)
-                .Skip((filter.page_number - 1) * filter.page_size)
-                .Take(filter.page_size)
-                .Where(booking => booking.customer_id == customerId && booking.excluded == false)
-                .ToListAsync();
+            int limit = filter.page_size;
+            int offset = (filter.page_number - 1) * filter.page_size;
+            string customer_id = filter.customer_id;
+            string text = filter.text;
 
-            int total_records = await _dataContext.Bookings.CountAsync();
-            PaginationResult<Booking> paginationResult = _utils.CreatePaginationResult<Booking>(bookings, filter, total_records);
+            string where = $"{whereSql} LIMIT @limit OFFSET @offset";
+
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("limit", limit);
+            queryParams.Add("offset", offset);
+            queryParams.Add("customer_id", customer_id);
+            queryParams.Add("text", $"%{text}%");
+
+            SelectOptions options = new SelectOptions();
+            options.As = "booking";
+            options.Where = where;
+            options.Params = queryParams;
+
+            options.Include<BookingStatus>(new IncludeModel{
+                As = "status",
+                ForeignKey = "booking_id"
+            });
+            options.Include<BookingPayment>(new IncludeModel{
+                As = "payments",
+                ForeignKey = "booking_id"
+            });
+            options.Include<Passenger>(new IncludeModel{
+                As = "passengers",
+                ForeignKey = "booking_id"
+            });
+
+            IncludeModel includeCity = new IncludeModel();
+            includeCity.As = "city";
+            includeCity.ForeignKey = "city_id";
+            //includeCity.AddRawAttribute("full_name", "CONCAT(city.name, ' • ', state.prefix)");
+            includeCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeDestinAerodrome = new IncludeModel();
+            includeDestinAerodrome.As = "destination_aerodrome";
+            includeDestinAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinAerodrome.ThenInclude<City>(includeCity);
+
+            IncludeModel includeFlightSegment = new IncludeModel();
+            includeFlightSegment.As = "flight_segment";
+            includeFlightSegment.ForeignKey = "flight_segment_id";
+            includeFlightSegment.ThenInclude<Aerodrome>(includeOriginAerodrome);
+            includeFlightSegment.ThenInclude<Aerodrome>(includeDestinAerodrome);
+
+            options.Include<FlightSegment>(includeFlightSegment);
+
+            IEnumerable<Booking> bookings = await _dapperWrapper.QueryAsync<Booking>(options);
+            int total_records = bookings.Count();
+
+            PaginationFilter paginationFilter= new PaginationFilter(filter.page_number, filter.page_size);
+            PaginationResult<Booking> paginationResult = _utils.CreatePaginationResult<Booking>(bookings.ToList(), filter, total_records);
 
             return paginationResult;
         }

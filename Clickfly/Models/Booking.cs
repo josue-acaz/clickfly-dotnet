@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PagarmeCoreApi.Standard.Models;
 
 namespace clickfly.Models
 {
@@ -38,5 +39,13 @@ namespace clickfly.Models
 
         [NotMapped]
         public bool customer_is_passenger { get; set; }
+
+        [NotMapped]
+        public GetTransactionResponse payment_transaction { get; set; }
+        
+        public Booking()
+        {
+            status = new List<BookingStatus>();
+        }
     }
 }

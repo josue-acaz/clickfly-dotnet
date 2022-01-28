@@ -21,9 +21,18 @@ namespace clickfly.Models
         public string holder_name { get; set; }
 
         [NotMapped]
-        public string card_number { get; set; }
+        public string number { get; set; }
 
         [NotMapped]
         public string exp_date { get; set; }
+
+        [NotMapped]
+        public int exp_year { get; set; }
+
+        [NotMapped]
+        public int exp_month { get; set; }
+
+        [NotMapped]
+        public string cvv { get; set; }
     }
 }

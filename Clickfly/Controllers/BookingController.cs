@@ -34,16 +34,16 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Booking booking)
         {
+            Console.WriteLine("aaaaaaa");
             try
             {
-                string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
                 using var transaction = _dataContext.Database.BeginTransaction();
 
-                booking.customer_id = customerId;
-                CreateBookingResponse createBookingResponse = await _bookingService.Save(booking);
+                booking = await _bookingService.Save(booking);
                 await transaction.CommitAsync();
 
-                return HttpResponse(createBookingResponse);
+                return HttpResponse(booking);
             }
             catch (Exception ex)
             {

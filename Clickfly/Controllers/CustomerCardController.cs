@@ -57,9 +57,7 @@ namespace clickfly.Controllers
         {
             try
             {
-                string customerId = GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
-            
-                filter.customer_id = customerId;
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
                 PaginationResult<CustomerCard> customerCards = await _customerCardService.Pagination(filter);
                 return HttpResponse(customerCards);
             }

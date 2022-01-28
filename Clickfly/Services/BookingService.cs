@@ -80,14 +80,19 @@ namespace clickfly.Services
             return paginationResult;
         }
 
-        public async Task<CreateBookingResponse> Save(Booking booking)
+        public async Task<Booking> Save(Booking booking)
         {
-            CreateBookingResponse createBookingResponse = new CreateBookingResponse();
+            Customer authCustomer = _informer.GetValue<Customer>(UserTypes.Customer);
 
-            string customer_id = booking.customer_id;
+            string customer_id = authCustomer.id;
             string customerCardId = booking.customer_card_id;
             string flightSegmentId = booking.flight_segment_id;
             string customerAddressId = booking.customer_address_id;
+
+            Console.WriteLine(customer_id);
+            Console.WriteLine(customerCardId);
+            Console.WriteLine(flightSegmentId);
+            Console.WriteLine(customerAddressId);
 
             string[] selected_passengers = booking.selected_passengers;
             string paymentMethod = booking.payment_method;
@@ -104,6 +109,9 @@ namespace clickfly.Services
                 (customer == null || !customer.verified)
             )
             {
+                Console.WriteLine((customerIsPassenger && customer.type != CustomerTypes.Individual));
+                Console.WriteLine((flightSegment == null || customerAddress == null));
+                Console.WriteLine((customer == null || !customer.verified));
                 throw new BadRequestException("Requisição inválida.");
             }
 
@@ -180,7 +188,7 @@ namespace clickfly.Services
             // CASO PAGAMENTO NÃO SEJA APROVADO, NÃO CRIAR RESERVA
             if(bookingStatus == BookingStatusTypes.NotApproved)
             {
-                return createBookingResponse;
+                return booking;
             }
 
             Booking createBooking = new Booking();
@@ -267,10 +275,10 @@ namespace clickfly.Services
             createBookingStatus.booking_id = bookingId;
 
             createBookingStatus = await _bookingStatusRepository.Create(createBookingStatus);
-            createBookingResponse.booking_status = createBookingStatus;
-            createBookingResponse.payment_transaction = transactionResponse;
+            booking.status.Add(createBookingStatus);
+            booking.payment_transaction = transactionResponse;
 
-            return createBookingResponse;
+            return booking;
         }
     }
 }

@@ -5,7 +5,6 @@ using clickfly.Data;
 using clickfly.Models;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using BCryptNet = BCrypt.Net.BCrypt;
 using Npgsql;
 using System.Linq;
 using clickfly.ViewModels;
@@ -53,55 +52,28 @@ namespace clickfly.Repositories
 
         public async Task<Customer> GetByEmail(string email)
         {
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND customer.email ILIKE @email";
-            NpgsqlParameter param = new NpgsqlParameter("email", $"%{email}%");
-            
-            Customer customer = await _dataContext.Customers.FromSqlRaw(querySql, param).FirstOrDefaultAsync();
+            Customer customer = await _dataContext.Customers
+            .FirstOrDefaultAsync(customer => customer.email == email && customer.excluded == false);
+
             return customer;
         }
 
         public async Task<Customer> GetById(string id)
         {
-            IncludeModel includeCustomerCards = new IncludeModel();
-            includeCustomerCards.As = "cards";
-            includeCustomerCards.ForeignKey = "customer_id";
-            includeCustomerCards.Where = "cards.excluded = false ORDER BY cards.created_at DESC";
+            Customer customer = await _dataContext.Customers
+            .Include(customer => customer.cards.Where(card => card.excluded == false))
+            .Include(customer => customer.friends.Where(friend => friend.excluded == false))
+            .Include(customer => customer.addresses.Where(address => address.excluded == false))
+            .FirstOrDefaultAsync(customer => customer.id == id && customer.excluded == false);
 
-            IncludeModel includeCustomerFriends = new IncludeModel();
-            includeCustomerFriends.As = "friends";
-            includeCustomerFriends.ForeignKey = "customer_id";
-            includeCustomerFriends.Where = "friends.excluded = false ORDER BY friends.created_at DESC";
-
-            IncludeModel includeCustomerAddresses = new IncludeModel();
-            includeCustomerAddresses.As = "addresses";
-            includeCustomerAddresses.ForeignKey = "customer_id";
-            includeCustomerAddresses.Where = "addresses.excluded = false ORDER BY addresses.created_at DESC";
-
-            /*Verificar porque com o atributo password_hash o Slapper.Automapper Crasha*/
-            List<string> excludeAttributes = new List<string>();
-            excludeAttributes.Add("password_hash");
-
-            SelectOptions options = new SelectOptions();
-            options.As = "customer";
-            options.Where = $"{whereSql} AND customer.id = @id";
-            options.Params = new { id = id };
-            options.Attributes.Exclude = excludeAttributes;
-
-            options.Include<CustomerCard>(includeCustomerCards);
-            options.Include<CustomerFriend>(includeCustomerFriends);
-            options.Include<CustomerAddress>(includeCustomerAddresses);
-            options.AddRawAttribute("thumbnail", customerThumbnailSql);
-
-            Customer customer = await _dapperWrapper.QuerySingleAsync<Customer>(options);
             return customer;
         }
 
         public async Task<Customer> GetByPasswordResetToken(string password_reset_token)
         {
-            string querySql = $"SELECT {fieldsSql} FROM {fromSql} WHERE {whereSql} AND customer.password_reset_token = @password_reset_token";
-            NpgsqlParameter param = new NpgsqlParameter("password_reset_token", password_reset_token);
-            
-            Customer customer = await _dataContext.Customers.FromSqlRaw(querySql, param).FirstOrDefaultAsync();
+            Customer customer = await _dataContext.Customers
+            .FirstOrDefaultAsync(customer => customer.password_reset_token == password_reset_token && customer.excluded == false);
+
             return customer;
         }
 
@@ -139,17 +111,48 @@ namespace clickfly.Repositories
 
         public async Task<Customer> Update(Customer customer)
         {
-            List<string> exclude = new List<string>();
-            exclude.Add("created_at");
-            exclude.Add("created_by");
+            var entity = await _dataContext.Customers.FirstAsync(c => c.id == customer.id);
 
-            UpdateOptions options = new UpdateOptions();
-            options.Data = customer;
-            options.Where = "id = @id";
-            options.Transaction = _dBContext.GetTransaction();
-            options.Exclude = exclude;
+            if(entity != null)
+            {
+                if(entity.name != customer.name)
+                {
+                    entity.name = customer.name;
+                }
 
-            await _dapperWrapper.UpdateAsync<Customer>(options);
+                if(entity.email != customer.email)
+                {
+                    entity.email = customer.email;
+                }
+
+                if(entity.document_type != customer.document_type)
+                {
+                    entity.document_type = customer.document_type;
+                }
+                
+                if(entity.document != customer.document)
+                {
+                    entity.document = customer.document;
+                }
+                
+                if(entity.birthdate != customer.birthdate)
+                {
+                    entity.birthdate = customer.birthdate;
+                }
+                
+                if(entity.phone_number != customer.phone_number)
+                {
+                    entity.phone_number = customer.phone_number;
+                }
+                
+                if(entity.emergency_phone_number != customer.emergency_phone_number)
+                {
+                    entity.emergency_phone_number = customer.emergency_phone_number;
+                }
+
+                await _dataContext.SaveChangesAsync();
+            }
+
             return customer;
         }
     }

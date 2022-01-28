@@ -55,6 +55,8 @@ namespace clickfly.Services
             string username = authenticateParams.username;
             string password = authenticateParams.password;
 
+            Console.WriteLine(username);
+
             Customer customer = await _customerRepository.GetByEmail(username);
 
             if(customer == null)
@@ -76,6 +78,8 @@ namespace clickfly.Services
 
             authenticated.token = token;
             authenticated.auth_user = customer;
+
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(authenticated));
 
             return authenticated;
         }
@@ -130,6 +134,8 @@ namespace clickfly.Services
 
                 GetCustomerResponse customerResponse = await _customersController.CreateCustomerAsync(customerRequest);
                 customer.customer_id = customerResponse.Id;
+
+                Console.WriteLine($"PAGAR.ME CUSTOMER_ID: {customerResponse.Id}");
 
                 customer = await _customerRepository.Create(customer);
             }

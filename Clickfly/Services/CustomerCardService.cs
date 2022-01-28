@@ -7,6 +7,8 @@ using PagarmeCoreApi.Standard.Models;
 using Microsoft.Extensions.Options;
 using clickfly.Helpers;
 using clickfly.ViewModels;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace clickfly.Services
 {
@@ -52,7 +54,7 @@ namespace clickfly.Services
             
             customerCard.brand = cardResponse.Brand;
             customerCard.holder_name = cardResponse.HolderName;
-            customerCard.card_number = $"•••• {cardResponse.LastFourDigits}";
+            customerCard.number = $"•••• {cardResponse.LastFourDigits}";
             customerCard.exp_date = _utils.GetExpCard(cardResponse.ExpMonth, cardResponse.ExpYear);
 
             return customerCard;
@@ -60,22 +62,38 @@ namespace clickfly.Services
 
         public async Task<PaginationResult<CustomerCard>> Pagination(PaginationFilter filter)
         {
-            string customerId = filter.customer_id;
+            Customer authCustomer = _informer.GetValue<Customer>(UserTypes.Customer);
+            filter.customer_id = authCustomer.id;
+
+            Console.WriteLine($"SYSTEM CUSTOMER ID: {authCustomer.id}");
+            Console.WriteLine($"ID X: {authCustomer.customer_id}");
+
             PaginationResult<CustomerCard> paginationResult = await _customerCardRepository.Pagination(filter);
             CustomerCard[] customerCards = paginationResult.data.ToArray();
 
-            Customer customer = await _customerRepository.GetById(customerId);
+            Customer customer = await _customerRepository.GetById(authCustomer.id);
             string customer_id = customer.customer_id;
+
+            Console.WriteLine($"PAGAR.ME CUSTOMER ID: {customer_id}");
             
             for (int index = 0; index < customerCards.Length; index++)
             {
                 CustomerCard customerCard = customerCards[index];
-                GetCardResponse cardResponse = await _customersController.GetCardAsync(customer_id, customerCard.card_id);
+                Console.WriteLine($"CARD ID: {customerCard.card_id}");
+                
+                try
+                {
+                    GetCardResponse cardResponse = await _customersController.GetCardAsync("cus_8qdBkx2T2UdpnmZN", customerCard.card_id);
             
-                customerCard.brand = cardResponse.Brand;
-                customerCard.holder_name = cardResponse.HolderName;
-                customerCard.card_number = $"•••• {cardResponse.LastFourDigits}";
-                customerCard.exp_date = _utils.GetExpCard(cardResponse.ExpMonth, cardResponse.ExpYear);
+                    customerCard.brand = cardResponse.Brand;
+                    customerCard.holder_name = cardResponse.HolderName;
+                    customerCard.number = $"•••• {cardResponse.LastFourDigits}";
+                    customerCard.exp_date = _utils.GetExpCard(cardResponse.ExpMonth, cardResponse.ExpYear);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
 
             return paginationResult;
@@ -83,6 +101,7 @@ namespace clickfly.Services
 
         public async Task<CustomerCard> Save(CustomerCard customerCard)
         {
+            Customer customer = _informer.GetValue<Customer>(UserTypes.Customer);
             bool update = customerCard.id != "";
 
             if(update)
@@ -92,6 +111,28 @@ namespace clickfly.Services
             else
             {
                 customerCard = await _customerCardRepository.Create(customerCard);
+
+                var metadata = new Dictionary<string, string>();
+                metadata.Add("customer_card_id", customerCard.id);
+
+                //string[] exp_date = customerCard.exp_date.Split('/');
+                //int exp_month = Int32.Parse(exp_date[0]);
+                //int exp_year = Int32.Parse(exp_date[1]);
+
+                CreateCardRequest createCardRequest = new CreateCardRequest();
+                createCardRequest.Number = String.Join("", customerCard.number.Split(" "));
+                createCardRequest.HolderName = customerCard.holder_name;
+                createCardRequest.ExpMonth = 8;
+                createCardRequest.ExpYear = 28;
+                createCardRequest.Cvv = customerCard.cvv;
+                createCardRequest.Metadata = metadata;
+
+                GetCardResponse getCardResponse = await _customersController.CreateCardAsync(customer.customer_id, createCardRequest);
+                customerCard.card_id = getCardResponse.Id;
+
+                Console.WriteLine($"PAGAR.ME CARD ID: {customerCard.card_id}");
+
+                await _customerCardRepository.Update(customerCard);
             }
 
             return customerCard;

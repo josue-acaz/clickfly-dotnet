@@ -113,11 +113,13 @@ namespace clickfly.Controllers
         {
             try
             {
+                Console.WriteLine("AQUI");
                 Authenticated authenticated = await _customerService.Authenticate(authenticateParams);
                 return authenticated;
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 Notify(ex.ToString());
                 return HttpResponse();
             }
