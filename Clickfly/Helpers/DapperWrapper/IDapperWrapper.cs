@@ -14,3 +14,26 @@ namespace clickfly.Data
         int Count<T>(CountOptions options);
     }
 }
+
+// TABELAS
+/*
+
+t
+t0
+t1
+t2
+t3
+...
+
+*/
+
+// CAMPOS
+/*
+
+c
+c0
+c1
+c2
+c3
+
+*/

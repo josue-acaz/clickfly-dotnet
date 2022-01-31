@@ -5,6 +5,7 @@ namespace clickfly.Data
 {
     public class IncludeModel : QueryExtensions {
         public string As { get; set; }
+        public string Code { get; set; }
         public string ForeignKey { get; set; }
         public Attributes Attributes { get; set; }
         public string TableName { get; set; }
@@ -13,6 +14,7 @@ namespace clickfly.Data
         public bool BelongsTo { get; set; }
         public List<IncludeModel> Includes { get; set; }
         public List<RawAttribute> RawAttributes { get; set; }
+        public int Count { get; set; }
 
         public IncludeModel()
         {

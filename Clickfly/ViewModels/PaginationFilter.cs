@@ -29,6 +29,7 @@ namespace clickfly.ViewModels
         public string flight_type { get; set; }
         public string flight_segment_type { get; set; }
         public string air_taxi_id { get; set; }
+        public string booking_id { get; set; }
         public List<ExcludeFilterAttribute> exclude { get; set; }
         public PaginationFilter()
         {

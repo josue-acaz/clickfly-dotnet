@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using clickfly.ViewModels;
+using clickfly.Exceptions;
 
 namespace clickfly.Services
 {
@@ -96,6 +97,13 @@ namespace clickfly.Services
 
         public async Task<Customer> GetById(string id)
         {
+
+            Customer authCustomer = _informer.GetValue<Customer>(UserTypes.Customer);
+            //if(authCustomer.id != id)
+            //{
+            //    throw new UnauthorizedException("Acesso negado.");
+            //}
+
             Customer customer = await _customerRepository.GetById(id);
             return customer;
         }
@@ -168,6 +176,8 @@ namespace clickfly.Services
 
         public async Task<string> Thumbnail(ThumbnailRequest thumbnailRequest)
         {
+            Customer authCustomer = _informer.GetValue<Customer>(UserTypes.Customer);
+            
             IFormFile file = thumbnailRequest.file;
             string customerId = thumbnailRequest.customer_id;
 
@@ -182,6 +192,7 @@ namespace clickfly.Services
             createFile.url = uploadResponse.Url;
             createFile.mimetype = uploadResponse.MimeType;
             createFile.field_name = FieldNames.Thumbnail;
+            createFile.created_by = authCustomer.id;
 
             createFile = await _fileRepository.Create(createFile);
             string url = createFile.url;

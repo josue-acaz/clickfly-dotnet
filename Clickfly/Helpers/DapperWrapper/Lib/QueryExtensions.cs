@@ -172,6 +172,8 @@ namespace clickfly.Data
             {
                 attributesSql += ", ";
                 string As = includeModel.As;
+                string Code = includeModel.Code;
+                string ForeignKey = includeModel.ForeignKey;
                 string AsInclude = nv1 ? As : $"{parentAs}_{As}";
                 List<string> attributes = includeModel.Attributes.Include;
                 List<IncludeModel> thenIncludeModels = includeModel.Includes;
@@ -180,9 +182,9 @@ namespace clickfly.Data
                 for (int i = 0; i < attributes.Count; i++)
                 {
                     string attribute = attributes[i];
-                    attributesSql += $"{As}.{attribute} AS {AsInclude}_{attribute}";
+                    attributesSql += $"{Code}.{attribute} AS {AsInclude}_{attribute}";
                     bool isLastAttribute = i == attributes.Count -1;
-
+                    
                     if(!isLastAttribute)
                     {
                         attributesSql += ", ";
@@ -212,61 +214,222 @@ namespace clickfly.Data
             {
                 string pk = includeModel.PK;
                 string AS = includeModel.As;
+                string Code = includeModel.Code;
                 string tableName = includeModel.TableName;
                 string foreignKey = includeModel.ForeignKey;
                 string where = includeModel.Where;
                 bool belongsTo = includeModel.BelongsTo;
+                List<string> attributes = includeModel.Attributes.Include;
+                List<RawAttribute> rawAttributes = includeModel.RawAttributes;
 
-                bool alreadyIncluded = parentIncludeSql.Contains($"{tableName} AS {AS}");
-                if(!alreadyIncluded)
+                string joinStatementSql = $"{parentAs}.{foreignKey} = {Code}.{parentPK}";
+                if(belongsTo)
                 {
-                    string joinStatementSql = $"{parentAs}.{foreignKey} = {AS}.{parentPK}";
-
-                    if(belongsTo)
-                    {
-                        joinStatementSql = $"{parentAs}.{parentPK} = {AS}.{foreignKey}";
-                    }
-
-                    includeSql += $" LEFT OUTER JOIN (SELECT * FROM {tableName} AS {AS}";
-                    if(where != null)
-                    {
-                        includeSql += $" WHERE {where} ";
-                    }
-                    includeSql += $") {AS} ON {joinStatementSql} ";
+                    joinStatementSql = $"{parentAs}.{parentPK} = {Code}.{foreignKey}";
                 }
 
-                includeSql += IncludeModelsToQuery(pk, includeModel.Includes, AS, parentIncludeSql);
+                includeSql += $"\nLEFT JOIN (\n\tSELECT * FROM {tableName} AS {Code}";//{GetSelectAttributes(attributes, rawAttributes, Code)}
+                if(where != null)
+                {
+                    includeSql += $" WHERE {where} ";
+                }
+                
+                includeSql += $"\n) AS {Code} ON {joinStatementSql}\n";
+                includeSql += IncludeModelsToQuery(pk, includeModel.Includes, Code, parentIncludeSql);
                 parentIncludeSql += includeSql;
             }
 
             return includeSql;
         }
+
+        protected string ReplaceQuery(string Query, string As, string Code, List<string> excludedKeys = null)
+        {
+            return Query.Replace($"{As}.", $"{Code}.");
+        }
+
+        protected string ReplaceQueryRecursive(string Query, List<IncludeModel> includes, List<string> excludedKeys = null)
+        {
+            for (int i = 0; i < includes.Count; i++)
+            {
+                Query = ReplaceQuery(Query, includes[i].As, includes[i].Code, excludedKeys);
+                if(includes[i].Includes.Count > 0)
+                {
+                    Query = ReplaceQueryRecursive(Query, includes[i].Includes, excludedKeys);
+                }
+            }
+            
+            return Query;
+        }
+
+        protected string ReplaceQueryRecursive(string Query, List<IncludeModel> includes, string As, string Code)
+        {
+            for (int i = 0; i < includes.Count; i++)
+            {
+                Query = ReplaceQuery(Query, As, Code);
+                if(includes[i].Includes.Count > 0)
+                {
+                    Query = ReplaceQueryRecursive(Query, includes[i].Includes, As, Code);
+                }
+            }
+            
+            return Query;
+        }
+
+        protected List<RawAttribute> ReplaceRaw(List<RawAttribute> rawAttributes, string As, string Code)
+        {
+            for (int i = 0; i < rawAttributes.Count; i++)
+            {
+                rawAttributes[i].Query = ReplaceQuery(rawAttributes[i].Query, As, Code);
+            }
+
+            return rawAttributes;
+        }
+
+        protected List<RawAttribute> ReplaceRaw(List<RawAttribute> rawAttributes, List<IncludeModel> includeModels)
+        {
+            for (int i = 0; i < rawAttributes.Count; i++)
+            {
+                rawAttributes[i].Query = ReplaceQueryRecursive(rawAttributes[i].Query, includeModels);
+            }
+
+            return rawAttributes;
+        }
+
+        protected List<RawAttribute> ReplaceRaw(List<RawAttribute> rawAttributes, List<IncludeModel> includeModels, string As, string Code)
+        {
+            for (int i = 0; i < rawAttributes.Count; i++)
+            {
+                rawAttributes[i].Query = ReplaceQueryRecursive(rawAttributes[i].Query, includeModels, As, Code);
+            }
+
+            return rawAttributes;
+        }
+
+        protected List<IncludeModel> ReplaceIncludesRecursive(List<IncludeModel> includeModels, string As, string Code)
+        {
+            for (int i = 0; i < includeModels.Count; i++)
+            {
+                IncludeModel include = includeModels[i];
+                include.RawAttributes = ReplaceRaw(include.RawAttributes, includeModels, As, Code);
+
+                if(include.Includes.Count > 0)
+                {
+                    include.Includes = ReplaceIncludesRecursive(include.Includes, As, Code);
+                }
+
+                includeModels[i] = include;
+            }
+
+            return includeModels;
+        }
+
+        protected List<IncludeModel> ReplaceIncludesRecursive(List<IncludeModel> includeModels)
+        {
+            for (int i = 0; i < includeModels.Count; i++)
+            {
+                IncludeModel include = includeModels[i];
+                include.RawAttributes = ReplaceRaw(include.RawAttributes, includeModels);
+
+                if(include.Includes.Count > 0)
+                {
+                    include.Includes = ReplaceIncludesRecursive(include.Includes);
+                }
+
+                includeModels[i] = include;
+            }
+
+            return includeModels;
+        }
+
+        protected int CountIncludeRecursive(List<IncludeModel> includeModels, int index)
+        {
+            int count = index;
+            for (int i = 0; i < includeModels.Count; i++)
+            {
+                IncludeModel include = includeModels[i];
+                List<IncludeModel> thenIncludes = include.Includes;
+
+                string Code = $"t{count}";
+                string Where = include.Where;
+
+                include.Code = Code;
+                if(include.Where != null && include.Where != "")
+                {
+                    include.Where = Where.Replace(include.As, Code);
+                }
+                count += 1;
+
+                if(thenIncludes.Count > 0)
+                {
+                    count = CountIncludeRecursive(thenIncludes, count);
+                }
+            }
+
+            return count;
+        }
     
         protected string GetSelectQuery(SelectQueryParams selectQueryParams)
         {
+            string Code = "t";
             string pk = selectQueryParams.PK;
             string As = selectQueryParams.As;
+            bool single = selectQueryParams.single;
             string tableName = selectQueryParams.TableName;
             List<string> attributes = selectQueryParams.Attributes;
-            string whereSql = selectQueryParams.Where;
+            string Where = selectQueryParams.Where;
+            string MainWhere = selectQueryParams.MainWhere;
             List<IncludeModel> includeModels = selectQueryParams.Includes;
-            List<RawAttribute> rawAttributes = selectQueryParams.RawAttributes;
+            List<string> MappingExcludeKeys = new List<string>();
+
+            if(selectQueryParams.Params != null)
+            {
+                IDictionary<string, object> queryParams = selectQueryParams.Params.ToDictionary();
+                foreach(KeyValuePair<string, object> kvp in queryParams)
+                {
+                    MappingExcludeKeys.Add($"@{kvp.Key}");
+                }
+            }
+
+            // Mapping all tables
+            int count = CountIncludeRecursive(includeModels, 0);
+
+            // Replace raw attributes from main query
+            List<RawAttribute> rawAttributes = ReplaceRaw(selectQueryParams.RawAttributes, As, Code); // Main
+            rawAttributes = ReplaceRaw(rawAttributes, includeModels); // Includes
+
+            // Replace raw attributes from includes
+            // Replace where in "CountIncludeRecursive"
+            includeModels = ReplaceIncludesRecursive(includeModels, As, Code); // Main
+            includeModels = ReplaceIncludesRecursive(includeModels); // Includes
 
             // Default Attributes For Main Model
-            string attributesSql = GetSelectAttributes(attributes, rawAttributes, As);
+            string attributesSql = GetSelectAttributes(attributes, rawAttributes, Code);
 
             // Attributes For Include Models
             if(includeModels.Count > 0)
             {
-                attributesSql += GetSelectAttributesRecursive(includeModels, As, true);
+                attributesSql += GetSelectAttributesRecursive(includeModels, Code, true);
             }
 
-            string querySql = $" SELECT {attributesSql} FROM {tableName} AS {As} ";
-            querySql += IncludeModelsToQuery(pk, includeModels, As, querySql);
-
-            if(whereSql != null)
+            string querySql = $"\nSELECT {attributesSql} FROM (SELECT * FROM {tableName} AS {Code}";
+            if(Where != null && Where != "")
             {
-                querySql += $" WHERE {whereSql} ";
+                Where = ReplaceQuery(Where, As, Code, MappingExcludeKeys);
+                querySql += $"\nWHERE {Where}";
+            }
+            if(single)
+            {
+                querySql += "\nLIMIT 1";
+            }
+
+            querySql += $") AS {Code}\n";
+            querySql += IncludeModelsToQuery(pk, includeModels, Code, querySql);
+
+            if(MainWhere != null && MainWhere != "")
+            {
+                MainWhere = ReplaceQuery(MainWhere, As, Code, MappingExcludeKeys);
+                MainWhere = ReplaceQueryRecursive(MainWhere, includeModels, MappingExcludeKeys);
+                querySql += $"\nWHERE {MainWhere}\n";
             }
 
             return querySql;
@@ -359,7 +522,10 @@ namespace clickfly.Data
         {
             string Pk = GetPK<T>();
             string As = options.As;
-            string where = options.Where;
+            string Code = options.Code;
+            string Where = options.Where;
+            object Params = options.Params;
+            string MainWhere = options.MainWhere;
             object optionParams = options.Params;
             List<IncludeModel> optionIncludes = options.Includes;
 
@@ -377,7 +543,11 @@ namespace clickfly.Data
             queryParams.Attributes = defaultAttributes;
             queryParams.RawAttributes = rawAttributes;
             queryParams.Includes = optionIncludes;
-            queryParams.Where = where;
+            queryParams.single = options.single;
+            queryParams.MainWhere = MainWhere;
+            queryParams.Params = Params;
+            queryParams.Where = Where;
+            queryParams.Code = Code;
             queryParams.As = As;
             queryParams.PK = Pk;
 

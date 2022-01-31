@@ -34,7 +34,6 @@ namespace clickfly.Controllers
         [HttpPost]
         public async Task<ActionResult> Save([FromBody]Booking booking)
         {
-            Console.WriteLine("aaaaaaa");
             try
             {
                 GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);

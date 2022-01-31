@@ -102,9 +102,10 @@ namespace clickfly.Repositories
             string air_taxi_id = filter.air_taxi_id;
 
             string where = $"{whereSql} AND _user.air_taxi_id = @air_taxi_id";
+            string mainWhere = $"";
             
             filter.exclude.ForEach(ex => {
-                where += $" AND user_role.{ex.name} != '{ex.value}' ";
+                mainWhere += $" user_role.{ex.name} != '{ex.value}' ";
             });
             
             where += " LIMIT @limit OFFSET @offset ";
@@ -125,6 +126,7 @@ namespace clickfly.Repositories
             SelectOptions options = new SelectOptions();
             options.As = "_user";
             options.Where = where;
+            options.MainWhere = mainWhere;
             options.Params = queryParams;
             options.Include<PermissionGroup>(includePermissionGroup);
             options.AddRawAttribute("role", "user_role.label");

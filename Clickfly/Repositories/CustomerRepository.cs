@@ -30,6 +30,15 @@ namespace clickfly.Repositories
             customer.created_at = DateTime.Now;
             customer.excluded = false;
             customer.verified = true;
+            
+            if(customer.type == CustomerTypes.Individual)
+            {
+                customer.document_type = "rg";
+            }
+            else
+            {
+                customer.document_type = "cnpj";
+            }
 
             List<string> exclude = new List<string>();
             exclude.Add("updated_at");
@@ -60,11 +69,37 @@ namespace clickfly.Repositories
 
         public async Task<Customer> GetById(string id)
         {
-            Customer customer = await _dataContext.Customers
-            .Include(customer => customer.cards.Where(card => card.excluded == false))
-            .Include(customer => customer.friends.Where(friend => friend.excluded == false))
-            .Include(customer => customer.addresses.Where(address => address.excluded == false))
-            .FirstOrDefaultAsync(customer => customer.id == id && customer.excluded == false);
+            SelectOptions options = new SelectOptions();
+            options.As = "customer";
+            options.Where = $"excluded = false AND id = @id";
+            options.Params = new { id = id };
+
+            options.Include<CustomerCard>(new IncludeModel{
+                As = "cards",
+                ForeignKey = "customer_id",
+                Where = "excluded = false"
+            });
+
+            options.Include<CustomerFriend>(new IncludeModel{
+                As = "friends",
+                ForeignKey = "customer_id",
+                Where = "excluded = false"
+            });
+
+            options.Include<CustomerAddress>(new IncludeModel{
+                As = "addresses",
+                ForeignKey = "customer_id",
+                Where = "excluded = false"
+            });
+
+            options.AddRawAttribute("thumbnail", @"
+                SELECT url FROM files WHERE resource_id = customer.id 
+                AND resource = 'customers' 
+                AND field_name = 'thumbnail' 
+                ORDER BY customer.created_at DESC LIMIT 1
+            ");
+
+            Customer customer = await _dapperWrapper.QuerySingleAsync<Customer>(options);
 
             return customer;
         }
@@ -111,48 +146,17 @@ namespace clickfly.Repositories
 
         public async Task<Customer> Update(Customer customer)
         {
-            var entity = await _dataContext.Customers.FirstAsync(c => c.id == customer.id);
+            List<string> exclude = new List<string>();
+            exclude.Add("created_at");
+            exclude.Add("created_by");
 
-            if(entity != null)
-            {
-                if(entity.name != customer.name)
-                {
-                    entity.name = customer.name;
-                }
+            UpdateOptions options = new UpdateOptions();
+            options.Data = customer;
+            options.Where = "id = @id";
+            options.Transaction = _dBContext.GetTransaction();
+            options.Exclude = exclude;
 
-                if(entity.email != customer.email)
-                {
-                    entity.email = customer.email;
-                }
-
-                if(entity.document_type != customer.document_type)
-                {
-                    entity.document_type = customer.document_type;
-                }
-                
-                if(entity.document != customer.document)
-                {
-                    entity.document = customer.document;
-                }
-                
-                if(entity.birthdate != customer.birthdate)
-                {
-                    entity.birthdate = customer.birthdate;
-                }
-                
-                if(entity.phone_number != customer.phone_number)
-                {
-                    entity.phone_number = customer.phone_number;
-                }
-                
-                if(entity.emergency_phone_number != customer.emergency_phone_number)
-                {
-                    entity.emergency_phone_number = customer.emergency_phone_number;
-                }
-
-                await _dataContext.SaveChangesAsync();
-            }
-
+            await _dapperWrapper.UpdateAsync<Customer>(options);
             return customer;
         }
     }

@@ -61,6 +61,7 @@ namespace clickfly.Services
             filter.page_number = 1;
             filter.order = "DESC";
             filter.order_by = "created_at";
+            filter.text = autocompleteParams.text;
 
             PaginationResult<Aerodrome> paginationResult = await _aerodromeRepository.Pagination(filter);
             List<Aerodrome> aerodromes = paginationResult.data;

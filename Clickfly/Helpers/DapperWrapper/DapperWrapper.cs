@@ -3,6 +3,7 @@ using Dapper;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace clickfly.Data
 {
@@ -30,11 +31,13 @@ namespace clickfly.Data
 
         public async Task<T> QuerySingleAsync<T>(SelectOptions options)
         {
+            options.single = true;
             string pk = GetPK<T>();
             string querySql = GetSelectQuery<T>(options);
-            
+            Console.WriteLine(querySql);
+
             IEnumerable<dynamic> queryResult = await _dBContext.GetConnection().QueryAsync<dynamic>(querySql, options.Params, _dBContext.GetTransaction());
-            
+
             Slapper.AutoMapper.Configuration.AddIdentifier(typeof(T), pk);
             IEnumerable<T> queryResultInstance = Slapper.AutoMapper.MapDynamic<T>(queryResult);
             

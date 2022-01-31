@@ -25,20 +25,10 @@ namespace clickfly.Repositories
 
         public async Task<Passenger> Create(Passenger passenger)
         {
-            passenger.id = Guid.NewGuid().ToString();
             passenger.created_at = DateTime.Now;
             passenger.excluded = false;
 
-            List<string> exclude = new List<string>();
-            exclude.Add("updated_at");
-            exclude.Add("updated_by");
-
-            InsertOptions options = new InsertOptions();
-            options.Data = passenger;
-            options.Exclude = exclude;
-            options.Transaction = _dBContext.GetTransaction();
-
-            await _dapperWrapper.InsertAsync<Passenger>(options);
+            await _dataContext.Passengers.AddAsync(passenger);
             return passenger;
         }
 

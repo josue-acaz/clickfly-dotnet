@@ -8,12 +8,15 @@ namespace clickfly.Data
     {
         public string PK { get; set; }
         public string As { get; set; } /*Opcional, caso não seja fornecido será usado o nome da classe e/ou somente o nome dos campos*/
+        public string Code { get; set; }
         public string Query { get; set; }
         public string Where { get; set; }
+        public string MainWhere { get; set; }
         public object Params { get; set; }
         public Attributes Attributes { get; set; }
         public List<IncludeModel> Includes { get; set; }
         public List<RawAttribute> RawAttributes { get; set; }
+        public bool single { get; set; }
 
         public SelectOptions()
         {

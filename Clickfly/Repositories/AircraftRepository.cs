@@ -66,10 +66,10 @@ namespace clickfly.Repositories
             options.As = "aircraft";
             options.Where = $"{whereSql} AND aircraft.id = @id";
             options.Params = new { id = id };
-            options.AddRawAttribute("thumbnail", aircraftThumbnailSql);
-            options.AddRawAttribute("seating_map", aircraftSeatingMapSql);
             options.Include<Flight>(includeFlight);
             options.Include<AircraftModel>(includeAircraftModel);
+            options.AddRawAttribute("thumbnail", aircraftThumbnailSql);
+            options.AddRawAttribute("seating_map", aircraftSeatingMapSql);
 
             Aircraft aircraft = await _dapperWrapper.QuerySingleAsync<Aircraft>(options);
 
@@ -96,19 +96,22 @@ namespace clickfly.Repositories
             int limit = filter.page_size;
             int offset = (filter.page_number - 1) * filter.page_size;
             string air_taxi_id = filter.air_taxi_id;
+            string text = filter.text;
 
-            string where = $"{whereSql} LIMIT @limit OFFSET @offset";
+            string where = $"{whereSql} AND aircraft.prefix ILIKE @text LIMIT @limit OFFSET @offset";
 
             PaginationFilter paginationFilter = new PaginationFilter(filter.page_number, filter.page_size);
 
             var queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);
             queryParams.Add("offset", offset);
+            queryParams.Add("text", $"%{text}%");
             queryParams.Add("air_taxi_id", air_taxi_id);
 
             SelectOptions options = new SelectOptions();
             options.As = "aircraft";
             options.Where = where;
+            options.MainWhere = $"model.name ILIKE @text";
             options.Params = queryParams;
 
             options.Include<AircraftModel>(new IncludeModel{
@@ -116,13 +119,9 @@ namespace clickfly.Repositories
                 ForeignKey = "aircraft_model_id",
             });
 
-            int total_records = _dapperWrapper.Count<Aircraft>(new CountOptions{
-                As = "aircraft",
-                Where = where,
-                Params = queryParams
-            });
-
             IEnumerable<Aircraft> aircrafts = await _dapperWrapper.QueryAsync<Aircraft>(options);
+            int total_records = aircrafts.Count();
+
             PaginationResult<Aircraft> paginationResult = _utils.CreatePaginationResult<Aircraft>(aircrafts.ToList(), paginationFilter, total_records);
 
             return paginationResult;

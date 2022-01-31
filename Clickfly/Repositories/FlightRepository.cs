@@ -51,10 +51,6 @@ namespace clickfly.Repositories
 
         public async Task<Flight> GetById(string id)
         {
-            SelectOptions options = new SelectOptions();
-            options.Where = $"{whereSql} AND flight.id = @id";
-            options.Params = new { id = id };
-
             IncludeModel includeAircraft = new IncludeModel();
             includeAircraft.As = "aircraft";
             includeAircraft.ForeignKey = "aircraft_id";
@@ -72,11 +68,16 @@ namespace clickfly.Repositories
                 As = "origin_aerodrome",
                 ForeignKey = "origin_aerodrome_id"
             });
+
             includeSegments.ThenInclude<Aerodrome>(new IncludeModel{
                 As = "destination_aerodrome",
                 ForeignKey = "destination_aerodrome_id"
             });
 
+            SelectOptions options = new SelectOptions();
+            options.As = "flight";
+            options.Where = $"{whereSql} AND flight.id = @id";
+            options.Params = new { id = id };
             options.Include<Aircraft>(includeAircraft);
             options.Include<FlightSegment>(includeSegments);
 
@@ -111,10 +112,31 @@ namespace clickfly.Repositories
             queryParams.Add("text", $"%{text}%");
             queryParams.Add("air_taxi_id", air_taxi_id);
 
-            SelectOptions options = new SelectOptions();
-            options.As = "flight";
-            options.Where = where;
-            options.Params = queryParams;
+            IncludeModel includeOriginCity = new IncludeModel();
+            includeOriginCity.As = "city";
+            includeOriginCity.ForeignKey = "city_id";
+            includeOriginCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeDestinationCity = new IncludeModel();
+            includeDestinationCity.As = "city";
+            includeDestinationCity.ForeignKey = "city_id";
+            includeDestinationCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeOriginCity);
+
+            IncludeModel includeDestinationAerodrome = new IncludeModel();
+            includeDestinationAerodrome.As = "destination_aerodrome";
+            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinationAerodrome.ThenInclude<City>(includeDestinationCity);
 
             IncludeModel includeAircraft = new IncludeModel();
             includeAircraft.As = "aircraft";
@@ -124,24 +146,6 @@ namespace clickfly.Repositories
                 ForeignKey = "aircraft_model_id"
             });
 
-            IncludeModel includeCity = new IncludeModel();
-            includeCity.As = "city";
-            includeCity.ForeignKey = "city_id";
-            includeCity.ThenInclude<State>(new IncludeModel{
-                As = "state",
-                ForeignKey = "state_id"
-            });
-
-            IncludeModel includeOriginAerodrome = new IncludeModel();
-            includeOriginAerodrome.As = "origin_aerodrome";
-            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
-            includeOriginAerodrome.ThenInclude<City>(includeCity);
-
-            IncludeModel includeDestinationAerodrome = new IncludeModel();
-            includeDestinationAerodrome.As = "destination_aerodrome";
-            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
-            includeDestinationAerodrome.ThenInclude<City>(includeCity);
-
             IncludeModel includeSegments = new IncludeModel();
             includeSegments.As = "segments";
             includeSegments.ForeignKey = "flight_id";
@@ -149,6 +153,10 @@ namespace clickfly.Repositories
             includeSegments.ThenInclude<Aerodrome>(includeDestinationAerodrome);
             includeSegments.AddRawAttribute("status", "SELECT type FROM flight_segment_status WHERE flight_segment_id = segments.id ORDER BY created_at DESC LIMIT 1");
 
+            SelectOptions options = new SelectOptions();
+            options.As = "flight";
+            options.Where = where;
+            options.Params = queryParams;
             options.Include<Aircraft>(includeAircraft);
             options.Include<FlightSegment>(includeSegments);
             

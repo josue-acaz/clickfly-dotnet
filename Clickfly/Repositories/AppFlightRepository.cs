@@ -141,24 +141,31 @@ namespace clickfly.Repositories
             string destination_city_id = filter.destination_city_id;
             string currentDatetime = _utils.DateTimeToSql(DateTime.Now);
 
-            IncludeModel includeState = new IncludeModel();
-            includeState.As = "state";
-            includeState.ForeignKey = "state_id";
+            IncludeModel includeOriginCity = new IncludeModel();
+            includeOriginCity.As = "city";
+            includeOriginCity.ForeignKey = "city_id";
+            includeOriginCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
 
-            IncludeModel includeCity = new IncludeModel();
-            includeCity.As = "city";
-            includeCity.ForeignKey = "city_id";
-            includeCity.ThenInclude<State>(includeState);
+            IncludeModel includeDestinationCity = new IncludeModel();
+            includeDestinationCity.As = "city";
+            includeDestinationCity.ForeignKey = "city_id";
+            includeDestinationCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
 
             IncludeModel includeOriginAerodrome = new IncludeModel();
             includeOriginAerodrome.As = "origin_aerodrome";
             includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
-            includeOriginAerodrome.ThenInclude<City>(includeCity);
+            includeOriginAerodrome.ThenInclude<City>(includeOriginCity);
 
             IncludeModel includeDestinationAerodrome = new IncludeModel();
             includeDestinationAerodrome.As = "destination_aerodrome";
             includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
-            includeDestinationAerodrome.ThenInclude<City>(includeCity);
+            includeDestinationAerodrome.ThenInclude<City>(includeDestinationCity);
 
             IncludeModel includeAircraftModel = new IncludeModel();
             includeAircraftModel.As = "model";
@@ -187,14 +194,17 @@ namespace clickfly.Repositories
             options.As = "flight_segment";
             options.Params = queryParams;
             options.Where = $@"{whereSql}
-                AND flight.type = @flight_type
                 AND flight_segment.type = 'trip'
-                AND origin_aerodrome.city_id = @origin_city_id
-                AND destination_aerodrome.city_id = @destination_city_id
                 AND (({availableSeatsSql}) - @selected_seats) >= 0 
                 AND flight_segment.departure_datetime > '{currentDatetime}'::date + (120 * interval '1 minute')
                 LIMIT @limit OFFSET @offset
             ";
+            options.MainWhere = $@"
+                flight.type = @flight_type
+                AND origin_aerodrome.city_id = @origin_city_id
+                AND destination_aerodrome.city_id = @destination_city_id
+            ";
+
             options.AddRawAttribute("subtotal", subtotalSql);
             options.AddRawAttribute("available_seats", availableSeatsSql);
 

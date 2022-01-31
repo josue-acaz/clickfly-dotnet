@@ -77,25 +77,28 @@ namespace clickfly.Repositories
             int offset = (filter.page_number - 1) * filter.page_size;
             string text = filter.text;
 
+            Console.WriteLine("Pesquisando...");
+            Console.WriteLine(text);
+
+            string where = $"{whereSql} AND aerodrome.name ILIKE @text OR aerodrome.oaci_code ILIKE @text LIMIT @limit OFFSET @offset";
+
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);
             queryParams.Add("offset", offset);
             queryParams.Add("text", $"%{text}%");
 
-            SelectOptions options = new SelectOptions();
-            options.As = "aerodrome";
-            options.Where = $"{whereSql} AND aerodrome.name ILIKE @text OR aerodrome.oaci_code ILIKE @text LIMIT @limit OFFSET @offset";
-            options.Params = queryParams;
-
             IncludeModel includeCity = new IncludeModel();
             includeCity.As = "city";
             includeCity.ForeignKey = "city_id";
-
             includeCity.ThenInclude<State>(new IncludeModel{
                 As = "state",
                 ForeignKey = "state_id",
             });
 
+            SelectOptions options = new SelectOptions();
+            options.As = "aerodrome";
+            options.Where = where;
+            options.Params = queryParams;
             options.Include<City>(includeCity);
 
             IEnumerable<Aerodrome> aerodromes = await _dapperWrapper.QueryAsync<Aerodrome>(options);

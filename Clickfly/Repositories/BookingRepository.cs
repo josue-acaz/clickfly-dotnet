@@ -70,6 +70,48 @@ namespace clickfly.Repositories
             options.Where = where;
             options.Params = queryParams;
 
+            IncludeModel includeOriginCity = new IncludeModel();
+            includeOriginCity.As = "city";
+            includeOriginCity.ForeignKey = "city_id";
+            includeOriginCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeDestinationCity = new IncludeModel();
+            includeDestinationCity.As = "city";
+            includeDestinationCity.ForeignKey = "city_id";
+            includeDestinationCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeOriginCity);
+
+            IncludeModel includeDestinAerodrome = new IncludeModel();
+            includeDestinAerodrome.As = "destination_aerodrome";
+            includeDestinAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinAerodrome.ThenInclude<City>(includeDestinationCity);
+
+            IncludeModel includeAircraft = new IncludeModel();
+            includeAircraft.As = "aircraft";
+            includeAircraft.ForeignKey = "aircraft_id";
+            includeAircraft.ThenInclude<AircraftModel>(new IncludeModel{
+                As = "model",
+                ForeignKey = "aircraft_model_id"
+            });
+
+            IncludeModel includeFlightSegment = new IncludeModel();
+            includeFlightSegment.As = "flight_segment";
+            includeFlightSegment.ForeignKey = "flight_segment_id";
+            includeFlightSegment.ThenInclude<Aircraft>(includeAircraft);
+            includeFlightSegment.ThenInclude<Aerodrome>(includeOriginAerodrome);
+            includeFlightSegment.ThenInclude<Aerodrome>(includeDestinAerodrome);
+
+            options.Include<FlightSegment>(includeFlightSegment);
             options.Include<BookingStatus>(new IncludeModel{
                 As = "status",
                 ForeignKey = "booking_id"
@@ -82,33 +124,6 @@ namespace clickfly.Repositories
                 As = "passengers",
                 ForeignKey = "booking_id"
             });
-
-            IncludeModel includeCity = new IncludeModel();
-            includeCity.As = "city";
-            includeCity.ForeignKey = "city_id";
-            //includeCity.AddRawAttribute("full_name", "CONCAT(city.name, ' • ', state.prefix)");
-            includeCity.ThenInclude<State>(new IncludeModel{
-                As = "state",
-                ForeignKey = "state_id"
-            });
-
-            IncludeModel includeOriginAerodrome = new IncludeModel();
-            includeOriginAerodrome.As = "origin_aerodrome";
-            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
-            includeOriginAerodrome.ThenInclude<City>(includeCity);
-
-            IncludeModel includeDestinAerodrome = new IncludeModel();
-            includeDestinAerodrome.As = "destination_aerodrome";
-            includeDestinAerodrome.ForeignKey = "destination_aerodrome_id";
-            includeDestinAerodrome.ThenInclude<City>(includeCity);
-
-            IncludeModel includeFlightSegment = new IncludeModel();
-            includeFlightSegment.As = "flight_segment";
-            includeFlightSegment.ForeignKey = "flight_segment_id";
-            includeFlightSegment.ThenInclude<Aerodrome>(includeOriginAerodrome);
-            includeFlightSegment.ThenInclude<Aerodrome>(includeDestinAerodrome);
-
-            options.Include<FlightSegment>(includeFlightSegment);
 
             IEnumerable<Booking> bookings = await _dapperWrapper.QueryAsync<Booking>(options);
             int total_records = bookings.Count();

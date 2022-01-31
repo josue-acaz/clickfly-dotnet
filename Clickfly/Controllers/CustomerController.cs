@@ -113,7 +113,7 @@ namespace clickfly.Controllers
         {
             try
             {
-                Console.WriteLine("AQUI");
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
                 Authenticated authenticated = await _customerService.Authenticate(authenticateParams);
                 return authenticated;
             }
@@ -130,6 +130,7 @@ namespace clickfly.Controllers
         {
             try
             {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
                 using var transaction = _dataContext.Database.BeginTransaction();
 
                 string url = await _customerService.Thumbnail(thumbnailRequest);

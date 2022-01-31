@@ -89,11 +89,6 @@ namespace clickfly.Services
             string flightSegmentId = booking.flight_segment_id;
             string customerAddressId = booking.customer_address_id;
 
-            Console.WriteLine(customer_id);
-            Console.WriteLine(customerCardId);
-            Console.WriteLine(flightSegmentId);
-            Console.WriteLine(customerAddressId);
-
             string[] selected_passengers = booking.selected_passengers;
             string paymentMethod = booking.payment_method;
             int installments = booking.installments;
@@ -208,7 +203,9 @@ namespace clickfly.Services
 
             if(customerIsPassenger)
             {
+                Console.WriteLine("CUSTOMER IS PASSENGER 1");
                 Passenger passenger = new Passenger();
+                passenger.id = Guid.NewGuid().ToString();
                 passenger.name = customer.name;
                 passenger.email = customer.email;
                 passenger.birthdate = customer.birthdate;
@@ -227,15 +224,15 @@ namespace clickfly.Services
                     ticket.qr_code = boardingUrl/*_utils.GenerateQRCode(boardingUrl)*/;
                     ticket.passenger_id = passenger.id;
                     ticket.flight_segment_id = flightSegmentId;
-                    passenger.ticket = ticket;
                 }
 
                 await _passengerRepository.Create(passenger);
+                Console.WriteLine("CUSTOMER IS PASSENGER 2");
             }
             
-            List<Passenger> Passengers = new List<Passenger>();
             for (int index = 0; index < customerFriendPassengers.Length; index++)
             {
+                Console.WriteLine("FRIENDS");
                 CustomerFriend customerFriendPassenger = customerFriendPassengers[index];
 
                 Passenger passenger = new Passenger();
@@ -254,20 +251,13 @@ namespace clickfly.Services
                 if(bookingStatus == BookingStatusTypes.Approved)
                 {
                     Ticket ticket = new Ticket();
-                    ticket.id = Guid.NewGuid().ToString();
                     ticket.qr_code = boardingUrl/*_utils.GenerateQRCode(boardingUrl)*/;
                     ticket.passenger_id = passenger.id;
                     ticket.flight_segment_id = flightSegmentId;
-                    passenger.ticket = ticket;
                 }
 
-                Passengers.Add(passenger);
-            }
-
-            Passenger[] _passengers = Passengers.ToArray<Passenger>();
-            if(_passengers.Length > 0)
-            {
-                await _passengerRepository.RangeCreate(_passengers);
+                await _passengerRepository.Create(passenger);
+                Console.WriteLine("FRIENDS 2");
             }
 
             BookingStatus createBookingStatus = new BookingStatus();

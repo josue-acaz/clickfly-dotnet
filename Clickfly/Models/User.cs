@@ -24,5 +24,8 @@ namespace clickfly.Models
 
         [ForeignKey("air_taxi_id")]
         public AirTaxi air_taxi { get; set; }
+
+        [NotMapped]
+        public string teste { get; set; }
     }
 }

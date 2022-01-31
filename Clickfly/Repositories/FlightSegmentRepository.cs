@@ -53,24 +53,31 @@ namespace clickfly.Repositories
 
         public async Task<FlightSegment> GetById(string id)
         {
-            IncludeModel includeState = new IncludeModel();
-            includeState.As = "state";
-            includeState.ForeignKey = "state_id";
+            IncludeModel includeOriginCity = new IncludeModel();
+            includeOriginCity.As = "city";
+            includeOriginCity.ForeignKey = "city_id";
+            includeOriginCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
 
-            IncludeModel includeCity = new IncludeModel();
-            includeCity.As = "city";
-            includeCity.ForeignKey = "city_id";
-            includeCity.ThenInclude<State>(includeState);
+            IncludeModel includeDestinationCity = new IncludeModel();
+            includeDestinationCity.As = "city";
+            includeDestinationCity.ForeignKey = "city_id";
+            includeDestinationCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
 
             IncludeModel includeOriginAerodrome = new IncludeModel();
             includeOriginAerodrome.As = "origin_aerodrome";
             includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
-            includeOriginAerodrome.ThenInclude<City>(includeCity);
+            includeOriginAerodrome.ThenInclude<City>(includeOriginCity);
 
             IncludeModel includeDestinationAerodrome = new IncludeModel();
             includeDestinationAerodrome.As = "destination_aerodrome";
             includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
-            includeDestinationAerodrome.ThenInclude<City>(includeCity);
+            includeDestinationAerodrome.ThenInclude<City>(includeDestinationCity);
 
             IncludeModel includeAircraftModel = new IncludeModel();
             includeAircraftModel.As = "model";
@@ -108,16 +115,39 @@ namespace clickfly.Repositories
             int offset = (filter.page_number - 1) * filter.page_size;
             string flight_id = filter.flight_id;
             string text = filter.text;
-            string where = $"{whereSql} AND flight.excluded = false";
+            string where = $"{whereSql}";
+            string mainWhere = $"flight.excluded = false";
 
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);
             queryParams.Add("offset", offset);
             queryParams.Add("text", $"%{text}%");
 
-            SelectOptions options = new SelectOptions();
-            options.As = "flight_segment";
-            options.Params = queryParams;
+            IncludeModel includeOriginCity = new IncludeModel();
+            includeOriginCity.As = "city";
+            includeOriginCity.ForeignKey = "city_id";
+            includeOriginCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeDestinationCity = new IncludeModel();
+            includeDestinationCity.As = "city";
+            includeDestinationCity.ForeignKey = "city_id";
+            includeDestinationCity.ThenInclude<State>(new IncludeModel{
+                As = "state",
+                ForeignKey = "state_id"
+            });
+
+            IncludeModel includeOriginAerodrome = new IncludeModel();
+            includeOriginAerodrome.As = "origin_aerodrome";
+            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
+            includeOriginAerodrome.ThenInclude<City>(includeOriginCity);
+
+            IncludeModel includeDestinationAerodrome = new IncludeModel();
+            includeDestinationAerodrome.As = "destination_aerodrome";
+            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
+            includeDestinationAerodrome.ThenInclude<City>(includeDestinationCity);
 
             IncludeModel includeAircraft = new IncludeModel();
             includeAircraft.As = "aircraft";
@@ -127,31 +157,13 @@ namespace clickfly.Repositories
                 ForeignKey = "aircraft_model_id"
             });
 
-            IncludeModel includeCity = new IncludeModel();
-            includeCity.As = "city";
-            includeCity.ForeignKey = "city_id";
-            includeCity.ThenInclude<State>(new IncludeModel{
-                As = "state",
-                ForeignKey = "state_id"
-            });
-
-            IncludeModel includeOriginAerodrome = new IncludeModel();
-            includeOriginAerodrome.As = "origin_aerodrome";
-            includeOriginAerodrome.ForeignKey = "origin_aerodrome_id";
-            includeOriginAerodrome.ThenInclude<City>(includeCity);
-
-            IncludeModel includeDestinationAerodrome = new IncludeModel();
-            includeDestinationAerodrome.As = "destination_aerodrome";
-            includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
-            includeDestinationAerodrome.ThenInclude<City>(includeCity);
-
+            SelectOptions options = new SelectOptions();
+            options.As = "flight_segment";
+            options.Params = queryParams;
             options.Include<Aircraft>(includeAircraft);
             options.Include<Aerodrome>(includeOriginAerodrome);
             options.Include<Aerodrome>(includeDestinationAerodrome);
-            options.Include<Flight>(new IncludeModel{
-                As = "flight",
-                ForeignKey = "flight_id"
-            });
+            options.Include<Flight>(new IncludeModel{ As = "flight", ForeignKey = "flight_id" });
 
             if(flight_id != null)
             {
@@ -160,7 +172,7 @@ namespace clickfly.Repositories
             }
             else
             {
-                where += " AND double_check.resource = 'flight_segments' AND double_check.approved IS NULL ";
+                mainWhere += " AND double_check.resource = 'flight_segments' AND double_check.approved IS NULL ";
                 
                 IncludeModel includeDoubleCheck = new IncludeModel();
                 includeDoubleCheck.As = "double_check";
@@ -177,6 +189,7 @@ namespace clickfly.Repositories
 
             where += " LIMIT @limit OFFSET @offset ";
             options.Where = where;
+            options.MainWhere = mainWhere;
 
             IEnumerable<FlightSegment> flightSegments = await _dapperWrapper.QueryAsync<FlightSegment>(options);
             int total_records = flightSegments.Count();
