@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using clickfly.Models;
 using clickfly.ViewModels;
+using PagarmeCoreApi.Standard.Models;
 
 namespace clickfly.Services
 {

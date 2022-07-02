@@ -109,6 +109,7 @@ namespace clickfly.Controllers
         {
             try
             {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
                 using var transaction = _dataContext.Database.BeginTransaction();
 
                 string url = await _aircraftService.Thumbnail(thumbnailRequest);

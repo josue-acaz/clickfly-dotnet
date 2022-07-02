@@ -89,7 +89,7 @@ namespace clickfly.Repositories
         {
             SelectOptions options = new SelectOptions();
             options.As = "flight_segment";
-            options.Where = $"flight_segment.excluded = false AND flight_segment.flight_id = @flight_id ORDER BY flight_segment.number DESC LIMIT 1 OFFSET 0";
+            options.Where = $"flight_segment.excluded = false AND flight_segment.flight_id = @flight_id ORDER BY flight_segment.number DESC";
             options.Params = new { flight_id = flight_id };
 
             FlightSegment flightSegment = await _dapperWrapper.QuerySingleAsync<FlightSegment>(options);

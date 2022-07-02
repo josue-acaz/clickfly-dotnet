@@ -22,7 +22,6 @@ namespace clickfly.Repositories
 
         public async Task<Booking> Create(Booking booking)
         {
-            booking.id = Guid.NewGuid().ToString();
             booking.created_at = DateTime.Now;
             booking.excluded = false;
 
@@ -57,7 +56,7 @@ namespace clickfly.Repositories
             string customer_id = filter.customer_id;
             string text = filter.text;
 
-            string where = $"{whereSql} LIMIT @limit OFFSET @offset";
+            string where = $"{whereSql} AND booking.customer_id = @customer_id LIMIT @limit OFFSET @offset";
 
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             queryParams.Add("limit", limit);

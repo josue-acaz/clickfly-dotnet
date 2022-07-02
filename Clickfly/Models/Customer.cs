@@ -14,9 +14,6 @@ namespace clickfly.Models
         public string emergency_phone_number { get; set; }
         public string document { get; set; }
         public string document_type { get; set; }
-
-        [NotMapped]
-        public virtual string password { get; set; }
         public string password_hash { get; set; }
         public DateTime? password_reset_expires { get; set; }
         public string password_reset_token { get; set; }
@@ -28,6 +25,12 @@ namespace clickfly.Models
         public List<CustomerAddress> addresses { get; set; }
         public List<CustomerCard> cards { get; set; }
         public List<CustomerFriend> friends { get; set; }
+
+        [NotMapped]
+        public string password { get; set; }
+
+        [NotMapped]
+        public string confirm_password { get; set; }
 
         [NotMapped]
         public string thumbnail { get; set; }

@@ -113,7 +113,6 @@ namespace clickfly.Controllers
         {
             try
             {
-                GetSessionInfo(Request.Headers["Authorization"], UserTypes.Customer);
                 Authenticated authenticated = await _customerService.Authenticate(authenticateParams);
                 return authenticated;
             }
@@ -154,6 +153,51 @@ namespace clickfly.Controllers
                 return HttpResponse();
             }
             catch (Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
+        [HttpPost("forgot-password/{email}")]
+        public async Task<ActionResult> ForgotPassword(string email)
+        {
+            try
+            {
+                await _customerService.ForgotPassword(email);
+                return HttpResponse();
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
+        [HttpGet("check-reset-password/{token}")]
+        public async Task<ActionResult> CheckResetPassword(string token)
+        {
+            try
+            {
+                bool isValid = await _customerService.CheckResetPassword(token);
+                return HttpResponse(isValid);
+            }
+            catch(Exception ex)
+            {
+                Notify(ex.ToString());
+                return HttpResponse();
+            }
+        }
+
+        [HttpPut("reset-password")]
+        public async Task<ActionResult> ResetPassword([FromBody]ResetPasswordParams resetPasswordParams)
+        {
+            try
+            {
+                await _customerService.ResetPassword(resetPasswordParams);
+                return HttpResponse();
+            }
+            catch(Exception ex)
             {
                 Notify(ex.ToString());
                 return HttpResponse();

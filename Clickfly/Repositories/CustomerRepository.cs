@@ -5,6 +5,7 @@ using clickfly.Data;
 using clickfly.Models;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using BCryptNet = BCrypt.Net.BCrypt;
 using Npgsql;
 using System.Linq;
 using clickfly.ViewModels;
@@ -26,19 +27,9 @@ namespace clickfly.Repositories
 
         public async Task<Customer> Create(Customer customer)
         {
-            customer.id = Guid.NewGuid().ToString();
             customer.created_at = DateTime.Now;
             customer.excluded = false;
             customer.verified = true;
-            
-            if(customer.type == CustomerTypes.Individual)
-            {
-                customer.document_type = "rg";
-            }
-            else
-            {
-                customer.document_type = "cnpj";
-            }
 
             List<string> exclude = new List<string>();
             exclude.Add("updated_at");
@@ -61,9 +52,12 @@ namespace clickfly.Repositories
 
         public async Task<Customer> GetByEmail(string email)
         {
-            Customer customer = await _dataContext.Customers
-            .FirstOrDefaultAsync(customer => customer.email == email && customer.excluded == false);
+            SelectOptions options = new SelectOptions();
+            options.As = "customer";
+            options.Where = $"{whereSql} AND customer.email = @email";
+            options.Params = new { email = email };
 
+            Customer customer = await _dapperWrapper.QuerySingleAsync<Customer>(options);
             return customer;
         }
 
@@ -106,9 +100,12 @@ namespace clickfly.Repositories
 
         public async Task<Customer> GetByPasswordResetToken(string password_reset_token)
         {
-            Customer customer = await _dataContext.Customers
-            .FirstOrDefaultAsync(customer => customer.password_reset_token == password_reset_token && customer.excluded == false);
+            SelectOptions options = new SelectOptions();
+            options.As = "customer";
+            options.Where = $"{whereSql} AND customer.password_reset_token = @password_reset_token";
+            options.Params = new { password_reset_token = password_reset_token };
 
+            Customer customer = await _dapperWrapper.QuerySingleAsync<Customer>(options);
             return customer;
         }
 
@@ -149,6 +146,7 @@ namespace clickfly.Repositories
             List<string> exclude = new List<string>();
             exclude.Add("created_at");
             exclude.Add("created_by");
+            exclude.Add("password_hash");
 
             UpdateOptions options = new UpdateOptions();
             options.Data = customer;
@@ -158,6 +156,19 @@ namespace clickfly.Repositories
 
             await _dapperWrapper.UpdateAsync<Customer>(options);
             return customer;
+        }
+
+        public async Task UpdatePassword(Customer customer)
+        {
+            string querySql = $@"UPDATE customers SET password_hash = @password_hash, password_reset_token = '', password_reset_expires = null WHERE id = @id";
+            string password_hash = BCryptNet.HashPassword(customer.password);
+
+            object queryParams = new {
+                id = customer.id,
+                password_hash = password_hash,
+            };
+
+            await _dBContext.GetConnection().ExecuteAsync(querySql, queryParams, _dBContext.GetTransaction());
         }
     }
 }

@@ -19,7 +19,6 @@ namespace clickfly.Repositories
 
         public async Task<BookingPayment> Create(BookingPayment bookingPayment)
         {
-            bookingPayment.id = Guid.NewGuid().ToString();
             bookingPayment.created_at = DateTime.Now;
             bookingPayment.excluded = false;
 

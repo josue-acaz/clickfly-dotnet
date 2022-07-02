@@ -35,6 +35,7 @@ namespace clickfly.Controllers
         {
             try
             {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
                 using var transaction = _dataContext.Database.BeginTransaction();
             
                 aircraftImage = await _aircraftImageService.Save(aircraftImage);
@@ -54,6 +55,7 @@ namespace clickfly.Controllers
         {
             try
             {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
                 PaginationResult<AircraftImage> aircraftImages = await _aircraftImageService.Pagination(filter);
                 return HttpResponse(aircraftImages);
             }
@@ -69,6 +71,7 @@ namespace clickfly.Controllers
         {
             try
             {
+                GetSessionInfo(Request.Headers["Authorization"], UserTypes.User);
                 await _aircraftImageService.Delete(id);
                 return HttpResponse();
             }

@@ -14,12 +14,13 @@ namespace clickfly
         bool IsStrongPassword(string password);
         Installment[] GetInstallments(decimal subtotal, int max = 8);
         PaginationResult<Type> CreatePaginationResult<Type>(List<Type> data, PaginationFilter filter, int totalRecords);
-        string GetBookingStatus(string chargeStatus);
+        string GetBookingStatus(string orderStatus);
         string RemoveWhiteSpaces(string value);
         bool IsValidEmail(string email);
         string GetExpCard(int exp_month, int exp_year);
         string DateTimeToSql(DateTime dateTime);
         string GenerateQRCode(string value);
+        string[] GetPhoneNumber(string phone_number);
         string RandomHexString();
     }
 }

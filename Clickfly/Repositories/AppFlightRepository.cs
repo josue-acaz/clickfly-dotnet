@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Services;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using clickfly.ViewModels;
@@ -13,15 +14,17 @@ namespace clickfly.Repositories
 {
     public class AppFlightRepository : BaseRepository<FlightSegment>, IAppFlightRepository
     {
+        protected readonly IUploadService _uploadService;
+
         private static string whereSql = $"flight_segment.excluded = false";
         private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
         private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))) / 60";
         private static string subtotalSql = $"SELECT flight_segment.price_per_seat * @selected_seats";
-        private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
+        //private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
 
-        public AppFlightRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
+        public AppFlightRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils, IUploadService uploadService) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-
+            _uploadService = uploadService;
         }
 
         public async Task<PaginationResult<AppFlight>> Overview(PaginationFilter filter)
@@ -175,7 +178,7 @@ namespace clickfly.Repositories
             includeAircraft.As = "aircraft";
             includeAircraft.ForeignKey = "aircraft_id";
             includeAircraft.AddRawAttribute("flight_time", flightTimeSql);
-            includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
+            //includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
             includeAircraft.ThenInclude<AircraftModel>(includeAircraftModel);
 
             IncludeModel includeFlight = new IncludeModel();
@@ -214,9 +217,21 @@ namespace clickfly.Repositories
             options.Include<Aerodrome>(includeDestinationAerodrome);
 
             IEnumerable<FlightSegment> flightSegments = await _dapperWrapper.QueryAsync<FlightSegment>(options);
-            
+            List<FlightSegment> flightSegmentsList = flightSegments.ToList();
+
+            for (int i = 0; i < flightSegmentsList.Count; i++)
+            {
+                File thumbnailFile = await _dapperWrapper.QuerySingleAsync<File>(new SelectOptions{
+                    As = "file",
+                    Where = $"file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = 'thumbnail'",
+                    Params = new { aircraft_id = flightSegmentsList[i].aircraft.id },
+                });
+
+                flightSegmentsList[i].aircraft.thumbnail = _uploadService.GetPreSignedUrl(thumbnailFile.key);
+            }
+
             int total_records = flightSegments.Count();
-            PaginationResult<FlightSegment> paginationResult = _utils.CreatePaginationResult<FlightSegment>(flightSegments.ToList(), filter, total_records);
+            PaginationResult<FlightSegment> paginationResult = _utils.CreatePaginationResult<FlightSegment>(flightSegmentsList, filter, total_records);
 
             return paginationResult;
         }

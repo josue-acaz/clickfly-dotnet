@@ -31,5 +31,11 @@ namespace clickfly.Helpers
 
             return JsonConvert.DeserializeObject<Type>(sessionInfo.Value);
         }
+
+        public string GetValue(string key)
+        {
+            SessionInfo sessionInfo = _sessionInfo.Where(sessionInfo => sessionInfo.Key == key).FirstOrDefault();
+            return sessionInfo.Value;
+        }
     }
 }

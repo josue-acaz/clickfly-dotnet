@@ -16,5 +16,6 @@ namespace clickfly.Repositories
         Task<Customer> Update(Customer customer);
         Task Delete(string id);
         Task<PaginationResult<Customer>> Pagination(PaginationFilter filter);
+        Task UpdatePassword(Customer customer);
     }
 }

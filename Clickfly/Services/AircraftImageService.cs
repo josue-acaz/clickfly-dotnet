@@ -53,22 +53,24 @@ namespace clickfly.Services
         public async Task<AircraftImage> Save(AircraftImage aircraftImage)
         {
             IFormFile file = aircraftImage.file;
-            UploadResponse uploadResponse = await _uploadService.UploadFileAsync(file);
+            string user_id = _informer.GetValue(UserIdTypes.UserId);
 
+            string keyName = _utils.RandomBytes(20);
+            await _uploadService.UploadFileAsync(file, keyName);
             aircraftImage = await _aircraftImageRepository.Create(aircraftImage);
 
             File createFile = new File();
             createFile.resource_id = aircraftImage.id;
             createFile.resource = Resources.AircraftImages;
-            createFile.key = uploadResponse.Key;
-            createFile.name = uploadResponse.Name;
-            createFile.size = uploadResponse.Size;
-            createFile.url = uploadResponse.Url;
-            createFile.mimetype = uploadResponse.MimeType;
-            createFile.field_name = "aircraft_image";
+            createFile.key = keyName;
+            createFile.name = file.Name;
+            createFile.size = file.Length;
+            createFile.mimetype = file.ContentType;
+            createFile.field_name = FieldNames.AircraftImage;
+            createFile.created_by = user_id;
 
             createFile = await _fileRepository.Create(createFile);
-            aircraftImage.url = createFile.url;
+            aircraftImage.url = _uploadService.GetPreSignedUrl(keyName);
             aircraftImage.file = null;
     
             return aircraftImage;

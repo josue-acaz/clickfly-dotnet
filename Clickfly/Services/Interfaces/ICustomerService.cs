@@ -12,6 +12,7 @@ namespace clickfly.Services
         Task<Customer> GetById(string id);
         Task<Authenticated> Authenticate(AuthenticateParams authenticateParams);
         Task ForgotPassword(string email);
+        Task<bool> CheckResetPassword(string token);
         Task ResetPassword(ResetPasswordParams resetPasswordParams);
         Task ActivateAccount(string token);
         Task<string> Thumbnail(ThumbnailRequest thumbnailRequest);

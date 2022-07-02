@@ -10,7 +10,7 @@ namespace PagarmeCoreApi.Standard
 
         //The username to use with basic authentication
         //TODO: Replace the BasicAuthUserName with an appropriate value
-        public static string BasicAuthUserName = "sk_test_4qPp7JWsllfO1Doy";
+        public static string BasicAuthUserName = "sk_test_1xMW8RaH9MH95vR6"; //pk_test_2ko9m6aik3idnbpG
 
         //The password to use with basic authentication
         //TODO: Replace the BasicAuthPassword with an appropriate value

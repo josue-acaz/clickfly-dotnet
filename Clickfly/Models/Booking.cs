@@ -39,9 +39,12 @@ namespace clickfly.Models
 
         [NotMapped]
         public bool customer_is_passenger { get; set; }
+        
+        [NotMapped]
+        public string card_cvv { get; set; }
 
         [NotMapped]
-        public GetTransactionResponse payment_transaction { get; set; }
+        public GetPixTransactionResponse pix_transaction_response { get; set; }
         
         public Booking()
         {

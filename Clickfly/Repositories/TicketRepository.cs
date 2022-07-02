@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Services;
 using Npgsql;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +16,16 @@ namespace clickfly.Repositories
 {
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
+        protected readonly IUploadService _uploadService;
         private static string fieldsSql = "*";
         private static string fromSql = "tickets as ticket";
         private static string whereSql = "ticket.excluded = false";
         private static string deleteSql = "UPDATE tickets SET excluded = true WHERE id = @id";
-        private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
+        //private static string aircraftThumbnailSql = "SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
 
-        public TicketRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
+        public TicketRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils, IUploadService uploadService) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-
+            _uploadService = uploadService;
         }
 
         public async Task<Ticket> Create(Ticket ticket)
@@ -76,7 +78,6 @@ namespace clickfly.Repositories
             IncludeModel includeAircraft = new IncludeModel();
             includeAircraft.As = "aircraft";
             includeAircraft.ForeignKey = "aircraft_id";
-            includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
             includeAircraft.ThenInclude<AircraftModel>(includeAircraftModel);
 
             IncludeModel includeOriginAerodrome = new IncludeModel();
@@ -120,6 +121,14 @@ namespace clickfly.Repositories
 
             Ticket ticket = await _dapperWrapper.QuerySingleAsync<Ticket>(options);
 
+            File thumbnailFile = await _dapperWrapper.QuerySingleAsync<File>(new SelectOptions{
+                As = "file",
+                Where = $"file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = 'thumbnail'",
+                Params = new { aircraft_id = ticket.flight_segment.aircraft.id },
+            });
+
+            ticket.flight_segment.aircraft.thumbnail = _uploadService.GetPreSignedUrl(thumbnailFile.key);
+
             return ticket;
         }
 
@@ -152,7 +161,6 @@ namespace clickfly.Repositories
             IncludeModel includeAircraft = new IncludeModel();
             includeAircraft.As = "aircraft";
             includeAircraft.ForeignKey = "aircraft_id";
-            includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
             includeAircraft.ThenInclude<AircraftModel>(includeAircraftModel);
 
             IncludeModel includeOriginAerodrome = new IncludeModel();
@@ -189,6 +197,18 @@ namespace clickfly.Repositories
 
             int total_records = await _dataContext.Tickets.CountAsync();
             IEnumerable<Ticket> tickets = await _dapperWrapper.QueryAsync<Ticket>(options);
+
+            List<Ticket> ticketsList = tickets.ToList();
+            for (int i = 0; i < ticketsList.Count; i++)
+            {
+                File thumbnailFile = await _dapperWrapper.QuerySingleAsync<File>(new SelectOptions{
+                    As = "file",
+                    Where = $"file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = 'thumbnail'",
+                    Params = new { aircraft_id = ticketsList[i].flight_segment.aircraft.id },
+                });
+
+                ticketsList[i].flight_segment.aircraft.thumbnail = _uploadService.GetPreSignedUrl(thumbnailFile.key);
+            }
 
             PaginationResult<Ticket> paginationResult = _utils.CreatePaginationResult<Ticket>(tickets.ToList(), filter, total_records);
 

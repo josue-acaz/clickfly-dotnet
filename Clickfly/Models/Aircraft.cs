@@ -18,9 +18,9 @@ namespace clickfly.Models
         public float maximum_speed { get; set; }
         public float cruising_speed { get; set; }
         public float range { get; set; }
-        public float fixed_price { get; set; }
+        public int fixed_price { get; set; }
         public float fixed_price_radius { get; set; }
-        public float price_per_km { get; set; }
+        public int price_per_km { get; set; }
         public string description { get; set; }
         public bool pressurized { get; set; }
         public string aircraft_model_id { get; set; }

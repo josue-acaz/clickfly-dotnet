@@ -5,6 +5,7 @@ using clickfly.Repositories;
 using PagarmeCoreApi.Standard.Controllers;
 using PagarmeCoreApi.Standard.Models;
 using Microsoft.Extensions.Options;
+using PagarmeCoreApi.Standard.Exceptions;
 using clickfly.Helpers;
 using clickfly.ViewModels;
 using System.Collections.Generic;
@@ -48,48 +49,49 @@ namespace clickfly.Services
             string customerId = customerCard.customer_id;
             Customer customer = await _customerRepository.GetById(customerId);
 
-            GetCardResponse cardResponse = await _customersController.GetCardAsync(customer.customer_id, customerCard.card_id);
+            try
+            {
+                GetCardResponse cardResponse = await _customersController.GetCardAsync(customer.customer_id, customerCard.card_id);
             
-            customerCard.brand = cardResponse.Brand;
-            customerCard.exp_year = cardResponse.ExpYear;
-            customerCard.exp_month = cardResponse.ExpMonth;
-            customerCard.holder_name = cardResponse.HolderName;
-            customerCard.number = $"•••• {cardResponse.LastFourDigits}";
-            customerCard.exp_date = _utils.GetExpCard(cardResponse.ExpMonth, cardResponse.ExpYear);
+                customerCard.brand = cardResponse.Brand;
+                customerCard.exp_year = cardResponse.ExpYear;
+                customerCard.exp_month = cardResponse.ExpMonth;
+                customerCard.holder_name = cardResponse.HolderName;
+                customerCard.number = $"•••• {cardResponse.LastFourDigits}";
+                customerCard.exp_date = _utils.GetExpCard(cardResponse.ExpMonth, cardResponse.ExpYear);
+            }
+            catch(ErrorException ex)
+            {
+                Console.WriteLine(ex.Errors);
+            }
 
             return customerCard;
         }
 
         public async Task<PaginationResult<CustomerCard>> Pagination(PaginationFilter filter)
         {
-            Customer authCustomer = _informer.GetValue<Customer>(UserTypes.Customer);
-            filter.customer_id = authCustomer.id;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(filter));
+            filter.customer_id = _informer.GetValue(UserIdTypes.CustomerId);
+            Customer customer = await _customerRepository.GetById(filter.customer_id);
+            ListCardsResponse cardsResponse = await _customersController.GetCardsAsync(customer.customer_id, filter.page_number, filter.page_size);
+            List<CustomerCard> customerCards = new List<CustomerCard>();
 
-            PaginationResult<CustomerCard> paginationResult = await _customerCardRepository.Pagination(filter);
-            CustomerCard[] customerCards = paginationResult.data.ToArray();
-
-            Customer customer = await _customerRepository.GetById(authCustomer.id);
-            
-            for (int index = 0; index < customerCards.Length; index++)
+            List<GetCardResponse> cards = cardsResponse.Data;
+            foreach(GetCardResponse cardResponse in cards)
             {
-                CustomerCard customerCard = customerCards[index];
-                try
-                {
-                    GetCardResponse cardResponse = await _customersController.GetCardAsync(customer.customer_id, customerCard.card_id);
-            
-                    customerCard.brand = cardResponse.Brand;
-                    customerCard.exp_year = cardResponse.ExpYear;
-                    customerCard.exp_month = cardResponse.ExpMonth;
-                    customerCard.holder_name = cardResponse.HolderName;
-                    customerCard.number = $"•••• {cardResponse.LastFourDigits}";
-                    customerCard.exp_date = _utils.GetExpCard(cardResponse.ExpMonth, cardResponse.ExpYear);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
+                string customer_card_id = cardResponse.Metadata["customer_card_id"];
+                CustomerCard customerCard = await _customerCardRepository.GetById(customer_card_id);
+                customerCard.brand = cardResponse.Brand;
+                customerCard.exp_year = cardResponse.ExpYear;
+                customerCard.exp_month = cardResponse.ExpMonth;
+                customerCard.holder_name = cardResponse.HolderName;
+                customerCard.number = $"•••• {cardResponse.LastFourDigits}";
+                customerCard.exp_date = _utils.GetExpCard(cardResponse.ExpMonth, cardResponse.ExpYear);
+
+                customerCards.Add(customerCard);
             }
 
+            PaginationResult<CustomerCard> paginationResult = _utils.CreatePaginationResult<CustomerCard>(customerCards, filter, customerCards.Count);
             return paginationResult;
         }
 

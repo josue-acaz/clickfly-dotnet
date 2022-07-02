@@ -145,7 +145,7 @@ namespace clickfly.Services
                     value = excludeRoles[i]
                 });
             }
-            
+
             PaginationResult<User> paginationResult = await _userRepository.Pagination(filter);
             return paginationResult;
         }

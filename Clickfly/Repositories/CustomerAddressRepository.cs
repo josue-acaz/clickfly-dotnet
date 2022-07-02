@@ -24,7 +24,6 @@ namespace clickfly.Repositories
 
         public async Task<CustomerAddress> Create(CustomerAddress customerAddress)
         {
-            customerAddress.id = Guid.NewGuid().ToString();
             customerAddress.created_at = DateTime.Now;
             customerAddress.excluded = false;
 

@@ -112,6 +112,7 @@ namespace clickfly
 
     static class FieldNames {
         public const string Thumbnail = "thumbnail";
+        public const string AircraftImage = "aircraft_image";
     };
 
     static class FlightTypes {
@@ -139,5 +140,29 @@ namespace clickfly
         public const string Update = "update";
         public const string Read = "read";
         public const string Delete = "delete";
+    };
+
+    static class OrderStatus {
+        public const string Pending = "pending";
+        public const string Paid = "paid";
+        public const string Canceled = "canceled";
+        public const string Failed = "failed";
+    };
+
+    static class ChargeStatus {
+        public const string AuthorizedPendingCapture = "authorized_pending_capture";
+        public const string NotAuthorized = "not_authorized";
+        public const string Captured = "captured";
+        public const string PartialCapture = "partial_capture";
+        public const string WaitingCapture = "waiting_capture";
+        public const string Refunded = "refunded";
+        public const string Voided = "voided";
+        public const string PartialRefunded = "partial_refunded";
+        public const string PartialVoid = "partial_void";
+        public const string ErrorOnVoiding = "error_on_voiding";
+        public const string ErrorOnRefunding = "error_on_refunding";
+        public const string WaitingCancellation = "waiting_cancellation";
+        public const string WithError = "with_error";
+        public const string Failed = "failed";
     };
 }

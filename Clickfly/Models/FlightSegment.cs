@@ -11,7 +11,7 @@ namespace clickfly.Models
         public int number { get; set; }
         public DateTime departure_datetime { get; set; }
         public DateTime arrival_datetime { get; set; }
-        public decimal price_per_seat { get; set; }
+        public int price_per_seat { get; set; }
         public int total_seats { get; set; }
         public string type { get; set; }
         public decimal distance { get; set; }

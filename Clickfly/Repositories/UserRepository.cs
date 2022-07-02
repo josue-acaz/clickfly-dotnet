@@ -101,6 +101,10 @@ namespace clickfly.Repositories
             int offset = (filter.page_number - 1) * filter.page_size;
             string air_taxi_id = filter.air_taxi_id;
 
+            Console.WriteLine($@"
+                air_taxi_id: {air_taxi_id}
+            ");
+
             string where = $"{whereSql} AND _user.air_taxi_id = @air_taxi_id";
             string mainWhere = $"";
             

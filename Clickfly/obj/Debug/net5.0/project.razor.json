@@ -15627,6 +15627,11 @@
       "FilePath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/Templates/ActivateAccount.cshtml",
       "TargetPath": "Templates\\ActivateAccount.cshtml",
       "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/Templates/ForgotPassword.cshtml",
+      "TargetPath": "Templates\\ForgotPassword.cshtml",
+      "FileKind": "mvc"
     }
   ],
   "SerializationFormat": "0.2"

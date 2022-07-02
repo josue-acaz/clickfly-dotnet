@@ -126,21 +126,25 @@ namespace clickfly
             return installments.ToArray();
         }
 
-        public string GetBookingStatus(string chargeStatus)
+        public string GetBookingStatus(string orderStatus)
         {
             string bookingStatus = "";
 
-            if(chargeStatus == "paid" || chargeStatus == "overpaid")
+            if(orderStatus == OrderStatus.Paid)
             {
-                bookingStatus = "approved";
+                bookingStatus = BookingStatusTypes.Approved;
             }
-            if(chargeStatus == "processing" || chargeStatus == "pending" || chargeStatus == "underpaid")
+            else if(orderStatus == OrderStatus.Pending)
             {
-                bookingStatus = "pending";
+                bookingStatus = BookingStatusTypes.Pending;
             }
-            if(chargeStatus == "failed")
+            else if(orderStatus == OrderStatus.Failed)
             {
-                bookingStatus = "not_approved";
+                bookingStatus = BookingStatusTypes.NotApproved;
+            }
+            else
+            {
+                bookingStatus = BookingStatusTypes.Canceled;
             }
 
             return bookingStatus;
@@ -234,6 +238,13 @@ namespace clickfly
             string hexStr = String.Concat(hexArray);
 
             return hexStr.ToLower();
+        }
+
+        public string[] GetPhoneNumber(string phone_number)
+        {
+            phone_number = String.Join("", phone_number.Split('('));
+            phone_number = String.Join("", phone_number.Split('-'));
+            return phone_number.Split(')');
         }
     }
 }

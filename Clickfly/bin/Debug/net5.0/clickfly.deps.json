@@ -40,7 +40,7 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.1",
           "BCrypt.Net-Next": "4.0.2",
           "CoordinateSharp": "2.12.1.1",
-          "Dapper": "2.0.90",
+          "Dapper": "2.0.123",
           "Dapper.Contrib": "2.0.78",
           "Dapper.FluentMap": "2.0.0",
           "FluentValidation.AspNetCore": "10.3.3",
@@ -464,11 +464,11 @@
           "lib/netstandard2.1/CoordinateSharp.dll": {}
         }
       },
-      "Dapper/2.0.90": {
+      "Dapper/2.0.123": {
         "runtime": {
           "lib/net5.0/Dapper.dll": {
             "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.0.90.36046"
+            "fileVersion": "2.0.123.33578"
           }
         },
         "compile": {
@@ -477,7 +477,7 @@
       },
       "Dapper.Contrib/2.0.78": {
         "dependencies": {
-          "Dapper": "2.0.90"
+          "Dapper": "2.0.123"
         },
         "runtime": {
           "lib/net5.0/Dapper.Contrib.dll": {
@@ -491,7 +491,7 @@
       },
       "Dapper.FluentMap/2.0.0": {
         "dependencies": {
-          "Dapper": "2.0.90"
+          "Dapper": "2.0.123"
         },
         "runtime": {
           "lib/netstandard2.0/Dapper.FluentMap.dll": {
@@ -3737,12 +3737,12 @@
       "path": "coordinatesharp/2.12.1.1",
       "hashPath": "coordinatesharp.2.12.1.1.nupkg.sha512"
     },
-    "Dapper/2.0.90": {
+    "Dapper/2.0.123": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-e4YjOLJptnpwHIbP8HxjaYf7So9lhUC43rvvGMEkH4Q4CiVlm4rOxYDo0HyuHlMQKj0U5Ob/nCMm52TUhTaZQg==",
-      "path": "dapper/2.0.90",
-      "hashPath": "dapper.2.0.90.nupkg.sha512"
+      "sha512": "sha512-RDFF4rBLLmbpi6pwkY7q/M6UXHRJEOerplDGE5jwEkP/JGJnBauAClYavNKJPW1yOTWRPIyfj4is3EaJxQXILQ==",
+      "path": "dapper/2.0.123",
+      "hashPath": "dapper.2.0.123.nupkg.sha512"
     },
     "Dapper.Contrib/2.0.78": {
       "type": "package",

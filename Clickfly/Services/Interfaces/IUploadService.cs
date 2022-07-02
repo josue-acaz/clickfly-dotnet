@@ -7,6 +7,7 @@ namespace clickfly.Services
 {
     public interface IUploadService
     {
-        Task<UploadResponse> UploadFileAsync (IFormFile file);
+        Task UploadFileAsync (IFormFile file, string keyName);
+        string GetPreSignedUrl(string key);
     }
 }

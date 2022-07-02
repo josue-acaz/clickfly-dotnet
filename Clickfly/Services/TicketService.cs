@@ -53,7 +53,7 @@ namespace clickfly.Services
         {
             bool update = ticket.id != "";
 
-            string qr_code = _utils.GenerateQRCode(ticket.qr_code);
+            string qr_code = "qr_string";//_utils.GenerateQRCode(ticket.qr_code);
             ticket.qr_code = qr_code;
 
             if(update)

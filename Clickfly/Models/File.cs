@@ -14,7 +14,9 @@ namespace clickfly.Models
         public string name { get; set; }
         public string mimetype { get; set; }
         public string field_name { get; set; }
-        public string url { get; set; }
         public long size { get; set; }
+        
+        [NotMapped]
+        public string url { get; set; }
     }
 }

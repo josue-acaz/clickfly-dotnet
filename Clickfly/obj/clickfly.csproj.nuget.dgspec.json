@@ -14,13 +14,13 @@
         "outputPath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
+          "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/NuGet.Config",
           "/Users/piquiatuba/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
         ],
         "sources": {
-          "/Users/piquiatuba/Documents/Nuget/Packages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -73,7 +73,7 @@
             },
             "Dapper": {
               "target": "Package",
-              "version": "[2.0.90, )"
+              "version": "[2.0.123, )"
             },
             "Dapper.Contrib": {
               "target": "Package",

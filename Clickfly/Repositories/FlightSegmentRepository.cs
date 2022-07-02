@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Services;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -13,17 +14,24 @@ namespace clickfly.Repositories
 {
     public class FlightSegmentRepository : BaseRepository<FlightSegment>, IFlightSegmentRepository
     {
+        protected readonly IUploadService _uploadService;
         private static string fieldsSql = "*";
         private static string fromSql = "flight_segments as flight_segment";
         private static string whereSql = "flight_segment.excluded = false";
         private static string deleteSql = "UPDATE flight_segments SET excluded = true WHERE id = @id";
         private static string availableSeatsSql = $"flight_segment.total_seats - get_booked_seats(flight_segment.id)";
         private static string flightTimeSql = $"(SELECT EXTRACT(EPOCH FROM (flight_segment.arrival_datetime - flight_segment.departure_datetime))) / 60";
-        private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
+        //private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
 
-        public FlightSegmentRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
+        public FlightSegmentRepository(
+                IDBContext dBContext, 
+                IDataContext dataContext, 
+                IDapperWrapper dapperWrapper, 
+                IUploadService uploadService,
+                IUtils utils
+        ) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-            
+            _uploadService = uploadService;
         }
 
         public async Task<FlightSegment> Create(FlightSegment flightSegment)
@@ -79,15 +87,13 @@ namespace clickfly.Repositories
             includeDestinationAerodrome.ForeignKey = "destination_aerodrome_id";
             includeDestinationAerodrome.ThenInclude<City>(includeDestinationCity);
 
-            IncludeModel includeAircraftModel = new IncludeModel();
-            includeAircraftModel.As = "model";
-            includeAircraftModel.ForeignKey = "aircraft_model_id";
-
             IncludeModel includeAircraft = new IncludeModel();
             includeAircraft.As = "aircraft";
             includeAircraft.ForeignKey = "aircraft_id";
-            includeAircraft.ThenInclude<AircraftModel>(includeAircraftModel);
-            includeAircraft.AddRawAttribute("thumbnail", aircraftThumbnailSql);
+            includeAircraft.ThenInclude<AircraftModel>(new IncludeModel{
+                As = "model",
+                ForeignKey = "aircraft_model_id"
+            });
 
             IncludeModel includeFlight = new IncludeModel();
             includeFlight.As = "flight";
@@ -98,14 +104,20 @@ namespace clickfly.Repositories
             options.Where = $"{whereSql} AND flight_segment.id = @id";
             options.Params = new { id = id };
             options.AddRawAttribute("available_seats", availableSeatsSql);
-            
             options.Include<Flight>(includeFlight);
             options.Include<Aircraft>(includeAircraft);
             options.Include<Aerodrome>(includeOriginAerodrome);
             options.Include<Aerodrome>(includeDestinationAerodrome);
             
             FlightSegment flightSegment = await _dapperWrapper.QuerySingleAsync<FlightSegment>(options);
-            
+            File thumbnailFile = await _dapperWrapper.QuerySingleAsync<File>(new SelectOptions{
+                As = "file",
+                Where = $"file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = 'thumbnail'",
+                Params = new { aircraft_id = flightSegment.aircraft.id },
+            });
+
+            flightSegment.aircraft.thumbnail = _uploadService.GetPreSignedUrl(thumbnailFile.key);
+
             return flightSegment;
         }
 

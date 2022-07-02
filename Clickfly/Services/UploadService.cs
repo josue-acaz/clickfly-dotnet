@@ -4,11 +4,10 @@ using System.Threading.Tasks;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 using clickfly.Helpers;
 using clickfly.ViewModels;
 using clickfly.Repositories;
@@ -38,148 +37,55 @@ namespace clickfly.Services
             
         }
 
-        public async Task<UploadResponse> UploadFileAsync (IFormFile file)
+        public async Task UploadFileAsync (IFormFile file, string keyName)
         {
-            try
-            {  
-                string accessKey = _appSettings.AWS.AccessKey;
-                string secretKey = _appSettings.AWS.SecretKey;
-                string bucketName = _appSettings.AWS.BucketName;
+            string accessKey = _appSettings.AWS.AccessKey;
+            string secretKey = _appSettings.AWS.SecretKey;
+            string bucketName = _appSettings.AWS.BucketName;
 
-                BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-                AmazonS3Config config = new AmazonS3Config
-                {
-                    RegionEndpoint = regionEndpoint
-                };
-
-                using var client = new AmazonS3Client(credentials, config);
-
-
-                var image = Image.Load(file.OpenReadStream());
-                image.Mutate(x => x.Resize(256, 256));
-                await using var newMemoryStream = new MemoryStream();
-                image.SaveAsPng(newMemoryStream);
-                
-                //await file.CopyToAsync(newMemoryStream);
-
-                string originalName = file.FileName;
-                string fileExtension = Path.GetExtension(originalName);
-                string key = $"{_utils.RandomBytes(20)}-{originalName}";
-
-                // URL for Accessing Document for Demo
-                string location = $"https://{bucketName}.s3.amazonaws.com/{key}";
-
-                TransferUtilityUploadRequest uploadRequest = new TransferUtilityUploadRequest
-                {
-                    InputStream = newMemoryStream,
-                    Key = key,
-                    BucketName = bucketName,
-                    CannedACL = S3CannedACL.PublicRead
-                };
-
-                TransferUtility fileTransferUtility = new TransferUtility(client);
-                await fileTransferUtility.UploadAsync(uploadRequest);
-
-                UploadResponse uploadResponse = new UploadResponse();
-                uploadResponse.MimeType = file.ContentType;
-                uploadResponse.Key = key;
-                uploadResponse.Name = originalName;
-                uploadResponse.Url = location;
-                uploadResponse.Size = file.Length;
-
-                return uploadResponse;
-            }
-            catch (AmazonS3Exception amazonS3Exception)
+            BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+            AmazonS3Config config = new AmazonS3Config
             {
-                if (amazonS3Exception.ErrorCode != null
-                    && (amazonS3Exception.ErrorCode.Equals("InvalidAccessKeyId") || amazonS3Exception.ErrorCode.Equals("InvalidSecurity")))
-                {
-                    throw new Exception("Check the provided AWS Credentials.");
-                }
-                else
-                {
-                    throw new Exception("Error occurred: " + amazonS3Exception.Message);
-                }
-            }
+                RegionEndpoint = regionEndpoint
+            };
+            using var client = new AmazonS3Client(credentials, config);
+
+            await using var newMemoryStream = new MemoryStream();
+            await file.CopyToAsync(newMemoryStream);
+            
+            TransferUtilityUploadRequest uploadRequest = new TransferUtilityUploadRequest
+            {
+                InputStream = newMemoryStream,
+                Key = keyName,
+                BucketName = bucketName,
+            };
+
+            TransferUtility fileTransferUtility = new TransferUtility(client);
+            await fileTransferUtility.UploadAsync(uploadRequest);
         }
-    
-        /*
-        public async Task<IActionResult> DownloadFileAsync(int id)
+
+        public string GetPreSignedUrl(string key)
         {
-            try
+            string accessKey = _appSettings.AWS.AccessKey;
+            string secretKey = _appSettings.AWS.SecretKey;
+            string bucketName = _appSettings.AWS.BucketName;
+            
+            BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+            AmazonS3Config config = new AmazonS3Config
             {
-                var getdocument = _documentdata.GetDocumentbyDocumentId(id);
-                var credentials = new BasicAWSCredentials(_appSettings.AccessKey, _appSettings.SecretKey);
-                var config = new AmazonS3Config
-                {
-                    RegionEndpoint = Amazon.RegionEndpoint.APSouth1
-                };
-                using var client = new AmazonS3Client(credentials, config);
-                var fileTransferUtility = new TransferUtility(client);
+                RegionEndpoint = Amazon.RegionEndpoint.USEast1
+            };
+            using var client = new AmazonS3Client(credentials, config);
 
-                var objectResponse = await fileTransferUtility.S3Client.GetObjectAsync(new GetObjectRequest()
-                {
-                    BucketName = _appSettings.BucketName,
-                    Key = getdocument.DocumentName
-                });
-
-                if (objectResponse.ResponseStream == null)
-                {
-                    return NotFound();
-                }
-                return File(objectResponse.ResponseStream, objectResponse.Headers.ContentType, getdocument.DocumentName);
-            }
-            catch (AmazonS3Exception amazonS3Exception)
+            GetPreSignedUrlRequest request1 = new GetPreSignedUrlRequest
             {
-                if (amazonS3Exception.ErrorCode != null
-                    && (amazonS3Exception.ErrorCode.Equals("InvalidAccessKeyId") || amazonS3Exception.ErrorCode.Equals("InvalidSecurity")))
-                {
-                    throw new Exception("Check the provided AWS Credentials.");
-                }
-                else
-                {
-                    throw new Exception("Error occurred: " + amazonS3Exception.Message);
-                }
-            }
+                BucketName = bucketName,
+                Key = key,
+                Expires = DateTime.UtcNow.AddHours(1)
+            };
 
+            string urlString = client.GetPreSignedURL(request1);
+            return urlString;
         }
-    
-        public async Task<IActionResult> DeleteFileAsync(int id)
-        {
-            try
-            {
-                var getdocument = _documentdata.GetDocumentbyDocumentId(id);
-                _documentdata.Delete(getdocument);
-
-                var credentials = new BasicAWSCredentials(_appSettings.AccessKey, _appSettings.SecretKey);
-                var config = new AmazonS3Config
-                {
-                    RegionEndpoint = Amazon.RegionEndpoint.APSouth1
-                };
-                using var client = new AmazonS3Client(credentials, config);
-                var fileTransferUtility = new TransferUtility(client);
-                await fileTransferUtility.S3Client.DeleteObjectAsync(new DeleteObjectRequest()
-                {
-                    BucketName = _appSettings.BucketName,
-                    Key = getdocument.DocumentName
-                });
-
-            }
-            catch (AmazonS3Exception amazonS3Exception)
-            {
-                if (amazonS3Exception.ErrorCode != null
-                    && (amazonS3Exception.ErrorCode.Equals("InvalidAccessKeyId") || amazonS3Exception.ErrorCode.Equals("InvalidSecurity")))
-                {
-                    throw new Exception("Check the provided AWS Credentials.");
-                }
-                else
-                {
-                    throw new Exception("Error occurred: " + amazonS3Exception.Message);
-                }
-            }
-            return RedirectToAction("AllFiles");
-        }
-    
-        */
     }
 }

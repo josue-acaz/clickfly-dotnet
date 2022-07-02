@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using clickfly.Data;
 using clickfly.Models;
+using clickfly.Services;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -13,15 +14,16 @@ namespace clickfly.Repositories
 {
     public class AircraftRepository : BaseRepository<Aircraft>, IAircraftRepository
     {
+        protected readonly IUploadService _uploadService;
         private static string fieldsSql = "*";
         private static string fromSql = "aircrafts as aircraft";
         private static string whereSql = "aircraft.excluded = false";
-        private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
-        private static string aircraftSeatingMapSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'seating_map' LIMIT 1";
+        //private static string aircraftThumbnailSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'thumbnail' LIMIT 1";
+        //private static string aircraftSeatingMapSql = $"SELECT url FROM files WHERE resource_id = aircraft.id AND resource = 'aircrafts' AND field_name = 'seating_map' LIMIT 1";
 
-        public AircraftRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils) : base(dBContext, dataContext, dapperWrapper, utils)
+        public AircraftRepository(IDBContext dBContext, IDataContext dataContext, IDapperWrapper dapperWrapper, IUtils utils, IUploadService uploadService) : base(dBContext, dataContext, dapperWrapper, utils)
         {
-
+            _uploadService = uploadService;
         }
 
         public async Task<Aircraft> Create(Aircraft aircraft)
@@ -68,10 +70,29 @@ namespace clickfly.Repositories
             options.Params = new { id = id };
             options.Include<Flight>(includeFlight);
             options.Include<AircraftModel>(includeAircraftModel);
-            options.AddRawAttribute("thumbnail", aircraftThumbnailSql);
-            options.AddRawAttribute("seating_map", aircraftSeatingMapSql);
 
             Aircraft aircraft = await _dapperWrapper.QuerySingleAsync<Aircraft>(options);
+
+            File thumbnailFile = await _dapperWrapper.QuerySingleAsync<File>(new SelectOptions{
+                As = "file",
+                Where = $"file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = 'thumbnail'",
+                Params = new { aircraft_id = aircraft.id },
+            });
+
+            File seatingMapFile = await _dapperWrapper.QuerySingleAsync<File>(new SelectOptions{
+                As = "file",
+                Where = $"file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = 'seating_map'",
+                Params = new { aircraft_id = aircraft.id },
+            });
+
+            if(thumbnailFile != null)
+            {
+                aircraft.thumbnail = _uploadService.GetPreSignedUrl(thumbnailFile.key);
+            }
+            if(seatingMapFile != null)
+            {
+                aircraft.seating_map = _uploadService.GetPreSignedUrl(seatingMapFile.key);
+            }
 
             return aircraft;
         }
@@ -79,16 +100,15 @@ namespace clickfly.Repositories
         public async Task<string> GetThumbnail(GetThumbnailRequest thumbnailRequest)
         {
             string type = thumbnailRequest.type;
-            string aircraftId = thumbnailRequest.aircraft_id;
+            string aircraft_id = thumbnailRequest.aircraft_id;
 
-            string querySql = $@"SELECT file.url as {type} FROM files as file WHERE file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = @type LIMIT 1 OFFSET 0";
-        
-            Dictionary<string, object> queryParams = new Dictionary<string, object>();
-            queryParams.Add("@type", type);
-            queryParams.Add("@aircraft_id", aircraftId);
+            File thumbnailFile = await _dapperWrapper.QuerySingleAsync<File>(new SelectOptions{
+                As = "file",
+                Where = $"file.excluded = false AND file.resource_id = @aircraft_id AND file.field_name = @type LIMIT 1",
+                Params = new { type = type, aircraft_id = aircraft_id },
+            });
             
-            string thumbnail = await _dBContext.GetConnection().QuerySingleOrDefaultAsync<string>(querySql, queryParams);
-            return thumbnail;
+            return _uploadService.GetPreSignedUrl(thumbnailFile.key);
         }
 
         public async Task<PaginationResult<Aircraft>> Pagination(PaginationFilter filter)

@@ -108,26 +108,25 @@ namespace clickfly.Services
 
         public async Task<string> Thumbnail(ThumbnailRequest thumbnailRequest)
         {
-            string type = thumbnailRequest.type;
             IFormFile file = thumbnailRequest.file;
-            string aircraftId = thumbnailRequest.aircraft_id;
+            string aircraft_id = thumbnailRequest.aircraft_id;
+            string user_id = _informer.GetValue(UserIdTypes.UserId);
 
-            UploadResponse uploadResponse = await _uploadService.UploadFileAsync(file);
+            string keyName = _utils.RandomBytes(20);
+            await _uploadService.UploadFileAsync(file, keyName);
 
             File createFile = new File();
-            createFile.resource_id = aircraftId;
+            createFile.resource_id = aircraft_id;
             createFile.resource = Resources.Aircrafts;
-            createFile.key = uploadResponse.Key;
-            createFile.name = uploadResponse.Name;
-            createFile.size = uploadResponse.Size;
-            createFile.url = uploadResponse.Url;
-            createFile.mimetype = uploadResponse.MimeType;
-            createFile.field_name = type;
+            createFile.key = keyName;
+            createFile.name = file.Name;
+            createFile.size = file.Length;
+            createFile.mimetype = file.ContentType;
+            createFile.field_name = thumbnailRequest.type;
+            createFile.created_by = user_id;
 
-            createFile = await _fileRepository.Create(createFile);
-            string url = createFile.url;
-
-            return url;
+            await _fileRepository.Create(createFile);
+            return _uploadService.GetPreSignedUrl(keyName);
         }
 
         public async Task Delete(string id)

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "/15HBcGuDK3cZ+meA/UYqbqDIm9Jr8E0fvOAg98Fe9MseUZxVQb13A+/48uYtpij+pmBv8r+By+ocCg05TqzVw==",
+  "dgSpecHash": "f263ibFNA/uob1En1U2R0ig5Uta64Fr+t4yv+99vS5eakns7+3XScDlQHo+4cQaisFB0LGG1q8bXhXQ0J+Hauw==",
   "success": true,
   "projectFilePath": "/Users/piquiatuba/Documents/ClickFly/SDK/Clickfly/clickfly.csproj",
   "expectedPackageFiles": [
@@ -12,7 +12,7 @@
     "/Users/piquiatuba/.nuget/packages/awssdk.s3/3.7.3.15/awssdk.s3.3.7.3.15.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/bcrypt.net-next/4.0.2/bcrypt.net-next.4.0.2.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/coordinatesharp/2.12.1.1/coordinatesharp.2.12.1.1.nupkg.sha512",
-    "/Users/piquiatuba/.nuget/packages/dapper/2.0.90/dapper.2.0.90.nupkg.sha512",
+    "/Users/piquiatuba/.nuget/packages/dapper/2.0.123/dapper.2.0.123.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/dapper.contrib/2.0.78/dapper.contrib.2.0.78.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/dapper.fluentmap/2.0.0/dapper.fluentmap.2.0.0.nupkg.sha512",
     "/Users/piquiatuba/.nuget/packages/fluentvalidation/10.3.3/fluentvalidation.10.3.3.nupkg.sha512",
